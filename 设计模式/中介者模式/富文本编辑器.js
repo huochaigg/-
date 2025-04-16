@@ -8,8 +8,9 @@
     define(factory);
   } else {
     // 浏览器环境，挂载到全局对象 
-    global.EditBox = factory().default;
-    global.EffectManager = factory().EffectManager;
+    const lib = factory();
+    global.EditBox = lib.default;
+    global.EffectManager = lib.EffectManager;
   }
 })(typeof window !== 'undefined' ? window : this, function () {
   const getButtonId = (btnName) => {
@@ -48,53 +49,47 @@
   
   // 绑定在全局的事件
   const effectManager = new EffectManager();
+
+  class BaseCommand {
+    execute(editorArea, tagName) {
+      const selection = window.getSelection();
+      const range = selection.getRangeAt(0);
+      const selectedText = range.toString();
+      const node = document.createElement(tagName);
+      node.textContent = selectedText;
+      range.deleteContents();
+      range.insertNode(node);
+    }
+  }
   
   // 按钮命令类
-  class BoldCommand {
-    execute(textArea) {
-      const selection = window.getSelection();
-      const range = selection.getRangeAt(0);
-      const selectedText = range.toString();
-      const node = document.createElement('strong');
-      node.textContent = selectedText;
-      range.deleteContents();
-      range.insertNode(node);
+  class BoldCommand extends BaseCommand {
+    execute(editorArea) {
+      super.execute(editorArea, 'strong');
     }
   }
   
-  class ItalicCommand {
-    execute(textArea) {
-      const selection = window.getSelection();
-      const range = selection.getRangeAt(0);
-      const selectedText = range.toString();
-      const node = document.createElement('em');
-      node.textContent = selectedText;
-      range.deleteContents();
-      range.insertNode(node);
+  class ItalicCommand extends BaseCommand {
+    execute(editorArea) {
+      super.execute(editorArea, 'em');
     }
   }
   
-  class StrikeCommand {
-    execute(textArea) {
-      const selection = window.getSelection();
-      const range = selection.getRangeAt(0);
-      const selectedText = range.toString();
-      const node = document.createElement('del');
-      node.textContent = selectedText;
-      range.deleteContents();
-      range.insertNode(node);
+  class StrikeCommand extends BaseCommand {
+    execute(editorArea) {
+      super.execute(editorArea, 'del');
     }
   }
   
   class ClearFormatCommand {
-    execute(textArea) {
-      const text = textArea.innerText; // 获取纯文本内容
-      textArea.innerHTML = text; // 替换为纯文本
+    execute(editorArea) {
+      const text = editorArea.innerText; // 获取纯文本内容
+      editorArea.innerHTML = text; // 替换为纯文本
     }
   }
   
   class InsertImageCommand {
-    execute(textArea) {
+    execute(editorArea) {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'image/*';
@@ -111,7 +106,7 @@
             img.style.width = '100%';
             img.style.display = 'block';
             img.style.margin = '0 auto';
-            textArea.appendChild(img);
+            editorArea.appendChild(img);
           };
           reader.readAsDataURL(file);
         }
@@ -121,48 +116,56 @@
   }
   
   // btns的映射关系
-  const btnsMap = {
-    'bold': {
+  const btnsMap = new Map([
+    ['bold', {
       name: '加粗',
       command: BoldCommand,
-    },
-    'italic': {
+    }],
+    ['italic', {
       name: '斜体',
       command: ItalicCommand,
-    },
-    'strike': {
+    }],
+    ['strike', {
       name: '删除线',
       command: StrikeCommand,
-    },
-    'insertImage': {
+    }],
+    ['insertImage', {
       name: '插入图片',
       command: InsertImageCommand,
-    },
-    'clearFormat': {
+    }],
+    ['clearFormat', {
       name: '清除格式',
       command: ClearFormatCommand,
-    },
-  }
+    }],
+  ]);
   
   // 中介者类
   class EditorMediator {
-    constructor() {
-      this.textArea = null; // 编辑框
-      this.commands = {}; // 命令集合
-    }
+
+    #editorArea = null; // 编辑框
+    #commands = {}; // 命令集合
+    #state = {}; // 状态管理
   
-    setTextArea(textArea) {
-      this.textArea = textArea;
+    setTextArea(editorArea) {
+      this.#editorArea = editorArea;
     }
   
     registerCommand(name, command) {
-      this.commands[name] = command;
+      this.#commands[name] = command;
     }
   
     notify(name) {
-      if (this.commands[name]) {
-        this.commands[name].execute(this.textArea);
+      if (this.#commands[name]) {
+        this.#commands[name].execute(this.#editorArea);
       }
+    }
+
+    setState(key, value) {
+      this.#state[key] = value;
+    }
+  
+    getState(key) {
+      return this.#state[key];
     }
   }
   
@@ -178,10 +181,14 @@
       });
     }
   
-    execute() {
+    execute() { 
       if (this.mediator) {
         this.mediator.notify(this.name);
       }
+    }
+
+    setDisabled(isDisabled) {
+      this.dom.disabled = isDisabled;
     }
   }
   
@@ -190,9 +197,13 @@
     constructor(options) {
       this.options = options;
       this.containerId = options.containerId;
-      this.buttons = options.buttons || []; // 按钮配置
+      this.buttons = Object.assign(EditBox.defaultButtons, (options.buttons || [])); // 按钮配置
       this.mediator = new EditorMediator(); // 初始化中介者
       this.init();
+    }
+
+    static get defaultButtons() {
+      return ['bold', 'italic', 'strike', 'insertImage', 'clearFormat'];
     }
   
     init() {
@@ -213,22 +224,22 @@
     }
   
     createEditBox(container) {
-      this.textArea = document.createElement('div');
-      this.textArea.contentEditable = true;
-      this.textArea.classList.add('edit-box');
-      this.textArea.style = `
-        overflow-y: auto; 
-        border: none; 
-        outline: none; 
-        min-height: 200px; 
-        max-height: 400px; 
-        box-sizing: border-box;
-        border: 1px solid #ccc;
-      `;
-      this.textArea.style.cursor = 'text';
-      container.appendChild(this.textArea);
+      this.editorArea = document.createElement('div');
+      this.editorArea.contentEditable = true;
+      this.editorArea.classList.add('edit-box');
+      Object.assign(this.editorArea.style, {
+        overflowY: 'auto',
+        border: '1px solid #ccc',
+        outline: 'none',
+        minHeight: '200px',
+        maxHeight: '400px',
+        boxSizing: 'border-box',
+        cursor: 'text'
+      });
+      this.editorArea.style.cursor = 'text';
+      container.appendChild(this.editorArea);
   
-      this.mediator.setTextArea(this.textArea); // 将文本框传递给中介者
+      this.mediator.setTextArea(this.editorArea); // 将文本框传递给中介者
     }
   
     createButtonsBox(container) {
@@ -236,13 +247,15 @@
       this.buttonsContainer.classList.add('buttons-container');
   
       this.buttons.forEach((btn) => {
-        if (btnsMap[btn]) {
+        if (btnsMap.get(btn)) {
           const buttonElement = document.createElement('button');
           buttonElement.id = getButtonId(btn);
-          buttonElement.innerHTML = btnsMap[btn].name;
+          buttonElement.innerHTML = btnsMap.get(btn).name;
           this.buttonsContainer.appendChild(buttonElement);
   
-          // 创建按钮实例并绑定中介者
+          // 创建按钮实例
+          // 绑定按钮事件
+          // 绑定中介者
           new EditorButton(buttonElement, btn, this.mediator);
         }
       });
@@ -254,10 +267,24 @@
     registerCommands() {
       // 注册命令到中介者
       this.buttons.forEach((btn) => {
-        if (btnsMap[btn]) {
-          this.mediator.registerCommand(btn, new btnsMap[btn].command());
+        if (btnsMap.get(btn)) {
+          this.mediator.registerCommand(btn, new (btnsMap.get(btn).command)()); // new (btnsMap.get(btn).command()) 这样写报错注意
         }
       })
+    }
+
+    destory() {
+      // 清理事件监听器
+      effectManager.cleanup();
+    }
+
+    removeBox() {
+      // 清除按钮
+      this.buttonsContainer.innerHTML = '';
+      this.buttonsContainer.remove();
+      // 清除文本框
+      this.editorArea.innerHTML = '';
+      this.editorArea.remove();
     }
   }
 
