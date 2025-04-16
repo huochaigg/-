@@ -170,11 +170,19 @@
   }
   
   // 编辑器按钮类
+  // 负责按钮的创建和事件绑定
+  // 负责按钮的状态管理，命令的执行
+  // 负责按钮的样式管理
   class EditorButton {
-    constructor(dom, name, mediator) {
-      this.dom = dom;
+    constructor(name, mediator, container) {
       this.name = name;
       this.mediator = mediator;
+  
+      this.dom = document.createElement('button');
+      this.dom.id = getButtonId(name);
+      this.dom.innerHTML = btnsMap.get(name).name;
+  
+      container.appendChild(this.dom);
   
       effectManager.addEventListener(this.dom, 'click', () => {
         this.execute();
@@ -247,16 +255,11 @@
       this.buttonsContainer.classList.add('buttons-container');
   
       this.buttons.forEach((btn) => {
-        if (btnsMap.get(btn)) {
-          const buttonElement = document.createElement('button');
-          buttonElement.id = getButtonId(btn);
-          buttonElement.innerHTML = btnsMap.get(btn).name;
-          this.buttonsContainer.appendChild(buttonElement);
-  
+        if (btnsMap.has(btn)) {
           // 创建按钮实例
           // 绑定按钮事件
           // 绑定中介者
-          new EditorButton(buttonElement, btn, this.mediator);
+          new EditorButton(btn, this.mediator, this.buttonsContainer);
         }
       });
   
@@ -293,3 +296,22 @@
     EffectManager,
   }; // 返回插件类
 });
+
+
+// 使用示例
+// const editor = new EditBox({
+//   containerId: 'editor-container', // 容器ID
+//   buttons: ['bold', 'italic', 'strike', 'insertImage', 'clearFormat'], // 按钮配置
+// });
+
+// editor.destory(); // 销毁编辑器实例
+
+// editor.removeBox(); // 移除编辑器实例
+
+// BoldCommand等命令类
+// 注册到中介者 this.mediator.registerCommand('bold', new BoldCommand());
+
+// EditorButton类
+//  负责按钮的创建和事件绑定
+//  负责按钮的状态管理，命令的执行
+// 
