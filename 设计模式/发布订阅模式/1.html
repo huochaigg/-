@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    class Subject {
+      constructor() {
+        this.list = {}
+      }
+
+      on(name, fn) {
+        if (!this.list[name]) {
+          this.list[name] = []
+        }
+        this.list[name].push(fn)
+      }
+
+      emit(name, value) {
+        (this.list[name] || []).forEach(fn => fn(value))
+      }
+
+      delete(name, fn) {
+        const idx = this.list[name].findIndex(fn)
+        if (idx !== -1) {
+          this.list[name].splice(idx, 1)
+        }
+      }
+    }
+
+    const subject = new Subject()
+
+    const playFunc = (data) => {
+      console.log('接收到消息', data)
+    }
+
+    subject.on('play', playFunc)
+    subject.on('play', playFunc)
+
+    subject.emit('play', '踢足球')
+    
+  </script>
+</body>
+</html>

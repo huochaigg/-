@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>call,apply,bind</title>
+</head>
+<body>
+    <script>
+
+        // call,apply,bind详解
+
+        // call: 立即执行函数，并改变this指向
+        function greet(greeting) {
+            console.log(`${greeting}, ${this.name}`);
+        }
+
+        // const person = { name: 'Alice' };
+        // greet.call(person, 'Hello'); // Hello, Alice    
+
+        // // apply: 立即执行函数，并改变this指向，参数以数组形式传入
+
+        // function introduce(age, city) {
+        //     console.log(`I am ${this.name}, ${age} years old, living in ${city}.`);
+        // }
+
+        // const person2 = { name: 'Bob' };
+        // introduce.apply(person2, [30, 'New York']); // I am Bob, 30 years old, living in New York.
+
+        // // bind: 返回一个新函数，this指向改变，参数可以预设
+        // function sayHello() {
+        //     console.log(`Hello, ${this.name}`);
+        // }
+
+        // const person3 = { name: 'Charlie' };
+        // const boundSayHello = sayHello.bind(person3);
+        // boundSayHello(); // Hello, Charlie
+
+        // // bind可以预设参数
+        // function greetWithTime(greeting, time) {
+        //     console.log(`${greeting}, ${this.name}. It's ${time}.`);
+        // }
+
+        // const person4 = { name: 'David' };
+        // const boundGreet = greetWithTime.bind(person4, 'Good morning');
+        // boundGreet('8 AM'); // Good morning, David. It's 8 AM.
+
+
+        // call的原理是不是等同于：
+        // function bark(name) {
+        //     console.log(`${name}: wangwang`);
+        // }
+        // const dog = {
+        //     name: 'liyang',
+        // }
+        // // 变成下面的形式：
+        // const dog = {
+        //     name: 'liyang',
+        //     bark: function(name) {
+        //         console.log(`${name}: wangwang`);
+        //     }
+        // }
+
+        // 实现自定义call方法
+        // context: 上下文对象，this指向的对象
+        // args: 传入的参数
+        // Function.prototype.myCall = function(context, ...args) {
+        //     // 如果没有传入上下文，则默认指向全局对象
+        //     context = context || globalThis;
+        //     // 将函数绑定到上下文对象上
+        //     context.fn = this;
+        //     // 执行函数并获取结果
+        //     const result = context.fn(...args);
+        //     // 删除临时函数
+        //     delete context.fn;
+        //     return result;
+        // };
+        // console.log(globalThis)
+
+        // const dog = {
+        //     name: 'liyang',
+        // }
+        // function bark(name) {
+        //     console.log(`${name}: wangwang`);
+        // }
+        // bark.myCall(dog, 'liyang'); // liyang: wangwang
+        // bark.myCall(null, 'liyang'); // liyang: wangwang
+
+        // 实现自定义apply方法
+        // Function.prototype.myApply = function(context, args) {
+        //     context = context || globalThis;
+        //     context.fn = this;
+        //     const result = context.fn(...args);
+        //     delete context.fn;
+        //     return result;
+        // };
+
+        // 实现自定义bind方法
+        Function.prototype.myBind = function(context, ...args) {
+            context = context || globalThis;
+            context.fn = this; // 保存原函数的引用
+            return function(...newArgs) {
+                const result = context.fn(...args, ...newArgs); // 执行函数并传入参数
+                delete context.fn; // 删除临时函数
+                return result; // 返回结果
+            };
+        };
+        const dog2 = {
+            name: 'liyang',
+        }
+        function bark2(name) {
+            console.log(`${name}: wangwang`);
+        }
+        const boundBark = bark2.myBind(dog2, 'liyang');
+        boundBark(); // liyang: wangwang
+    </script>
+</body>
+</html>

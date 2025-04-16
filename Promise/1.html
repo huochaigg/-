@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    function MyPromise(executor) {
+      this.state = 'pending'; // 初始状态
+      this.value = undefined; // 成功的值
+      this.reason = undefined; // 失败的原因
+      this.onResolvedCallbacks = []; // 存储成功的回调
+      this.onRejectedCallbacks = []; // 存储失败的回调
+
+      const resolve = (value) => {
+        if (this.state === 'pending') {
+          this.state = 'fulfilled'; // 状态变为 fulfilled
+          this.value = value; // 保存成功的值
+          this.onResolvedCallbacks.forEach((callback) => callback()); // 执行所有成功回调
+        }
+      };
+
+      const reject = (reason) => {
+        if (this.state === 'pending') {
+          this.state = 'rejected'; // 状态变为 rejected
+          this.reason = reason; // 保存失败的原因
+          this.onRejectedCallbacks.forEach((callback) => callback()); // 执行所有失败回调
+        }
+      };
+
+      try {
+        executor(resolve, reject); // 执行传入的函数
+      } catch (error) {
+        reject(error); // 捕获异常并调用 reject
+      }
+    }
+
+    MyPromise.prototype.then = function (onFulfilled, onRejected) {
+      return new MyPromise((resolve, reject) => {
+        if (this.state === 'fulfilled') {
+          try {
+            const result = onFulfilled(this.value); // 执行成功回调
+            resolve(result); // 将结果传递给下一个 Promise
+          } catch (error) {
+            reject(error); // 捕获异常并传递给下一个 Promise
+          }
+        } else if (this.state === 'rejected') {
+          try {
+            const result = onRejected(this.reason); // 执行失败回调
+            resolve(result); // 将结果传递给下一个 Promise
+          } catch (error) {
+            reject(error); // 捕获异常并传递给下一个 Promise
+          }
+        } else if (this.state === 'pending') {
+          // 如果状态是 pending，将回调存储起来
+          this.onResolvedCallbacks.push(() => {
+            try {
+              const result = onFulfilled(this.value);
+              resolve(result);
+            } catch (error) {
+              reject(error);
+            }
+          });
+          this.onRejectedCallbacks.push(() => {
+            try {
+              const result = onRejected(this.reason);
+              resolve(result);
+            } catch (error) {
+              reject(error);
+            }
+          });
+        }
+      });
+    };
+
+    MyPromise.prototype.catch = function (onRejected) {
+      return this.then(null, onRejected); // 只处理失败的情况
+    };
+
+    MyPromise.prototype.finally = function (onFinally) {
+      return this.then(
+        (value) => {
+          onFinally(); // 执行 finally 回调
+          return value; // 将成功的值传递给下一个 then
+        },
+        (reason) => {
+          onFinally(); // 执行 finally 回调 error
+          throw reason; // 将失败的原因传递给下一个 catch
+        }
+      );
+    };
+  </script>
+
+  <script>
+
+    const promise = new MyPromise((resolve, reject) => {
+      setTimeout(() => {
+        console.log('执行异步操作...');
+        // resolve('成功');
+        reject('失败'); // 模拟失败
+      }, 1000); // 异步操作，2秒后调用 resolve
+    });
+
+    promise
+      .then((value) => {
+        console.log('回调 1:', value);
+      })
+      .then((value) => {
+        console.log('回调 1.2:', value);
+      })
+      .catch((error) => {
+        console.log('catch 1:', error);
+        return 'catch 1'; // 返回一个新的值
+      })
+      .finally(() => {
+        console.log('finally 1');
+      })
+      .then((value) => {
+        console.log('回调 1.3:', value);
+      })
+
+    promise.then((value) => {
+      console.log('回调 2:', value);
+    });
+
+    // promise.then((value) => {
+    //   console.log('回调 3:', value);
+    // });
+
+
+  </script>
+
+</body>
+
+</html>

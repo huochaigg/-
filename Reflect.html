@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+
+    // Reflect 详解：
+    // Reflect 是一个内置对象，提供了拦截 JavaScript 操作的方法。它可以用来操作对象的属性、方法等。
+    // Reflect 的方法与 Proxy 对象的方法一一对应，通常用于在 Proxy 中实现拦截操作。
+    // 例如：Reflect.get()、Reflect.set()、Reflect.has() 等等。
+    // Reflect 还提供了一些其他的方法，例如：Reflect.apply()、Reflect.construct() 等等。
+    // 这些方法可以用来调用函数、构造函数等。
+
+    // 1. Reflect.get(target, 
+    // 用于获取对象的属性值。它的第一个参数是目标对象，第二个参数是属性名，第三个参数是接收者（可选）。
+    const obj = { a: 1, b: 2 };
+    const value = Reflect.get(obj, 'a'); // 1
+    console.log(value); // 1
+    const obj1 = { a: 1, b: 2, c: undefined };
+    const value2 = Reflect.get(obj, 'c', obj1); 
+    console.log(value2); 
+
+    // 2. Reflect.set(target, propertyKey, value, receiver)
+    // 用于设置对象的属性值。它的第一个参数是目标对象，第二个参数是属性名，第三个参数是属性值，第四个参数是接收者（可选）。
+    const obj2 = { a: 1, b: 2 };
+    Reflect.set(obj2, 'a', 3); // 3
+    console.log(obj2.a); // 3
+
+    // 3. Reflect.has(target, propertyKey)
+    // 用于判断对象是否具有某个属性。它的第一个参数是目标对象，第二个参数是属性名。
+    const obj3 = { a: 1, b: 2 };
+    const hasA = Reflect.has(obj3, 'a'); // true
+    const hasC = Reflect.has(obj3, 'c'); // false
+
+    // 4. Reflect.deleteProperty(target, propertyKey)
+    // 用于删除对象的属性。它的第一个参数是目标对象，第二个参数是属性名。
+    const obj4 = { a: 1, b: 2 };
+    Reflect.deleteProperty(obj4, 'a'); // true
+    console.log(obj4); // { b: 2 }
+
+    // 5. Reflect.apply(target, thisArgument, argumentsList)
+    // 用于调用函数。它的第一个参数是目标函数，第二个参数是 this 的值，第三个参数是参数数组。
+    function add(a, b) {
+      return a + b;
+    }
+    console.log(Reflect.apply(add, null, [2, 3]))
+
+    // 6. Reflect.construct(target, argumentsList, newTarget)
+    // 用于调用构造函数。它的第一个参数是目标构造函数，第二个参数是参数数组，第三个参数是 new 的值（可选）。
+    // 1提供了对构造函数调用的更细粒度控制。
+    // 2支持动态构造函数调用。
+    // 3在继承和代理场景中非常有用。
+    function Person(name) {
+      this.name = name;
+    }
+    const person = Reflect.construct(Person, ['John']); // { name: 'John' }
+
+  </script>
+</body>
+</html>

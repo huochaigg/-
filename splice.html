@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+
+    // splice() 方法用于从数组中添加或删除元素，并返回被删除的元素。
+    // 它会直接修改原始数组，并返回一个包含被删除元素的新数组。
+    // splice(start, deleteCount, item1, item2, ...)
+    
+    // start: 要添加或删除元素的起始索引。
+    // deleteCount: 要删除的元素数量。
+    // item1, item2, ...: 要添加到数组中的新元素（可选）。
+
+    let array = [1, 2, 3, 4, 5];
+
+    // 删除元素
+    let removedElements = array.splice(2, 2); // 从索引2开始删除2个元素
+    console.log(array); // [1, 2, 5]
+
+    // 添加元素
+    array.splice(1, 0, 'a', 'b'); // 在索引1处添加'a'和'b'
+    console.log(array); // [1, 'a', 'b', 2, 5]
+
+    // 替换元素
+    array.splice(2, 1, 'c', 'd'); // 从索引2开始删除1个元素，并添加'c'和'd'
+    console.log(array); // [1, 'a', 'c', 'd', 5] 
+
+    // 返回被删除的元素
+    let removed = array.splice(1, 2); // 从索引1开始删除2个元素
+    console.log(removed); // ['a', 'c']
+    console.log(array); // [1, 'd', 5] // 原数组被修改
+
+    
+
+  </script>
+</body>
+</html>

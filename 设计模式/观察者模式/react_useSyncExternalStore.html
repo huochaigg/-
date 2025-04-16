@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    // useSyncExternalStore React 18+方法
+
+    let listeners = []
+
+    const store = {
+      state: { count: 0 },
+      getSnapshot() {
+        return store.state
+      },
+      subscribe(callback) {
+        listeners.push(callback)
+        return () => {
+          listeners = listeners.filter(l => l !== callback)
+        }
+      },
+      setCount(n) {
+        store.state.count = n
+        listeners.forEach(fn => fn())
+      }
+    }
+
+
+    function useReactive() {
+      return useSyncExternalStore(
+        store.subscribe,
+        store.getSnapshot
+      )
+    }
+
+    // react组件中
+    function A() {
+      const { count } = useReactive()
+      return <div>Count: {count}</div>
+    }
+
+    // 触发
+    function B() {
+      return <button onClick={() => store.setCount(store.state.count + 1)}>+1</button>
+    }
+
+  </script>
+</body>
+
+</html>

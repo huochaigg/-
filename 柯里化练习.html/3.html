@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+
+    function curriedAdd (...args) {
+      const preSum = args.reduce((pre, next) => pre + next, 0)
+      
+      function curried (...nextArg) {
+        const nextSum = nextArg.reduce((pre, next) => pre + next, 0)
+
+        if (nextArg === 0) {
+          return preSum
+        } else {
+          return curriedAdd(preSum, nextSum)
+        }
+      }
+
+      curried[Symbol.toPrimitive] = function() {
+        return preSum
+      }
+
+      return curried
+    }
+
+    console.log(+curriedAdd(1)(2, 3)())
+
+
+  </script>
+</body>
+</html>

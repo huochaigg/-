@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+  <script>
+
+    let obj = {}
+
+    obj = {
+      name: '小明',
+      age: 19,
+      msg: {
+        birthday: '2004-01-01',
+        address: '北京',
+        like: ['吃饭', '睡觉', '打豆豆']
+      }
+    }
+
+    // let obj2 = obj; // obj2 和 obj 指向同一个对象。; 不通过
+    // let obj2 = {...obj}; // obj2 和 obj 指向不同的对象。但是 obj2.msg 和 obj.msg 指向同一个对象。; 不通过
+    // let obj2 = Object.assign({}, obj); // obj2 和 obj 指向不同的对象。但是 obj2.msg 和 obj.msg 指向同一个对象。; 不通过
+    // let obj2 = JSON.parse(JSON.stringify(obj)); // obj2 和 obj 指向不同的对象。; obj2.msg 和 obj.msg 也指向不同的对象。; 通过
+    // let obj2 = structuredClone(obj); // obj2 和 obj 指向不同的对象。; obj2.msg 和 obj.msg 也指向不同的对象。; 通过
+    // let obj2 = { ...obj, msg: { ...obj.msg } }; // obj2 和 obj 指向不同的对象。; obj2.msg 和 obj.msg 也指向不同的对象。; 但是like是引用类型。不通过
+    // let obj2 = { ...obj, msg: { ...obj.msg, like: [...obj.msg.like] } }; // 通过
+    // let obj2 = { ...obj, msg: { ...obj.msg, like: obj.msg.like.slice() } }; // 通过
+    // let obj2 = { ...obj, msg: { ...obj.msg, like: Array.from(obj.msg.like) } }; // 通过
+    // let obj2 = { ...obj, msg: { ...obj.msg, like: obj.msg.like.concat() } }; // 通过
+    
+    
+
+    console.log('obj', JSON.stringify(obj)) // obj
+
+    obj.msg.like.push('打游戏')
+    console.log('obj', JSON.stringify(obj)) // obj 
+    console.log('obj2', JSON.stringify(obj2)) // obj2) 
+
+
+  </script>
+</body>
+</html>

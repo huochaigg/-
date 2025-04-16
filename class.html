@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>class</title>
+</head>
+<body>
+    <script>
+        // 原型链
+        // 原型链是 JavaScript 中对象继承的机制。每个对象都有一个内部属性 [[Prototype]]，指向它的原型对象。通过原型链，可以实现对象之间的继承和属性共享。
+        // 当访问一个对象的属性时，如果该对象没有这个属性，JavaScript 会查找它的原型对象，如果原型对象也没有，就继续查找原型对象的原型，直到找到该属性或到达原型链的顶端（即 Object.prototype）。
+
+        // function Person(name) {
+        //     this.name = name;
+        // }
+        // Person.prototype.sayHello = function() {
+        //     console.log(`Hello, my name is ${this.name}`);
+        // };
+
+        // // 以上相当于class
+        // class Person2 {
+        //     constructor(name) {
+        //         this.name = name;
+        //     }
+        //     sayHello() {
+        //         console.log(`Hello, my name is ${this.name}`);
+        //     }
+        // }
+        // const person1 = new Person('Alice');
+        // const person2 = new Person2('Bob');
+        // person1.sayHello(); // Hello, my name is Alice
+
+        // person2.sayHello(); // Hello, my name is Bob
+
+        // 使用class关键字定义类时，JavaScript 会自动为类创建一个原型对象，并将该原型对象的 [[Prototype]] 属性指向 Object.prototype。
+        // 这使得类的实例可以访问 Object.prototype 上定义的方法和属性。
+        // 例如，所有对象都可以使用 toString() 方法，因为它是 Object.prototype 上定义的方法。
+        // 这就是原型链的基本概念。通过原型链，JavaScript 实现了对象之间的继承和属性共享，使得代码更加灵活和可重用。
+        // 使用class关键字定义类相比于使用构造函数和原型对象的方式，更加简洁和易读。它提供了更清晰的语法来定义类、构造函数和方法，同时也支持继承和静态方法等特性。
+
+
+        // // 1. 定义类
+        // class Animal {
+        //     constructor(name) {
+        //         this.name = name;
+        //     }
+        //     speak() {
+        //         console.log(`${this.name} makes a noise.`);
+        //     }
+        // }
+
+        // // 2. 继承类
+        // class Dog extends Animal {
+        //     speak() {
+        //         console.log(`${this.name} barks.`);
+        //     }
+        // }
+
+        // class Cat extends Animal {
+        //     speak() {
+        //         console.log(`${this.name} meows.`);
+        //     }
+        // }
+        // // 3. 创建实例
+        // const dog = new Dog('Rex');
+
+        // const cat = new Cat('Whiskers');
+        // dog.speak(); // Rex barks.
+        // cat.speak(); // Whiskers meows.
+
+        // // 4. 静态方法
+        // class MathUtils {
+        //     static add(a, b) {
+        //         return a + b;
+        //     }
+        //     static subtract(a, b) {
+        //         return a - b;
+        //     }
+        // }
+        // console.log(MathUtils.add(5, 3)); // 8
+        // console.log(MathUtils.subtract(5, 3)); // 2
+
+        // // 5. 静态属性
+        // class Circle {
+        //     static pi = 3.14; // 静态属性
+        //     constructor(radius) {
+        //         this.radius = radius;
+        //     }
+        //     getArea() {
+        //         return Circle.pi * this.radius * this.radius; // 使用静态属性
+        //     }
+        // }
+
+        // const circle = new Circle(5);
+        // console.log(circle.getArea()); // 78.5
+
+        // // 6. getter 和 setter
+        // class Rectangle {
+        //     constructor(width, height) {
+        //         this.width = width;
+        //         this.height = height;
+        //     }
+        //     get area() {
+        //         return this.width * this.height; // getter
+        //     }
+        //     set area(value) {
+        //         this.width = Math.sqrt(value); // setter
+        //         this.height = Math.sqrt(value);
+        //     }
+        // }
+        // const rectangle = new Rectangle(4, 5);
+        // console.log(rectangle.area); // 20
+        // rectangle.area = 36; // 使用 setter 设置面积
+        // console.log(rectangle.width); // 6
+        // console.log(rectangle.height); // 6
+
+        // // 7. 私有属性和方法（ES2022 引入）
+        // class Person {
+        //     #name; // 私有属性
+        //     constructor(name) {
+        //         this.#name = name;
+        //     }
+        //     #greet() { // 私有方法
+        //         console.log(`Hello, my name is ${this.#name}`);
+        //     }
+        //     introduce() {
+        //         this.#greet(); // 调用私有方法
+        //     }
+        // }
+        // const person = new Person('Alice');
+        // person.introduce(); // Hello, my name is Alice
+        // // console.log(person.#name); // 报错：私有属性不能被外部访问
+        // // person.#greet(); // 报错：私有方法不能被外部访问
+
+        // // 8. 继承静态方法
+        // class Animal {
+        //     static species = 'Animal'; // 静态属性
+        //     constructor(name) {
+        //         this.name = name;
+        //     }
+        //     static getSpecies() { // 静态方法
+        //         return this.species;
+        //     }
+        // }
+
+        // class Dog extends Animal {
+        //     static species = 'Dog'; // 静态属性
+        // }
+        // console.log(Animal.getSpecies()); // Animal
+        // console.log(Dog.getSpecies()); // Dog
+
+        // // 9. 继承静态属性
+        // class Shape {
+        //     static type = 'Shape'; // 静态属性
+        //     constructor(name) {
+        //         this.name = name;
+        //     }
+        //     static getType() { // 静态方法
+        //         return this.type;
+        //     }
+        // }
+
+        // class Circle extends Shape {
+        //     static type = 'Circle'; // 静态属性
+        // }
+        // console.log(Shape.getType()); // Shape
+        // console.log(Circle.getType()); // Circle
+
+        // // 10. 继承静态方法和属性
+        // class Vehicle {
+        //     static type = 'Vehicle'; // 静态属性
+        //     constructor(name) {
+        //         this.name = name;
+        //     }
+        //     static getType() { // 静态方法
+        //         return this.type;
+        //     }
+        // }
+
+
+        // class Car extends Vehicle {
+        //     static type = 'Car'; // 静态属性
+        // }
+        // console.log(Vehicle.getType()); // Vehicle
+        // console.log(Car.getType()); // Car
+
+        // 11. super 关键字
+        class Animal {
+            constructor(name) {
+                this.name = name;
+            }
+            speak(name) {
+                console.log(`${name || this.name} makes a noise.`);
+            }
+        }
+
+        class Dog extends Animal {
+            constructor(name, breed) {
+                super(name); // 调用父类构造函数
+                this.breed = breed;
+            }
+            speak() {
+                console.log(`${this.name} barks.`);
+                super.speak('liyang') // 调用父类方法
+            }
+        }
+        const dog = new Dog('Rex', 'Golden Retriever');
+        dog.speak();
+
+        // super的作用是调用父类的构造函数和方法。在子类的构造函数中，必须先调用 super()，才能使用 this 关键字访问子类的属性和方法。super() 会调用父类的构造函数，并将当前实例作为参数传递给父类的构造函数。这样，子类就可以继承父类的属性和方法。
+        // 在子类的方法中，可以使用 super.methodName() 调用父类的方法。这样可以在子类中扩展或重写父类的方法，同时保留父类的方法实现。
+        // 这使得子类可以在调用父类的方法之前或之后执行一些额外的操作。
+        // 这就是 super 关键字的基本用法。它在类的继承中起到了重要的作用，使得子类可以方便地访问和扩展父类的属性和方法。
+
+        // 12. 静态方法是否只能访问静态属性？
+        // 静态方法可以访问静态属性，但不能直接访问实例属性。静态方法是属于类本身的，而不是属于类的实例。因此，静态方法只能访问类的静态属性和静态方法，而不能直接访问实例属性和实例方法。
+        // 但是，可以通过实例化对象来访问实例属性和实例方法。静态方法可以接受实例作为参数，从而间接访问实例属性和方法。
+        // 这使得静态方法可以在类的上下文中执行一些操作，但不能直接访问实例的状态。
+        // 举例：
+        // class Person {
+        //     static species = 'Human'; // 静态属性
+        //     constructor(name) {
+        //         this.name = name; // 实例属性
+        //     }
+        //     static getSpecies() { // 静态方法
+        //         return this.species;
+        //     }
+        //     static greet(person) { // 静态方法
+        //         console.log(`Hello, ${person.name}!`); // 访问实例属性
+        //     }
+        // }
+        // const alice = new Person('Alice');
+        // console.log(Person.getSpecies()); // Human
+        // Person.greet(alice); // Hello, Alice!
+
+        // 13. 实例属性可以访问静态属性吗？
+        // 实例属性可以访问静态属性，但需要通过类名来访问。实例属性是属于类的实例的，而静态属性是属于类本身的。因此，实例属性不能直接访问静态属性，但可以通过类名来访问静态属性。
+
+        // 实例属性可以访问父级的静态属性：
+        class Animal {
+            static species = 'Animal'; // 静态属性
+            constructor(name) {
+                this.name = name; // 实例属性
+            }
+            static getSpecies() { // 静态方法
+                return this.species;
+            }
+        }
+        class Dog extends Animal {
+            constructor(name, breed) {
+                super(name); // 调用父类构造函数
+                this.breed = breed; // 实例属性
+            }
+            getSpecies() { // 实例方法
+                return Dog.species; // 访问父类的静态属性 
+            }
+        }
+
+
+
+    </script>
+</body>
+</html>

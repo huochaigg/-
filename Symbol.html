@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+
+    // Symbol.toPrimitive 是一个内置的 Symbol 值，用于定义对象转换为原始值时的行为。
+    // 它可以被用来定义对象在不同上下文中（例如加法、比较等）转换为原始值的方式。
+    // 例如：
+    // 1. 定义一个对象，并实现 Symbol.toPrimitive 方法
+    const obj = {
+      name: 'John',
+      age: 30,
+      [Symbol.toPrimitive](hint) {
+        if (hint === 'string') {
+          return this.name;
+        } else if (hint === 'number') {
+          return this.age;
+        } else {
+          return null;
+        }
+      }
+    };
+    // 2. 使用对象进行字符串拼接
+    console.log('Name: ' + obj); // Name: John
+    // 3. 使用对象进行数值运算
+    console.log('Age: ' + obj); // Age: 30
+    
+    // [Symbol.toPrimitive]有哪些妙用？
+    
+
+  </script>
+</body>
+</html>

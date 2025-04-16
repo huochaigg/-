@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>instanceof</title>
+</head>
+<body>
+    <script>
+        // instanceof 是一个运算符，用于检测一个对象是否是另一个对象的实例
+        // 语法：object instanceof constructor
+        // 其中 object 是要检测的对象，constructor 是构造函数
+        // 如果 object 是 constructor 的实例，或者是其原型链上的实例，则返回 true，否则返回 false
+
+        // 举例：
+        // 1. 检测一个对象是否是 Array 的实例
+        const arr = [1, 2, 3];
+        console.log(arr instanceof Array); // true
+        console.log(arr instanceof Object); // true，因为所有数组都是对象的实例
+        console.log(arr instanceof Function); // false，因为数组不是函数的实例
+        console.log(arr instanceof String); // false，因为数组不是字符串的实例
+
+        // 2. 检测一个对象是否是 Object 的实例
+        const obj = { name: 'John' };
+        console.log(obj instanceof Object); // true，因为所有对象都是 Object 的实例
+        console.log(obj instanceof Array); // false，因为对象不是数组的实例
+        console.log(obj instanceof Function); // false，因为对象不是函数的实例
+
+
+        // 3. 检测一个函数是否是 Function 的实例
+        function myFunction() {}
+        console.log(myFunction instanceof Function); // true，因为函数是 Function 的实例    
+        console.log(myFunction instanceof Object); // true，因为函数也是对象的实例
+        console.log(myFunction instanceof Array); // false，因为函数不是数组的实例
+
+        // 4. 检测一个类的实例
+        class Person {}
+        const person = new Person();
+        console.log(person instanceof Person); // true，因为 person 是 Person 的实例
+        console.log(person instanceof Object); // true，因为所有类的实例都是对象的实例
+
+        // 5. 检测一个对象是否是某个自定义构造函数的实例
+        function Car(make, model) {
+            this.make = make;
+            this.model = model;
+        }
+        const myCar = new Car('Toyota', 'Corolla');
+        console.log(myCar instanceof Car); // true，因为 myCar 是 Car 的实例
+        console.log(myCar instanceof Object); // true，因为所有对象都是 Object 的实例
+        
+
+        // 6. 检测一个对象是否是某个内置构造函数的实例
+        const date = new Date();
+        console.log(date instanceof Date); // true，因为 date 是 Date 的实例
+        console.log(date instanceof Object); // true，因为所有对象都是 Object 的实例
+        console.log(date instanceof Array); // false，因为 date 不是数组的实例
+
+        // 7. 检测一个对象是否是某个内置构造函数的实例
+        const regex = new RegExp('ab+c');
+        console.log(regex instanceof RegExp); // true，因为 regex 是 RegExp 的实例
+        console.log(regex instanceof Object); // true，因为所有对象都是 Object 的实例
+
+
+        // 8. 检测一个对象是否是某个内置构造函数的实例
+        const error = new Error('Something went wrong!');
+        console.log(error instanceof Error); // true，因为 error 是 Error 的实例
+
+        // 9. instanceof 的原理
+        // instanceof 的实现原理是通过查找对象的原型链来判断对象是否是某个构造函数的实例
+        // 当我们使用 instanceof 运算符时，JavaScript 会检查对象的 __proto__ 属性是否指向构造函数的 prototype 属性
+
+        // 10. instanceof 的注意事项
+        // 1. instanceof 运算符只能用于对象和函数，不能用于基本数据类型
+        // 2. instanceof 运算符只能用于检测对象的原型链，不能用于检测对象的属性
+
+        // 11.为什么function myFunction() {}，myFunction是Function的实例？
+        // 因为在 JavaScript 中，函数也是对象的一种特殊类型。所有函数都是 Function 构造函数的实例。
+        // myFunction javascript 源码是怎样实现的 Function 的实例呢？
+        // 1. 在 JavaScript 中，函数是对象的一种特殊类型，它们具有可调用性。
+        // 2. 当我们定义一个函数时，JavaScript 引擎会为这个函数创建一个对象，这个对象的原型是 Function.prototype。 
+        // 3. 因此，所有函数都是 Function 构造函数的实例。
+
+    </script>
+</body>
+</html>

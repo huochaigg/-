@@ -1,0 +1,189 @@
+习\WeakMap.html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeakMap 示例</title>
+</head>
+
+<body>
+  <button id="example">WeakMap 示例</button>
+
+  <!-- 
+    WeakMap 是 ES6 引入的一种集合类型，类似于 Map，但有几个重要区别：
+
+    键必须是对象：WeakMap 只接受对象作为键（不能使用原始值如字符串、数字等）
+    
+    弱引用：WeakMap 对其键是弱引用，当键对象没有其他引用时，会被垃圾回收器回收
+    
+    不可枚举：WeakMap 不提供迭代方法（没有 keys()、values()、entries() 方法）
+    
+    没有 size 属性：无法直接获取 WeakMap 中的键值对数量
+    
+    没有 clear() 方法：不能一次性清空所有键值对
+  -->
+
+  <script>
+    // 1. 创建 WeakMap
+    const weakMap = new WeakMap();
+
+    // 2. 使用 DOM 元素作为键
+    const domElement = document.getElementById('example');
+    weakMap.set(domElement, { clicks: 0, lastClicked: null });
+
+    // 为元素添加点击事件，使用 WeakMap 存储数据
+    domElement.addEventListener('click', () => {
+      const data = weakMap.get(domElement);
+      data.clicks++;
+      data.lastClicked = new Date();
+
+      console.log(`Element clicked ${data.clicks} times`);
+      console.log(`Last clicked at: ${data.lastClicked}`);
+    });
+
+    // 3. 私有数据存储示例
+    function createUser(name, age) {
+      const user = { name };
+
+      // 使用 WeakMap 存储私有数据
+      const privateData = weakMap.get(user) || {};
+      privateData.age = age;
+      weakMap.set(user, privateData);
+
+      return user;
+    }
+
+    const user = createUser('张三', 28);
+    console.log(user); // 只能看到 {name: '张三'}
+    console.log(weakMap.get(user)); // {age: 28} - 私有数据
+
+    // 4. 弱引用演示
+    // let obj = { data: '一些数据' };
+    // weakMap.set(obj, '与对象关联的数据');
+
+    // console.log(weakMap.get(obj)); // '与对象关联的数据'
+
+    // 当 obj 被设置为 null，且没有其他引用时
+    // 垃圾回收器运行后，WeakMap 中的键值对会被自动移除
+    // obj = null;
+
+    // 此时无法访问关联数据，因为键已被回收
+    // 注意：垃圾回收的发生时机是不确定的，所以这个演示在控制台中不一定会立即看到效果
+
+    // 5. WeakMap 方法演示
+    // const key1 = {};
+    // const key2 = {};
+
+    // weakMap.set(key1, 'value1');
+    // console.log(weakMap.has(key1)); // true
+    // console.log(weakMap.get(key1)); // 'value1'
+
+    // weakMap.delete(key1);
+    // console.log(weakMap.has(key1)); // false
+
+
+    // 6. WeakMap 的迭代器
+    // WeakMap 不支持迭代器，因此不能使用 forEach、entries、keys 或 values 方法
+    // 但是可以使用 WeakMap 的 has、get、set 和 delete 方法来操作 WeakMap 中的键值对
+
+
+    // 7. WeakMap 的应用场景
+    // 1. 缓存与记忆化
+    const cache = new WeakMap();
+
+    function expensiveOperation(obj) {
+      if (cache.has(obj)) {
+        console.log('返回缓存结果');
+        return cache.get(obj);
+      }
+
+      console.log('计算新结果');
+      const result = obj.value * 2; // 假设这是一个耗时的计算 /* 复杂计算 */
+      cache.set(obj, result);
+      return result;
+    }
+
+    const obj1 = { value: 5 };
+    const obj2 = { value: 10 };
+    console.log(expensiveOperation(obj1)); // 计算新结果 10
+    console.log(expensiveOperation(obj1)); // 返回缓存结果 10
+    console.log(expensiveOperation(obj2)); // 计算新结果 20
+
+
+
+    // 2. DOM 元素的私有数据存储
+    // 存储与DOM元素相关的数据，而不会造成内存泄漏
+    const elementData = new WeakMap();
+
+    function setupElement(element) {
+      elementData.set(element, {
+        clickCount: 0,
+        lastClicked: null
+      });
+
+      element.addEventListener('click', () => {
+        const data = elementData.get(element);
+        data.clickCount++;
+        data.lastClicked = new Date();
+
+        console.log('Element clicked', data.clickCount, 'times', data.lastClicked);
+      });
+    }
+
+    const button = document.createElement('button');
+    button.textContent = 'Click me';
+    document.body.appendChild(button);
+    setupElement(button);
+    // 当元素被移除时，WeakMap中的数据会自动被垃圾回收
+
+
+    // 3. 循环引用
+    const relationships = new WeakMap();
+
+    let person1 = { name: '小明' };
+    let person2 = { name: '小红' };
+
+    // 建立关系
+    relationships.set(person1, { friends: [person2] });
+    relationships.set(person2, { friends: [person1] });
+    // 当其中一个对象不再被引用时，相关的关系数据会被自动清理
+
+    // 例如：
+    person1 = null; // 这将导致 person1 和 person2 的关系数据被垃圾回收
+    console.log(relationships.get(person2)); // undefined
+    
+
+    // 4.临时状态存储
+    const objectStates = new WeakMap();
+
+    function toggleState(obj) {
+      if (!objectStates.has(obj)) {
+        objectStates.set(obj, { active: false });
+      }
+
+      const state = objectStates.get(obj);
+      state.active = !state.active;
+      return state.active;
+    }
+    const obj3 = { id: 1 };
+    console.log(toggleState(obj3)); // true
+    console.log(toggleState(obj3)); // false
+    console.log(objectStates.get(obj3)); // { active: false } - 私有状态
+    toggleState(obj3)
+    console.log(objectStates.get(obj3)); // { active: true } - 私有状态
+
+    obj3.name = '小明'; // 添加新属性
+    console.log(objectStates.get(obj3)); // { active: false } - 私有状态
+
+    // 对键是弱引用,什么叫做弱引用？
+    // WeakMap 中的键是弱引用，这意味着如果没有其他引用指向该对象，垃圾回收器会自动回收它。WeakMap 不会阻止对象被垃圾回收。
+
+
+
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Proxy</title>
+</head>
+
+<body>
+	<script>
+		const obj = {
+			msg: '哈喽',
+			age: 17
+		}
+		const proxyObj = new Proxy(obj, {
+			get(target, property, receiver) {
+				// console.log('target', target)
+				// console.log('property', property)
+				// console.log('receiver', receiver)
+				console.log('get', target, property, receiver)
+				return target[property] ? target[property] : null
+			},
+
+			set(target, property, value, receiver) {
+				console.log('set', target, value)
+				target[property] = value
+			},
+
+			deleteProperty(target, property) {
+				console.log('deleteProperty target', target)
+				console.log('deleteProperty property', property)
+				Reflect.deleteProperty(target, property)
+			},
+
+			has(target, property) {
+				console.log('has', target, property)
+				return Reflect.has(target, property)
+			},
+
+			// ownKeys是一个拦截器，用于拦截对象的属性枚举操作
+			// 例如：for...in、Object.keys()、Object.getOwnPropertyNames()等操作
+			// 该拦截器返回一个数组，表示对象的所有属性名
+			// 该拦截器的返回值会被用于后续的操作，例如for...in循环、Object.keys()等
+			// 该拦截器的返回值必须是一个数组，否则会抛出错误
+			// 该拦截器的返回值可以是一个数组，也可以是一个字符串、数字等其他类型
+			ownKeys(target) {
+				console.log('ownKeys', target)
+				return Reflect.ownKeys(target)
+			},
+
+			// getOwnPropertyDescriptor是一个拦截器，用于拦截对象的属性描述符操作
+			// 例如：Object.getOwnPropertyDescriptor()等操作
+			// 该拦截器返回一个对象，表示对象的属性描述符
+			getOwnPropertyDescriptor(target, property) {
+				console.log('getOwnPropertyDescriptor', target, property)
+				return Reflect.getOwnPropertyDescriptor(target, property)
+			},
+
+			// defineProperty是一个拦截器，用于拦截对象的属性定义操作
+			// 例如：Object.defineProperty()等操作
+			defineProperty(target, property, descriptor) {
+				console.log('defineProperty', target, property, descriptor)
+				return Reflect.defineProperty(target, property, descriptor)
+				// 该拦截器返回一个布尔值，表示属性定义是否成功
+				// 如果返回true，则表示属性定义成功；如果返回false，则表示属性定义失败
+				// 如何定义或修改对象 enumerable、configurable、writable等属性
+				// 1. 使用Object.defineProperty()方法定义对象属性reate
+				// 2. 使用Object.defineProperties()方法定义多个对象属性
+				// 3. 使用Object.create()方法创建对象时定义对象属性
+				// 4. 使用Object.assign()方法合并对象时定义对象属性
+				// 5. 使用Object.freeze()方法冻结对象时定义对象属性
+				// 6. 使用Object.seal()方法密封对象时定义对象属性
+				// 7. 使用Object.preventExtensions()方法防止对象扩展时定义对象属性
+				// 8. 使用Object.isExtensible()方法判断对象是否可扩展时定义对象属性
+			},
+
+			// preventExtensions是一个拦截器，用于拦截对象的防止扩展操作
+			// 例如：Object.preventExtensions()等操作
+			// 该拦截器返回一个布尔值，表示对象是否可扩展
+			// 如果返回true，则表示对象可扩展；如果返回false，则表示对象不可扩展
+			preventExtensions(target) {
+				console.log('preventExtensions', target)
+				return Reflect.preventExtensions(target)
+			},
+
+			// isExtensible是一个拦截器，用于拦截对象的可扩展性操作
+			// 例如：Object.isExtensible()等操作
+			// 该拦截器返回一个布尔值，表示对象是否可扩展
+			// 如果返回true，则表示对象可扩展；如果返回false，则表示对象不可扩展
+			isExtensible(target) {
+				console.log('isExtensible', target)
+				return Reflect.isExtensible(target)
+			},
+
+			// apply是一个拦截器，用于拦截函数的调用操作
+			// 例如：函数调用、apply()、call()等操作
+			// 该拦截器返回一个值，表示函数调用的结果
+			// 如果返回值是一个对象，则表示函数调用成功；如果返回值是一个错误，则表示函数调用失败
+			apply(target, thisArg, argumentsList) {
+				console.log('apply', target, thisArg, argumentsList)
+				return Reflect.apply(target, thisArg, argumentsList)
+			},
+
+			// construct是一个拦截器，用于拦截对象的构造操作
+			// 例如：new操作符、Object.create()等操作
+			// 该拦截器返回一个对象，表示对象的构造结果
+			// 如果返回值是一个对象，则表示对象构造成功；如果返回值是一个错误，则表示对象构造失败
+			construct(target, args) {
+				console.log('construct', target, args)
+				return Reflect.construct(target, args)
+			}
+
+		})
+
+		// obj.name = '小红'
+		// obj.name = '小红' 为什么get方法没有被调用？以下是说明：
+		// 1. obj.name = '小红' 是直接在obj上添加属性，而不是通过代理对象proxyObj添加属性，所以不会触发get方法
+
+		// proxyObj.name = '小明'  // 通过代理对象添加属性，触发set方法
+
+
+		// console.log(proxyObj.msg)
+		// proxyObj.name = '小明'
+		// delete obj.msg
+		// console.log(obj)  // / {msg: '哈喽', name: '小明'}
+		// console.log(proxyObj)  // {msg: '哈喽', name: '小明'}
+
+		console.log('msg' in proxyObj)  // true
+		console.log(Object.keys(proxyObj))  // ['msg', 'name']
+		console.log(Object.getOwnPropertyNames(proxyObj))  // ['msg', 'name']
+		console.log(Object.getOwnPropertyDescriptors(proxyObj))  // {msg: {…}, name: {…}}
+		Object.defineProperty(proxyObj, 'age', {
+			value: 18,
+			writable: true,
+			enumerable: false,
+			configurable: true
+		})
+
+		console.log(Object.getOwnPropertyDescriptors(proxyObj))  // {msg: {…}, name: {…}, age: {…}}
+
+		// proxyObj.job = '前端开发工程师'
+		Object.preventExtensions(proxyObj)  // 防止扩展对象
+		proxyObj.job = '前端开发工程师'  // 该方法会阻止对象添加新属性，但允许修改和删除现有属性
+		console.log(proxyObj)  // {msg: '哈喽', name: '小明'}
+
+		// apply方法的使用
+		function add(a, b) {
+			return a + b
+		}
+		const proxyAdd = new Proxy(add, {
+			apply(target, thisArg, argumentsList) {
+				console.log('apply', target, thisArg, argumentsList)
+				return Reflect.apply(target, thisArg, argumentsList)
+			}
+		})
+		console.log(proxyAdd(1, 2))  // 3
+		console.log(proxyAdd.call(null, 1, 2))  // 3
+		console.log(proxyAdd.apply(null, [1, 2]))  // 3
+		console.log(proxyAdd.bind(null, 1, 2))  // [Function: bound add]
+		console.log(proxyAdd.bind(null, 1, 2)())  // 3
+
+		// call的第一个参数是this的值，第二个参数是函数的参数
+		// 妙用
+		// 1. 使用call()方法可以改变函数的this指向
+		// 2. 使用call()方法可以传递参数给函数
+		function test() {
+			console.log(this.name)
+		}
+		const obj1 = {
+			name: '小明'
+		}
+		const obj2 = {
+			name: '小红'
+		}
+		test.call(obj1)  // 小明
+
+
+		function test2() {
+			console.log(this.msg)
+		}
+		test2.call(proxyObj)  // 哈喽
+
+
+		// 如果Proxy第一个参数是一个函数
+		// 那么这个函数会被代理对象的apply方法拦截
+		// 这个函数的this指向是代理对象
+		// 这个函数的参数是代理对象的参数列表
+		// 这个函数的返回值是代理对象的返回值
+		// 这个函数的原型是代理对象的原型
+
+		const proxyAdd2 = new Proxy(add, {
+
+			apply(target, thisArg, argumentsList) {
+				// target函数体如何打印？
+				// thisArg是代理对象，是this的指向
+				// argumentsList是参数列表
+				console.log('apply', target.toString(), thisArg, argumentsList)
+				return Reflect.apply(target, thisArg, argumentsList)
+			}
+		})
+
+		console.log(proxyAdd2(1, 2))  // 3
+		// console.log(proxyAdd2.call(null, 1, 2))  // 3
+		// console.log(proxyAdd2.apply(null, [1, 2]))  // 3
+
+
+	</script>
+</body>
+
+</html>

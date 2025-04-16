@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+
+    function curryAdd (...args) {
+
+      function sum (...args) {
+        return args.reduce((pre, next) => pre + next, 0)
+      }
+
+      function next (...nextArgs) {
+        if (nextArgs.length === 0) {
+          return sum(...args)
+        }
+        
+        return curryAdd(...args, ...nextArgs);
+      }
+
+      // next.valueOf = function() {
+      //   return sum(...args)
+      // }
+
+      // next.toString
+      next[Symbol.toPrimitive] = function() {
+        return sum(...args)
+      }
+
+      return next
+    }
+
+    console.log(+curryAdd(1)(2)(3))
+
+  </script>
+</body>
+</html>

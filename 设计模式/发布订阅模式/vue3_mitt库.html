@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    function mitt() {
+      const all = new Map();
+
+      return {
+        on(type, handler) {
+          const handlers = all.get(type);
+          if (handlers) {
+            handlers.push(handler);
+          } else {
+            all.set(type, [handler]);
+          }
+        },
+        off(type, handler) {
+          const handlers = all.get(type);
+          if (handlers) {
+            handlers.splice(handlers.indexOf(handler) >>> 0, 1);
+          }
+        },
+        emit(type, evt) {
+          const handlers = all.get(type);
+          if (handlers) {
+            handlers.slice().forEach(fn => fn(evt));
+          }
+        }
+      }
+    }
+
+
+    // mitt库没有once方法，可以自己封装
+    function once(event, handler) {
+      const wrapper = (...args) => {
+        handler(...args);
+        emitter.off(event, wrapper);
+      };
+      emitter.on(event, wrapper);
+    }
+
+
+  </script>
+</body>
+
+</html>

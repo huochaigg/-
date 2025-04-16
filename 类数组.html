@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>类数组</title>
+</head>
+<body>
+    <ul>
+        <li id="li1"></li>
+        <li id="li2">12321</li>
+    </ul>
+
+    <div class="box">
+        <div class="box1">111</div>
+        <div class="box2">222</div>
+        <div class="box3">
+            <div>333</div>
+        </div>
+    </div>
+
+    <script>
+        // 类数组
+        // 类数组对象是指具有 length 属性和索引属性的对象，但不是数组实例。
+        // 例如，arguments 对象、DOM NodeList、HTMLCollection 等都属于类数组对象。
+        // 类数组对象可以使用 Array.from() 方法转换为真正的数组，或者使用 Array.prototype.slice.call() 方法进行转换。
+        // 1. arguments 对象
+        function sum() {
+            // arguments 是一个类数组对象
+            console.log(arguments); // 类数组对象
+            const args = Array.from(arguments); // 转换为数组
+            return args.reduce((acc, curr) => acc + curr, 0);
+        }
+        console.log(sum(1, 2, 3, 4)); // 10
+
+        // 2. DOM NodeList
+        const listItems = document.querySelectorAll('li'); // 返回一个 NodeList
+        console.log(listItems); // NodeList 对象
+        const itemsArray = Array.from(listItems); // 转换为数组
+        itemsArray.forEach(item => {
+            console.log(item.textContent); // 输出每个列表项的文本内容
+        });
+
+        // 3. HTMLCollection
+        const divs = document.getElementsByTagName('div'); // 返回一个 HTMLCollection
+        console.log(divs); // HTMLCollection 对象
+        const divsArray = Array.from(divs); // 转换为数组
+        divsArray.forEach(div => {
+            console.log(div.innerHTML);
+        });
+
+
+        // 4. 使用 Array.prototype.slice.call() 方法转换类数组对象
+        function example() {
+            const args = Array.prototype.slice.call(arguments); // 转换为数组
+            console.log(args); // 输出参数数组
+
+            const list = Array.from(arguments); // 也可以使用 Array.from() 方法
+            console.log(list)
+        }
+        example(1, 2, 3); // [1, 2, 3]
+
+        // 5. 使用扩展运算符转换类数组对象
+        function example2() {
+            const args = [...arguments]; // 使用扩展运算符转换为数组
+            console.log(args); // 输出参数数组
+        }
+        example2(4, 5, 6); // [4, 5, 6]
+
+        // 6. 使用 Array.prototype.map() 方法处理类数组对象
+        const numbers = { 0: 1, 1: 2, 2: 3, 3: 4, 4: 5, length: 5 }; // 类数组对象
+        const doubled = Array.prototype.map.call(numbers, function(num) {
+            return num * 2; // 将每个数字乘以 2
+        });
+
+        console.log(doubled); // [2, 4, 6, 8, 10]
+
+        // 7. 使用 Array.prototype.filter() 方法处理类数组对象
+        const filtered = Array.prototype.filter.call(numbers, function(num) {
+            return num > 2; // 过滤出大于 2 的数字
+        });
+        console.log(filtered); // [3, 4, 5]
+
+        // 8. 使用 Array.prototype.reduce() 方法处理类数组对象
+        const sumResult = Array.prototype.reduce.call(numbers, function(acc, num) {
+            return acc + num; // 计算数组元素的和
+        }, 0);
+
+        console.log(sumResult); // 15
+
+        // 9. 使用 Array.prototype.forEach() 方法处理类数组对象
+        Array.prototype.forEach.call(numbers, function(num) {
+            console.log(num); // 输出每个数字
+        });
+        
+        // 10. 使用 Array.prototype.every() 方法处理类数组对象
+        const allGreaterThanZero = Array.prototype.every.call(numbers, function(num) {
+            return num > 0; // 检查所有数字是否大于 0
+        });
+        console.log(allGreaterThanZero); // true
+
+        // 11. 使用 Array.prototype.some() 方法处理类数组对象
+        const someGreaterThanThree = Array.prototype.some.call(numbers, function(num) {
+            return num > 3; // 检查是否有数字大于 3
+        });
+
+        console.log(someGreaterThanThree); // true
+
+        // 12. 使用 Array.prototype.indexOf() 方法处理类数组对象
+        const index = Array.prototype.indexOf.call(numbers, 3); // 查找数字 3 的索引
+        console.log(index); // 2
+
+        // 13. 使用 Array.prototype.lastIndexOf() 方法处理类数组对象
+        const lastIndex = Array.prototype.lastIndexOf.call(numbers, 3); // 查找数字 3 的最后索引
+        console.log(lastIndex); // 2
+
+        // 14. 使用 Array.prototype.find() 方法处理类数组对象
+        const found = Array.prototype.find.call(numbers, function(num) {
+            return num > 3; // 查找第一个大于 3 的数字
+        });
+
+        console.log(found); // 4
+
+        // 15. 使用 Array.prototype.findIndex() 方法处理类数组对象
+        const foundIndex = Array.prototype.findIndex.call(numbers, function(num) {
+            return num > 3; // 查找第一个大于 3 的数字的索引
+        });
+        console.log(foundIndex); // 3
+
+        // 16. 使用 Array.prototype.includes() 方法处理类数组对象
+        const includesThree = Array.prototype.includes.call(numbers, 3); // 检查是否包含数字 3
+        console.log(includesThree); // true
+
+
+        // 17. 使用 Array.prototype.join() 方法处理类数组对象
+        const joined = Array.prototype.join.call(numbers, ', '); // 将数字连接为字符串
+        console.log(joined); // "1, 2, 3, 4, 5"
+
+        // 18. 使用 Array.prototype.slice() 方法处理类数组对象
+        const sliced = Array.prototype.slice.call(numbers, 1, 4); // 截取数组的一部分
+        console.log(sliced); // [2, 3, 4]
+
+        // 19. 使用 Array.prototype.splice() 方法处理类数组对象
+        const spliced = Array.prototype.splice.call(numbers, 1, 3); // 删除数组的一部分 
+        console.log(spliced); // [2, 3, 4]
+
+        console.log(numbers); // { 0: 1, 1: 5, length: 5 } // 原数组被修改
+
+        // 20.手写一个类数组对象
+        function MyArray() {
+            this.length = 0; // 初始化长度为 0
+        }
+
+        MyArray.prototype.push = function(item) {
+            this[this.length] = item; // 将新元素添加到数组末尾
+            this.length++; // 增加长度
+        };
+        MyArray.prototype.pop = function() {
+            if (this.length === 0) return undefined; // 如果数组为空，返回 undefined
+            const item = this[this.length - 1]; // 获取最后一个元素
+            delete this[this.length - 1]; // 删除最后一个元素
+            this.length--; // 减少长度
+            return item; // 返回删除的元素
+        };
+        MyArray.prototype.forEach = function(callback) {
+            for (let i = 0; i < this.length; i++) {
+                callback(this[i], i, this); // 调用回调函数
+            }
+        };
+        MyArray.prototype.map = function(callback) {
+            const result = new MyArray(); // 创建一个新的 MyArray 实例
+            for (let i = 0; i < this.length; i++) {
+                result.push(callback(this[i], i, this)); // 调用回调函数并添加到新数组
+            }
+            return result; // 返回新数组
+        };
+        MyArray.prototype.filter = function(callback) {
+            const result = new MyArray(); // 创建一个新的 MyArray 实例
+            for (let i = 0; i < this.length; i++) {
+                if (callback(this[i], i, this)) {
+                    result.push(this[i]); // 如果满足条件，添加到新数组
+                }
+            }
+            return result; // 返回新数组
+        };
+        MyArray.prototype.reduce = function(callback, initialValue) {
+            let accumulator = initialValue; // 初始化累加器
+            for (let i = 0; i < this.length; i++) {
+                accumulator = callback(accumulator, this[i], i, this); // 调用回调函数
+            }
+            return accumulator; // 返回累加器的值
+        };
+
+        MyArray.prototype.slice = function(start, end) {
+            const result = new MyArray(); // 创建一个新的 MyArray 实例
+            for (let i = start; i < end; i++) {
+                result.push(this[i]); // 添加到新数组
+            }
+            return result; // 返回新数组
+        };
+        MyArray.prototype.splice = function(start, deleteCount, ...items) {
+            const deletedItems = new MyArray(); // 创建一个新的 MyArray 实例
+            for (let i = start; i < start + deleteCount; i++) {
+                deletedItems.push(this[i]); // 添加到新数组
+                delete this[i]; // 删除元素
+            }
+            for (let i = 0; i < items.length; i++) {
+                this[start + i] = items[i]; // 添加新元素
+            }
+            this.length -= deleteCount; // 更新长度
+            return deletedItems; // 返回删除的元素
+        };
+        MyArray.prototype.indexOf = function(item) {
+            for (let i = 0; i < this.length; i++) {
+                if (this[i] === item) return i; // 返回索引
+            }
+            return -1; // 如果未找到，返回 -1
+        };
+        MyArray.prototype.lastIndexOf = function(item) {
+            for (let i = this.length - 1; i >= 0; i--) {
+                if (this[i] === item) return i; // 返回索引
+            }
+            return -1; // 如果未找到，返回 -1
+        };
+        
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="./富文本编辑器.js"></script>
+  <style>
+    .edit-box{
+      width: 500px;
+      height: 500px;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="editBox"></div>
+
+  <script type="text/javascript">
+    new EditBox({
+      containerId: 'editBox',
+      text: {
+
+      },
+      buttons: [
+        'bold',
+        'italic',
+        'strike',
+        'insertImage'
+      ]
+    })
+
+  </script>
+</body>
+</html>

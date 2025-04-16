@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <!-- 
+    只能存储对象：
+
+    1 WeakSet 的元素必须是对象，不能是原始值（如字符串、数字等）。
+    如果尝试添加非对象类型，会抛出错误。
+    弱引用：
+
+    2 WeakSet 对其存储的对象是“弱引用”，这意味着这些对象不会阻止垃圾回收。
+    如果某个对象没有其他引用，垃圾回收机制会自动清理它，即使它仍在 WeakSet 中。
+    不可迭代：
+
+    3 WeakSet 不像 Set 那样可以被迭代（例如，不能使用 for...of 或 forEach）。
+    这是因为 WeakSet 的元素是弱引用，可能随时被垃圾回收，无法保证集合的稳定性。
+    没有键值对：
+
+    4 WeakSet 只存储值，没有键值对的概念。
+  -->
+
+  <script>
+
+    const weakSet = new WeakSet();
+    const obj1 = { name: 'Alice' };
+    const obj2 = { name: 'Bob' };
+    const obj3 = { name: 'Charlie' };
+
+    // 添加对象到 WeakSet
+    weakSet.add(obj1);
+    weakSet.add(obj2);
+    weakSet.add(obj3);
+
+    // 检查对象是否在 WeakSet 中
+    console.log(weakSet.has(obj1)); // true
+    console.log(weakSet.has(obj2)); // true
+    console.log(weakSet.has({ name: 'Alice' })); // false (不同的对象)
+
+    console.log(weakSet.has(obj3)); // true
+
+    // 删除对象
+    weakSet.delete(obj2);
+
+    console.log(weakSet.has(obj2)); // false
+
+    console.log(weakSet.has(obj3)); // true
+
+    console.log(weakSet.size); // undefined (没有 size 属性)
+    
+
+
+    
+
+  </script>
+</body>
+</html>

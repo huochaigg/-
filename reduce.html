@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+
+    // js reduce 方法是数组方法之一，用于对数组中的每个元素执行一个指定的 reducer 函数，并返回单个值。
+    // 它的语法如下：
+    // array.reduce(callback[, initialValue])
+    // callback：一个函数，用于执行每个数组元素的操作。它接受四个参数：accumulator、currentValue、currentIndex 和 array。
+    // accumulator：上一次调用 callback 函数的返回值，或者 initialValue（如果提供了 initialValue）。
+    // currentValue：当前正在处理的数组元素。
+    // currentIndex：当前正在处理的数组元素的索引（可选）。
+
+    1. // 计算数组元素的和
+    const numbers = [1, 2, 3, 4, 5];  
+    const sum = numbers.reduce((accumulator, currentValue) => {
+      return accumulator + currentValue;
+    }, 0); // 0 是初始值
+    console.log(sum); // 输出 15
+
+    // 2. // 计算数组元素的乘积
+    const product = numbers.reduce((accumulator, currentValue) => {
+      return accumulator * currentValue;
+    }, 1); // 1 是初始值    
+
+    console.log(product); // 输出 120
+
+    // 3. // 计算数组元素的最大值
+    const max = numbers.reduce((accumulator, currentValue) => {
+      return Math.max(accumulator, currentValue);
+    }, numbers[0]); // 数组的第一个元素是初始值
+    console.log(max); // 输出 5   
+
+    // 4. // 计算数组元素的最小值
+    const min = numbers.reduce((accumulator, currentValue) => {
+      return Math.min(accumulator, currentValue);
+    }, numbers[0]); // 数组的第一个元素是初始值
+    console.log(min); // 输出 1
+
+    // 6. // 计算数组元素的出现次数
+    const fruits = ['apple', 'banana', 'orange', 'apple', 'banana', 'apple'];
+    const fruitCount = fruits.reduce((accumulator, currentValue) => {
+      accumulator[currentValue] = (accumulator[currentValue] || 0) + 1;
+      return accumulator;
+    }, {}); // 初始值是一个空对象
+    console.log(fruitCount); // 输出 { apple: 3, banana: 2, orange: 1 }
+
+    // 7. // 扁平化嵌套数组
+    const nestedArray = [[1, 2], [3, 4], [5]];
+    const flatArray = nestedArray.reduce((accumulator, currentValue) => {
+      return accumulator.concat(currentValue);
+    }, []); // 初始值是一个空数组
+    console.log(flatArray); // 输出 [1, 2, 3, 4, 5]
+
+    // 8. // 计算数组元素的平均值
+    const average = numbers.reduce((accumulator, currentValue, index, array) => {
+      accumulator += currentValue;
+      if (index === array.length - 1) {
+        return accumulator / array.length; // 最后一个元素时计算平均值
+      }
+      return accumulator;
+    }, 0); // 初始值是 0
+    console.log(average); // 输出 3
+
+    // 9.手写 reduce 方法
+    Array.prototype.myReduce = function(fn, init) {
+
+      // fn 是一个函数，init 是初始值
+      if (typeof fn !== 'function') {
+        throw new TypeError('fn must be a function')
+      }
+
+      let accumulator;
+      let index = 0;
+      let that = this || []
+
+      if (init) {
+        accumulator = init
+      } else {
+        // 如果没有传入初始值，则使用数组的第一个元素作为初始值
+        accumulator = that[0]
+        index = 1 // 从第二个元素开始遍历
+      }
+
+      for (let i = index; i < that.length; i++) {
+        accumulator = fn(accumulator, that[i], i, that)
+      }
+
+      return accumulator
+    }
+
+    // 使用手写的 reduce 方法计算数组元素的和
+    const mySum = numbers.myReduce((accumulator, currentValue, index) => {
+      console.log('index', index, accumulator); // 输出索引
+      return accumulator + currentValue;
+    }, 1); // 0 是初始值
+    console.log(mySum); // 输出 15
+
+
+  </script>
+</body>
+</html>

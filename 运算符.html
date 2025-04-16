@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+
+    // ??运算符
+    let str = null ?? 'default string';
+    console.log(str); // 'default string'
+
+    let str2 = undefined ?? 'default string';
+    console.log(str2); // 'default string'
+
+    let str3 = 0 ?? 'default string';
+    console.log(str3); // 0 (因为0不是null或undefined)
+
+    let str4 = '' ?? 'default string';
+    console.log(str4); // '' (因为''不是null或undefined)
+
+    let str5 = false ?? 'default string';
+    console.log(str5); // false (因为false不是null或undefined)
+
+    // ??=运算符
+    // ??=运算符是逻辑赋值运算符的一种，用于在变量为null或undefined时赋值
+    let a = null;
+    a ??= 'default string';
+    console.log(a); // 'default string'
+
+    // 如果a已经有值，则不会被赋值
+    let b = 'existing value';
+    b ??= 'default string';
+    console.log(b); // 'existing value'
+
+    // ??运算符的优先级低于赋值运算符
+    let c = null;
+    let d = (c ??= 'default string');
+    console.log(c); // 'default string'
+    console.log(d); // 'default string'
+
+    // ??运算符的优先级高于逻辑与（&&）和逻辑或（||）运算符
+    let e = null;
+    let f = (e ?? 'default string') && 'another string';
+    console.log(e); // null
+    console.log(f); // 'another string' (因为e是null，所以??运算符返回'default string'，然后&&运算符返回'another string')
+
+    // &&运算符
+    let g = true && false;
+    console.log(g); // false (因为两个操作数都是布尔值，&&运算符返回false)
+
+    let h = 1 && 0;
+    console.log(h); // 0 (因为两个操作数都是数字，&&运算符返回0)
+
+    let i = 'hello' && 'world';
+    console.log(i); // 'world' (因为两个操作数都是字符串，&&运算符返回第二个操作数)
+
+    let j = null && 'default string';
+    console.log(j); // null (因为第一个操作数是null，&&运算符返回第一个操作数)
+
+    // ||运算符
+    let k = true || false;
+    console.log(k); // true (因为两个操作数都是布尔值，||运算符返回第一个操作数)
+    
+    let l = 1 || 0;
+    console.log(l); // 1 (因为第一个操作数是1，||运算符返回第一个操作数)
+
+    let m = 'hello' || 'world';
+    console.log(m); // 'hello' (因为第一个操作数是非空字符串，||运算符返回第一个操作数)
+
+    let n = null || 'default string';
+    console.log(n); // 'default string' (因为第一个操作数是null，||运算符返回第二个操作数)
+
+    // 逻辑赋值运算符（||=）
+    // 逻辑赋值运算符（||=）是逻辑或赋值运算符的一种，用于在变量为假值时赋值
+    let o = null;
+    o ||= 'default string';
+    console.log(o); // 'default string'
+
+    
+    // 如果o已经有值，则不会被赋值
+    let p = 'existing value';
+    p ||= 'default string';
+    console.log(p); // 'existing value'
+
+    // ||=运算符的优先级低于赋值运算符
+    let q = null;
+    let r = (q ||= 'default string');
+    console.log(q); // 'default string'
+    console.log(r); // 'default string'
+
+    // ||=运算符的优先级高于逻辑与（&&）和逻辑或（||）运算符
+    let s = null;
+    let t = (s ||= 'default string') || 'another string';
+    console.log(s); // 'default string'
+    console.log(t); // 'default string' (因为s是null，所以||运算符返回'default string')
+
+    // 逻辑赋值运算符（&&=）
+    // 逻辑赋值运算符（&&=）是逻辑与赋值运算符的一种，用于在变量为真值时赋值
+    let u = true;
+    u &&= 'default string';
+    console.log(u); // 'default string'
+
+    // 如果u已经有值，则不会被赋值
+    let v = 'existing value';
+    v &&= 'default string';
+    console.log(v); // 'existing value'
+
+    // &&=运算符的优先级低于赋值运算符
+    let w = true;
+    let x = (w &&= 'default string');
+    console.log(w); // 'default string'
+    console.log(x); // 'default string'
+
+    // &&=运算符的优先级高于逻辑与（&&）和逻辑或（||）运算符
+    let y = true;
+    let z = (y &&= 'default string') && 'another string';
+    console.log(y); // 'default string'
+    console.log(z); // 'another string' (因为y是true，所以&&运算符返回'another string')
+
+    // 逻辑非运算符（!）
+    let aa = !true;
+    console.log(aa); // false (因为逻辑非运算符将true转换为false)
+
+    let ab = !false;
+    console.log(ab); // true (因为逻辑非运算符将false转换为true)
+
+    // 运算符 & 是什么？  
+    // 运算符 & 是按位与运算符，用于对两个数字的二进制表示进行按位与操作。
+    // 例如，5 & 3 的结果是 1，因为 5 的二进制表示是 101，3 的二进制表示是 011，按位与的结果是 001（即1）。
+
+    // 运算符 | 是什么？
+    // 运算符 | 是按位或运算符，用于对两个数字的二进制表示进行按位或操作。
+    // 例如，5 | 3 的结果是 7，因为 5 的二进制表示是 101，3 的二进制表示是 011，按位或的结果是 111（即7）。
+
+    // 运算符 ^ 是什么？
+    // 运算符 ^ 是按位异或运算符，用于对两个数字的二进制表示进行按位异或操作。
+    // 例如，5 ^ 3 的结果是 6，因为 5 的二进制表示是 101，3 的二进制表示是 011，按位异或的结果是 110（即6）。
+
+
+    // 运算符的优先级排列
+    // 1. 赋值运算符（=）
+    // 2. 逻辑赋值运算符（??=、||=、&&=）
+    // 3. 逻辑或运算符（||）
+    // 4. 逻辑与运算符（&&）
+    // 5. 逻辑非运算符（!）
+    
+
+  </script>
+</body>
+</html>

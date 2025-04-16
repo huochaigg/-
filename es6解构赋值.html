@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>解构赋值</title>
+</head>
+
+<body>
+	<script>
+
+		// // 1.解构赋值的基本语法
+		// const person = {
+		//     name: 'John',
+		//     age: 30,
+		//     city: 'New York'
+		// };
+
+		// const { name, age, city } = person;
+		// console.log(name); // John
+		// console.log(age); // 30
+		// console.log(city); // New York
+
+
+		// // 2.解构赋值的默认值
+		// const person2 = {
+		//     name: 'Jane',
+		//     age: 25
+		// };
+		// const { name: personName, age: personAge, city: personCity = 'Unknown' } = person2;
+		// console.log(personName); // Jane
+
+
+		// // 3. 嵌套解构赋值
+		// const user = {
+		//     id: 1,
+		//     profile: {
+		//         name: 'Alice',
+		//         age: 28
+		//     }
+		// };
+
+		// const { id, profile: { name: userName, age: userAge } } = user;
+		// console.log(id); // 1
+		// console.log(userName); // Alice
+		// console.log(userAge); // 28
+
+		// // 4. 数组解构赋值
+		// const numbers = [1, 2, 3, 4, 5];
+		// const [first, second, ...rest] = numbers;
+		// console.log(first); // 1
+		// console.log(second); // 2
+		// console.log(rest); // [3, 4, 5]
+
+
+		// // 5. 函数参数的解构赋值
+		// function displayInfo({ name, age }) {
+		//     console.log(`Name: ${name}, Age: ${age}`);
+		// }
+		// const userInfo = {
+		//     name: 'Bob',
+		//     age: 35
+		// };
+		// displayInfo(userInfo); // Name: Bob, Age: 35
+
+		// // 6. 解构赋值与剩余参数结合
+		// function sum(...numbers) {
+		//     return numbers.reduce((acc, num) => acc + num, 0);
+		// }
+		// const result = sum(1, 2, 3, 4, 5);
+		// console.log(result); // 15
+
+		// // 7. 解构赋值与展开运算符结合
+		// const arr1 = [1, 2, 3];
+		// const arr2 = [4, 5, 6];
+		// const combined = [...arr1, ...arr2];
+		// console.log(combined); // [1, 2, 3, 4, 5, 6]
+
+		// // 8. 解构赋值与对象字面量结合
+		// const x = 1;
+		// const y = 2;
+		// const obj = { x, y };
+		// console.log(obj); // { x: 1, y: 2 }
+
+		// // 9. 解构赋值与函数返回值结合
+		// function getCoordinates() {
+		//     return [10, 20];
+		// }
+
+		// const [xCoord, yCoord] = getCoordinates();
+		// console.log(xCoord); // 10
+		// console.log(yCoord); // 20
+
+		// // 10. 解构赋值与类结合
+		// class Person {
+		//     constructor(name, age) {
+		//         this.name = name;
+		//         this.age = age;
+		//     }
+		// }
+
+		// const personInstance = new Person('Charlie', 40);
+		// const { name: instanceName, age: instanceAge } = personInstance;
+		// console.log(instanceName); // Charlie
+
+		// console.log(instanceAge); // 40
+
+		// // 11. 解构赋值与模块结合
+
+		// // 假设我们有一个模块导出一个对象
+		// // module.js
+		// export const moduleData = {
+		//     title: 'Module Title',
+		//     description: 'Module Description'
+		// };
+		// // main.js
+		// import { moduleData } from './module.js';
+		// const { title, description } = moduleData;
+		// console.log(title); // Module Title
+
+		// console.log(description); // Module Description
+
+		// // 12. 解构赋值与Promise结合
+		// const fetchData = () => {
+		//     return new Promise((resolve) => {
+		//         setTimeout(() => {
+		//             resolve({ data: 'Fetched Data' });
+		//         }, 1000);
+		//     });
+		// };
+		// fetchData().then(({ data }) => {
+		//     console.log(data); // Fetched Data
+		// });
+
+		// // 13. 解构赋值与Map结合
+		// const map = new Map([
+		//     ['name', 'David'],
+		//     ['age', 45]
+		// ]);
+		// const { name: mapName, age: mapAge } = Object.fromEntries(map);
+		// console.log(mapName); // David
+		// console.log(mapAge); // 45
+
+		// // 14. 解构赋值与Set结合
+		// const set = new Set([1, 2, 3, 4, 5]);
+		// const [firstSetValue, ...restSetValues] = [...set];
+		// console.log(firstSetValue); // 1
+
+		// console.log(restSetValues); // [2, 3, 4, 5]
+
+		// // 15. 解构赋值与Symbol结合
+		// const sym = Symbol('description');
+		// const objWithSymbol = {
+		//     [sym]: 'Symbol Value'
+		// };
+		// const { [sym]: symbolValue } = objWithSymbol;
+		// console.log(symbolValue); // Symbol Value
+
+		// // 16. 解构赋值与WeakMap结合
+		// const weakMap = new WeakMap();
+		// const objKey = {};
+		// weakMap.set(objKey, 'WeakMap Value');
+		// const weakMapValue = weakMap.get(objKey);   
+		// console.log(weakMapValue); // WeakMap Value
+
+		// // 17. 解构赋值与WeakSet结合
+		// const weakSet = new WeakSet();
+		// const objKey2 = {};
+		// weakSet.add(objKey2);
+		// const hasKey = weakSet.has(objKey2);
+		// console.log(hasKey); // true
+
+		// // 18. 解构赋值与Proxy结合
+		// const target = {
+		//     name: 'Eve'
+		// };
+		// const handler = {
+		//     get(target, prop) {
+		//         return target[prop] + ' (Proxy)';
+		//     }
+		// };
+		// const proxy = new Proxy(target, handler);
+		// const { name: proxyName } = proxy;
+		// console.log(proxyName); // Eve (Proxy)
+
+		// 19. 解构赋值与Reflect结合
+		// 19. 解构赋值与Reflect结合
+
+		// 基本对象操作
+		// const person = {
+		// 	name: 'Alice',
+		// 	age: 25
+		// };
+
+		// // 使用 Reflect.get 获取属性并解构
+		// const name = Reflect.get(person, 'name');
+		// const { age } = Reflect.construct(Object, [person]);
+		// console.log(name, age); // Alice 25
+
+		// // 使用 Reflect.ownKeys 获取所有属性并解构
+		// const [firstKey, secondKey] = Reflect.ownKeys(person);
+		// console.log(firstKey, secondKey); // name age
+
+		// // 使用 Reflect.defineProperty 并解构
+		// const newObj = {};
+		// Reflect.defineProperty(newObj, 'id', {
+		// 	value: 1,
+		// 	enumerable: true
+		// });
+		// const { id } = newObj;
+		// console.log(id); // 1
+
+		// // 使用 Reflect.getPrototypeOf 并解构
+		// class Animal {
+		// 	constructor(species) {
+		// 		this.species = species;
+		// 	}
+		// }
+		// const dog = new Animal('dog');
+		// const { constructor: { name: className } } = Reflect.getPrototypeOf(dog);
+		// console.log(className); // Animal
+
+		// // 使用 Reflect.apply 并解构结果
+		// function getCoordinates(x, y) {
+		// 	return { x, y };
+		// }
+		// const { x, y } = Reflect.apply(getCoordinates, null, [10, 20]);
+		// console.log(x, y); // 10 20
+
+
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>继承的详解</title>
+</head>
+
+<body>
+	<script>
+		// 1. 原型链继承
+		// function Parent(name) {
+		// 	this.name = name || 'Parent';
+		// 	this.hobbies = ['reading', 'coding'];
+		// }
+
+		// Parent.prototype.getName = function () {
+		// 	return this.name;
+		// };
+
+		// function Child() { }
+		// Child.prototype = new Parent('child'); // 子类原型指向父类实例
+		// Child.prototype.constructor = Child; // 修正 constructor 指向
+
+		// const child1 = new Child();
+		// child1.hobbies.push('gaming');
+
+		// console.log(child1.hobbies); // ['reading', 'coding', 'gaming']
+		// console.log(child1.getName()); // 'Parent' 不是'child' (共享问题)
+
+		// const child2 = new Child();
+		// console.log(child2.hobbies); // ['reading', 'coding', 'gaming'] (共享问题)
+
+		// child1.__proto__.name = 'child1'; // 修改父类实例的属性
+		// console.log(child1.getName()); // 'child1'
+		// console.log(child2.getName()); // 'child1' (共享问题)
+
+		// 这一步不能传参：
+		// const child1 = new Child(); 
+		// 这一步是将子类的原型指向父类的实例，这样子类的实例就可以访问父类的属性和方法。但是，父类构造函数中的参数在子类实例化时并不会被调用，因此无法传递参数。
+
+		// 2. 构造函数继承
+		// function Parent(name) {
+		// 	this.name = name || 'Parent';
+		// 	this.hobbies = ['reading', 'coding'];
+		// }
+
+		// function Child(name, age) {
+		// 	Parent.call(this, name); // 调用父类构造函数
+		// 	this.age = age || 10;
+		// }
+
+		// const child1 = new Child('Child1', 20);
+		// child1.hobbies.push('gaming');
+
+		// console.log(child1.hobbies); // ['reading', 'coding', 'gaming']
+		// console.log(child1.name); // 'Child1'
+
+		// const child2 = new Child('Child2', 25);
+		// console.log(child2.hobbies); // ['reading', 'coding'] (独立)
+		// console.log(child2.name); // 'Child2'
+
+		// 3. 组合继承
+		// function Parent3(name) {
+		// 	this.name = name || 'Parent3';
+		// 	this.hobbies = ['reading', 'coding'];
+		// }
+		// Parent3.prototype.getName = function () {
+		// 	return this.name;
+		// };
+
+		// function Child3(name, age) {
+		// 	Parent3.call(this, name); // 调用父类构造函数
+		// 	this.age = age || 10;
+		// }
+		// Child3.prototype = new Parent3(); // 创建父类实例
+		// Child3.prototype.constructor = Child3; // 修正 constructor 指向
+		// Child3.prototype.getAge = function () {
+		// 	return this.age;
+		// };
+
+		// const child3 = new Child3('Child3', 20);
+		// child3.hobbies.push('gaming');
+		// console.log(child3.hobbies); // ['reading', 'coding', 'gaming']
+		// console.log(child3.getName()); // 'Child3'
+		// console.log(child3.getAge()); // 20
+
+		// const child4 = new Child3('Child4', 25);
+		// console.log(child4.hobbies); // ['reading', 'coding'] (独立)
+		// console.log(child4.getName()); // 'Child4'
+		// console.log(child4.getAge()); // 25
+
+
+		// 4. 寄生组合继承
+		// function Parent4(name) {
+		// 	this.name = name || 'Parent4'; // 设置默认值
+		// }
+		// Parent4.prototype.getName = function () {
+		// 	return this.name;
+		// };
+
+		// function Child4(name, age) {
+		// 	Parent4.call(this, name); // 调用Parent4的构造函数
+		// 	this.age = age || 10; // 设置默认值
+		// }
+		// Child4.prototype = Object.create(Parent4.prototype); // 继承Parent4的原型
+		// console.log(Child4.prototype.constructor); // 输出 Child4.prototype.constructor
+		// Child4.prototype.constructor = Child4; // 修正constructor指向
+		// console.log(Child4.prototype.constructor);
+		// Child4.prototype.getAge = function () {
+		// 	return this.age;
+		// };
+		// const child4 = new Child4('Child4', 20); // 创建Child4实例
+
+		// console.log(child4.getName()); // 输出 'Child4'
+		// console.log(child4.getAge()); // 输出 20
+
+		// function Parent() {
+			
+		// }
+		// Parent.prototype.data = [1, 2, 3]; // 原型属性
+		// function Child() {
+		// 	Parent.call(this); // 调用父类构造函数，继承实例属性
+		// }
+		// Child.prototype = Object.create(Parent.prototype); // 创建父类原型的浅拷贝
+		// Child.prototype.constructor = Child;
+
+		// const child1 = new Child();
+		// const child2 = new Child();
+
+		// child1.data.push(4); // 修改 child1 的 data
+
+		// console.log(child1.data); // [1, 2, 3, 4] (共享问题)
+		// console.log(child2.data); // ['1', '2', '3', '4'] (共享问题)
+		// console.log(Parent.prototype.data); // ['1', '2', '3', '4'] (共享问题)
+
+		// // 5. class 语法继承
+		// class Parent5 {
+		// 	constructor(name) {
+		// 		this.name = name || 'Parent5';
+		// 		this.hobbies = ['reading', 'coding'];
+		// 	}
+		// 	getName() {
+		// 		return this.name;
+		// 	}
+		// }
+		// class Child5 extends Parent5 {
+		// 	constructor(name, age) {
+		// 		super(name); // 调用父类构造函数
+		// 		this.age = age || 10;
+		// 	}
+		// }
+		// const child5 = new Child5('Child5', 20);
+		// child5.hobbies.push('gaming'); 
+		// console.log(Child5 instanceof Parent5); // false
+		// console.log(child5 instanceof Child5); // true
+		// console.log(child5 instanceof Parent5); // true
+
+
+		// console.log(child5.hobbies); // ['reading', 'coding', 'gaming']
+		// console.log(child5.getName()); // 'Child5'
+		// console.log(child5.age); // 20
+		// const child6 = new Child5('Child6', 25);
+		// console.log(child6.hobbies); // ['reading', 'coding'] (独立)
+		// console.log(child6.getName()); // 'Child6'
+		// console.log(child6.age); // 25
+		// console.log(child5 instanceof Child5); // true
+		// console.log(child5 instanceof Parent5); // true
+		// console.log(child5 instanceof Object); // true
+		// console.log(child5 instanceof Function); // false 为什么为false: 因为Function是一个特殊的对象，它是JavaScript中所有函数的基类，而Child5是一个类，不是函数，所以child5不是Function的实例。
+		
+
+		// Object.setPrototypeOf 举例
+		// function Parent7(name) {
+		// 	this.name = name || 'Parent7';
+		// 	this.hobbies = ['reading', 'coding'];
+		// }
+		// Parent7.prototype.getName = function () {
+		// 	return this.name;
+		// };	
+		// function Child7(name, age) {
+		// 	Parent7.call(this, name); // 调用父类构造函数
+		// 	this.age = age || 10;
+		// }
+		// Object.setPrototypeOf(Child7, Parent7); // 设置Child的原型为Parent
+		// Child7.prototype.getAge = function () {
+		// 	return this.age;
+		// };
+		// const child7 = new Child7('Child7', 20); // 创建Child7实例
+		// console.log(Child7.__proto__ === Parent7); // true
+
+		// instanceof 是一个运算符，用于检测一个对象是否是另一个对象的实例。它的语法是：`object instanceof constructor`。
+		// 例如：`child7 instanceof Child7` 返回 true，因为 `child7` 是 `Child7` 的实例。
+	</script>
+
+</body>
+
+</html>

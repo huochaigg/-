@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="./js/axios.js"></script>
+</head>
+
+<body>
+  <script>
+    // 手写promise:
+    // 1. Promise 是一个表示异步操作的对象，可能处于以下三种状态之一：pending（待定）、fulfilled（已兑现）和rejected（已拒绝）。
+    // 2. Promise 的构造函数接受一个 executor 函数，该函数接受两个参数：resolve 和 reject。resolve 用于将 Promise 状态从 pending 改变为 fulfilled，reject 用于将状态改为 rejected。
+    // 3. Promise 实例有 then 方法，用于注册成功和失败的回调函数。then 方法返回一个新的 Promise，可以链式调用。
+
+    class MyPromise {
+      constructor(executor) {
+        this.state = 'pending'; // 初始状态
+        this.value = undefined; // 成功的值
+        this.reason = undefined; // 失败的原因
+        this.onResolvedCallbacks = []; // 存储成功的回调
+        this.onRejectedCallbacks = []; // 存储失败的回调
+
+        const resolve = (value) => {
+          if (this.state === 'pending') {
+            this.state = 'fulfilled'; // 状态变为 fulfilled
+            this.value = value; // 保存成功的值
+            this.onResolvedCallbacks.forEach((callback) => callback()); // 执行所有成功回调
+          }
+        };
+
+        const reject = (reason) => {
+          if (this.state === 'pending') {
+            this.state = 'rejected'; // 状态变为 rejected
+            this.reason = reason; // 保存失败的原因
+            this.onRejectedCallbacks.forEach((callback) => callback()); // 执行所有失败回调
+          }
+        };
+
+        try {
+          executor(resolve, reject); // 执行传入的函数
+        } catch (error) {
+          reject(error); // 捕获异常并调用 reject
+        }
+      }
+
+      then(onFulfilled, onRejected) {
+        console.log('then', this.state)
+
+        // 返回一个新的 Promise 实现链式调用
+        return new MyPromise((resolve, reject) => {
+          if (this.state === 'fulfilled') {
+            try {
+              const result = onFulfilled(this.value); // 执行成功回调
+              resolve(result); // 将结果传递给下一个 Promise
+            } catch (error) {
+              reject(error); // 捕获异常并传递给下一个 Promise
+            }
+          } else if (this.state === 'rejected') {
+            try {
+              const result = onRejected(this.reason); // 执行失败回调
+              resolve(result); // 将结果传递给下一个 Promise
+            } catch (error) {
+              reject(error); // 捕获异常并传递给下一个 Promise
+            }
+          } else if (this.state === 'pending') {
+            // 如果状态是 pending，将回调存储起来
+            this.onResolvedCallbacks.push(() => {
+              try {
+                const result = onFulfilled(this.value);
+                resolve(result);
+              } catch (error) {
+                reject(error);
+              }
+            });
+            this.onRejectedCallbacks.push(() => {
+              try {
+                const result = onRejected(this.reason);
+                resolve(result);
+              } catch (error) {
+                reject(error);
+              }
+            });
+          }
+        });
+      }
+
+      catch(onRejected) {
+        return this.then(null, onRejected); // 只处理失败的情况
+      }
+
+      finally() {
+        return this.then(
+          (value) => {
+            // 成功时执行的回调
+            return value; // 返回成功的值
+          },
+          (reason) => {
+            // 失败时执行的回调
+            throw reason; // 抛出失败的原因
+          }
+        );
+      }
+
+      // 静态方法：Promise.all
+      static all(promises) {
+        return new MyPromise((resolve, reject) => {
+          const results = [];
+          let count = 0;
+
+          promises.forEach((promise, index) => {
+            promise.then((value) => {
+              results[index] = value; // 保存每个 Promise 的结果
+              count++;
+              if (count === promises.length) {
+                resolve(results); // 所有 Promise 成功后 resolve
+              }
+            }, reject); // 如果有一个 Promise 失败，直接 reject
+          });
+        });
+      }
+
+      // 静态方法：Promise.race
+      static race(promises) {
+        return new MyPromise((resolve, reject) => {
+          promises.forEach((promise) => {
+            promise.then(resolve, reject); // 只要有一个 Promise 完成，就 resolve 或 reject
+          });
+        });
+      }
+    }
+
+    // 测试代码
+    // const promise1 = new MyPromise((resolve) => setTimeout(resolve, 1000, '成功1'));
+    // const promise2 = new MyPromise((resolve) => setTimeout(resolve, 500, '成功2'));
+    // const promise3 = new MyPromise((_, reject) => setTimeout(reject, 800, '失败'));
+
+    // MyPromise.all([promise1, promise2, promise3])
+    //   .then((results) => console.log('All:', results))
+    //   .catch((error) => console.error('All Error:', error));
+
+    // MyPromise.race([promise1, promise2, promise3])
+    //   .then((result) => console.log('Race:', result))
+    //   .catch((error) => console.error('Race Error:', error));
+
+    const promise4 = new MyPromise((resolve, reject) => {
+      setTimeout(() => {
+        console.log('log 4成功')
+        resolve('4成功');
+      }, 3000);
+    });
+
+    promise4
+      .then((result) => {
+        console.log('Promise 4:', result);
+        return 'hello'
+      })
+      console.log('onResolvedCallbacks:', promise4.onResolvedCallbacks)
+
+    // // 如果需要在then中执行 if (this.state === 'fulfilled'), 可以将.then的调用放在异步操作完成之后：
+    setTimeout(() => { 
+      promise4
+        .then((result => {
+          console.log('Promise 4.1:', result); // 这里的 result 是上一个 then 的返回值
+          return '4.1成功'; // 返回一个普通值
+        }))
+
+      promise4
+        .then((result => {
+          console.log('Promise 4.2:', result); // 这里的 result 是上一个 then 的返回值
+          return '4.2成功'; // 返回一个普通值
+        }))
+    }, 5000)
+
+    //   .then((result) => {
+    //     console.log('result:', result); // 这里的 result 是上一个 then 的返回值
+    //     console.log('Promise 4.1:', result);
+    //     return '4.2成功'; // 返回一个普通值
+    //   })
+    // .finally(() => {
+    //   console.log('Promise 4 finally'); // finally 不会影响链式调用的结果
+    // })
+
+    // const promise5 = new MyPromise((resolve, reject) => {
+    //   setTimeout(() => {
+    //     const random = Math.random();
+    //     console.log('random:', random);
+    //     if (random > 0.5) {
+    //       resolve('5成功');
+    //     } else {
+    //       reject('5失败');
+    //     }
+    //   }, 1000);
+    // });
+
+    // promise5.then(value => {
+    //   console.log('Promise 5 1:', value);
+    // })
+
+    // promise5.then(value => {
+    //   console.log('Promise 5 2:', value);
+    // })
+
+    // promise5.then(value => {
+    //   console.log('Promise 5 3:', value);
+    // })
+
+    // promise5.then(value => {
+    //   console.log('Promise 5 4:', value);
+    // })
+
+    // promise5.then(value => {
+    //   console.log('Promise 5 5:', value);
+    // })
+
+  </script>
+
+  <script>
+
+    // class MyPromise<T> {
+    //   private state: 'pending' | 'fulfilled' | 'rejected' = 'pending'; // 状态
+    //   private value?: T; // 成功的值
+    //   private reason?: any; // 失败的原因
+    //   private onResolvedCallbacks: (() => void)[] = []; // 成功回调队列
+    //   private onRejectedCallbacks: (() => void)[] = []; // 失败回调队列
+
+    //   constructor(executor: (resolve: (value: T) => void, reject: (reason: any) => void) => void) {
+    //     const resolve = (value: T) => {
+    //       if (this.state === 'pending') {
+    //         this.state = 'fulfilled';
+    //         this.value = value;
+    //         this.onResolvedCallbacks.forEach((callback) => callback());
+    //       }
+    //     };
+
+    //     const reject = (reason: any) => {
+    //       if (this.state === 'pending') {
+    //         this.state = 'rejected';
+    //         this.reason = reason;
+    //         this.onRejectedCallbacks.forEach((callback) => callback());
+    //       }
+    //     };
+
+    //     try {
+    //       executor(resolve, reject); // 执行传入的函数
+    //     } catch (error) {
+    //       reject(error); // 捕获异常并调用 reject
+    //     }
+    //   }
+
+    //   then<TResult = T>(
+    //     onFulfilled?: (value: T) => TResult | MyPromise<TResult>,
+    //     onRejected?: (reason: any) => TResult | MyPromise<TResult>
+    //   ): MyPromise<TResult> {
+    //     return new MyPromise < TResult > ((resolve, reject) => {
+    //       if (this.state === 'fulfilled') {
+    //         try {
+    //           const result = onFulfilled ? onFulfilled(this.value as T) : (this.value as unknown as TResult);
+    //           resolvePromise(result, resolve, reject);
+    //         } catch (error) {
+    //           reject(error);
+    //         }
+    //       } else if (this.state === 'rejected') {
+    //         try {
+    //           const result = onRejected ? onRejected(this.reason) : (this.reason as unknown as TResult);
+    //           resolvePromise(result, resolve, reject);
+    //         } catch (error) {
+    //           reject(error);
+    //         }
+    //       } else if (this.state === 'pending') {
+    //         this.onResolvedCallbacks.push(() => {
+    //           try {
+    //             const result = onFulfilled ? onFulfilled(this.value as T) : (this.value as unknown as TResult);
+    //             resolvePromise(result, resolve, reject);
+    //           } catch (error) {
+    //             reject(error);
+    //           }
+    //         });
+    //         this.onRejectedCallbacks.push(() => {
+    //           try {
+    //             const result = onRejected ? onRejected(this.reason) : (this.reason as unknown as TResult);
+    //             resolvePromise(result, resolve, reject);
+    //           } catch (error) {
+    //             reject(error);
+    //           }
+    //         });
+    //       }
+    //     });
+    //   }
+
+    //   catch(onRejected: (reason: any) => T | MyPromise<T>): MyPromise<T> {
+    //     return this.then(undefined, onRejected);
+    //   }
+
+    //   static all<T>(promises: Array<MyPromise<T>>): MyPromise<T[]> {
+    //     return new MyPromise < T[] > ((resolve, reject) => {
+    //       const results: T[] = [];
+    //       let count = 0;
+
+    //       promises.forEach((promise, index) => {
+    //         promise.then((value) => {
+    //           results[index] = value;
+    //           count++;
+    //           if (count === promises.length) {
+    //             resolve(results);
+    //           }
+    //         }, reject);
+    //       });
+    //     });
+    //   }
+
+    //   static race<T>(promises: Array<MyPromise<T>>): MyPromise<T> {
+    //     return new MyPromise < T > ((resolve, reject) => {
+    //       promises.forEach((promise) => {
+    //         promise.then(resolve, reject);
+    //       });
+    //     });
+    //   }
+    // }
+
+    // // 辅助函数：处理 then 回调的返回值
+    // function resolvePromise<T>(
+    //   result: T | MyPromise<T>,
+    //   resolve: (value: T) => void,
+    //   reject: (reason: any) => void
+    // ): void {
+    //   if (result instanceof MyPromise) {
+    //     result.then(resolve, reject);
+    //   } else {
+    //     resolve(result);
+    //   }
+    // }
+
+    // // 测试代码
+    // const promise1 = new MyPromise < string > ((resolve) => setTimeout(resolve, 1000, '成功1'));
+    // const promise2 = new MyPromise < string > ((resolve) => setTimeout(resolve, 500, '成功2'));
+    // const promise3 = new MyPromise < string > ((_, reject) => setTimeout(reject, 800, '失败'));
+
+    // MyPromise.all([promise1, promise2, promise3])
+    //   .then((results) => console.log('All:', results))
+    //   .catch((error) => console.error('All Error:', error));
+
+    // MyPromise.race([promise1, promise2, promise3])
+    //   .then((result) => console.log('Race:', result))
+    //   .catch((error) => console.error('Race Error:', error));
+
+  </script>
+
+  <script>
+
+    // const executor2 = (resolve, reject) => {
+    //   setTimeout(() => {
+    //     resolve('成功');
+    //   }, 1000);
+    // };
+
+    // executor2(
+    //   (value) => {
+    //     console.log('resolve:', value);
+    //   },
+    //   (reason) => {
+    //     console.error('reject:', reason);
+    //   }
+    // );
+
+  </script>
+</body>
+
+</html>

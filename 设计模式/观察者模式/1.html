@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+
+    class Subject {
+      constructor() {
+        this.observers = []; // 观察者列表
+      }
+
+      addObserver(fn) {
+        this.observers.push(fn)
+        return () => {
+          this.rmObserver(fn)
+        }
+      }
+
+      rmObserver(fn) {
+        const idx = this.observers.findIndex(fn)
+        if (idx !== -1) {
+          this.observers.splice(idx, 1)
+        }
+      }
+
+      notice(data) {
+        this.observers.forEach(fn => fn(data))
+      }
+    }
+
+    const subject = new Subject()
+    
+    const offObserver = subject.addObserver((data) => {
+      console.log('obs1收到', data)
+    })
+
+    const offObserver2 = subject.addObserver(data => {
+      console.log('obs2收到', data)
+    })
+
+    // ...
+    // 移除观察者
+    offObserver()
+    offObserver2()
+
+    subject.notice('哈哈哈哈')
+
+
+  </script>
+</body>
+</html>

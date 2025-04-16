@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    // 前端常用设计模式：
+    // 1. 单例模式：确保一个类只有一个实例，并提供一个全局访问点。
+    // 单例模式的优点主要体现在以下几个方面：
+    // (1).全局访问点
+    // 单例模式确保一个类只有一个实例，并提供一个全局访问点。这使得在整个应用程序中可以方便地访问该实例，而不需要创建多个实例。
+    // (2).节省资源
+    // 单例模式避免了创建多个实例所带来的资源浪费，尤其是在需要频繁创建和销毁对象的情况下。
+    // (3).控制实例化过程
+    // 单例模式可以控制实例化的过程，确保在需要时才创建实例，并提供一个统一的接口来访问该实例。
+    // (4).易于维护和扩展
+    // 单例模式使得代码更易于维护和扩展，因为所有的逻辑都集中在一个地方，而不是分散在多个实例中。
+    // (5).线程安全
+    // 在多线程环境中，单例模式可以确保只有一个实例被创建，从而避免了线程安全问题。
+    // (6).懒加载
+    // 单例模式可以实现懒加载，即在第一次访问实例时才创建它。这可以提高性能，尤其是在实例化过程比较耗时的情况下。
+    // (7).避免命名冲突
+    // 单例模式可以避免命名冲突，因为只有一个实例存在，避免了多个实例之间的命名冲突问题。
+
+    // 以下是单例模式的实现方式：
+    // 1. 饿汉式单例：在类加载时就创建实例，确保只有一个实例存在。
+    class EagerConfig {
+      constructor(env) {
+        console.log(`EagerConfig 实例化，环境: ${env}`);
+        this.env = env;
+      }
+
+      static instance = new EagerConfig('production'); // 提前创建
+
+      static getInstance() {
+        return EagerConfig.instance;
+      }
+    }
+
+    // 2. 懒汉式单例：在第一次访问实例时才创建它。（懒加载）
+    function Singleton() {
+      if (Singleton.instance) {
+        return Singleton.instance;
+      }
+      Singleton.instance = this;
+
+      this.state = {}; // 可以存储一些状态
+
+      this.getState = function () {
+        return this.state;
+      };
+      this.setState = function (newState) {
+        this.state = newState;
+      };
+    }
+
+    const instance1 = new Singleton();
+    const instance2 = new Singleton();
+    console.log(instance1 === instance2); // true，两个实例是同一个
+
+
+    class Singleton2 {
+      constructor() {
+        if (Singleton2.instance) {
+          return Singleton2.instance;
+        }
+        Singleton2.instance = this;
+        this.state = {}; // 存储状态
+      }
+
+      getState() {
+        return this.state;
+      }
+
+      setState(newState) {
+        this.state = newState;
+      }
+    }
+
+    console.log('Singleton2', Singleton2.instance)
+
+    const instance3 = new Singleton2();
+    console.log('Singleton2_1', Singleton2.instance)
+
+    instance3.setState({ name: 'Alice' });
+    const instance4 = new Singleton2();
+    console.log('instance3', instance3);
+    console.log('instance4', instance4);
+    console.log('instance3 === instance4', instance3 === instance4); // true，两个实例是同一个
+
+
+    // 3. 懒加载单例模式：在第一次访问实例时才创建它，但是用.getInstance()方法来获取实例。
+    // 单例的真正优势不在于你“用不用 new”，而在于你封住了 new 的入口，强制全局都只能通过 getInstance() 来获取实例。
+    // 这样就可以在 getInstance() 中控制实例的创建和返回，避免了直接使用 new 可能带来的问题。
+    // 用new有可能破坏单例模式的封装性，导致多个实例的创建。
+    // 例如：
+    // logger.ts
+    // 
+    // class LoggerSingleton {
+    //   // 静态私有属性来存储实例
+    //   private static instance: LoggerSingleton;
+
+    //   // 构造函数私有化，禁止外部使用 `new` 创建实例
+    //   private constructor(private level: string = 'info') { }
+
+    //   // 日志输出函数
+    //   log(message: string): void {
+    //     console.log(`[${this.level.toUpperCase()}] ${message}`);
+    //   }
+
+    //   // 静态方法获取单例实例
+    //   public static getInstance(): LoggerSingleton {
+    //     if (!LoggerSingleton.instance) {
+    //       LoggerSingleton.instance = new LoggerSingleton();
+    //     }
+    //     return LoggerSingleton.instance;
+    //   }
+
+    //   // 设置日志级别
+    //   public setLevel(level: string): void {
+    //     this.level = level;
+    //   }
+    // }
+
+    // export default LoggerSingleton;
+
+
+    // 懒加载单例模式和普通有什么区别？
+    // 懒加载单例模式在第一次访问实例时才创建它，而普通单例模式在创建实例时就立即创建。懒加载单例模式可以提高性能，尤其是在实例化过程比较耗时的情况下。懒加载单例模式还可以避免在不需要实例时浪费资源。
+
+
+
+    // 2. 工厂模式：定义一个创建对象的接口，让子类决定实例化哪个类。
+
+    // 工厂模式的优点主要体现在以下几个方面：
+    // (1).封装对象创建逻辑
+    // 工厂模式将对象的创建逻辑封装在工厂方法中，调用者只需要提供必要的参数，而不需要关心具体的实现细节。这种封装提高了代码的可读性和可维护性。
+
+    // (2).解耦对象创建与使用
+    // 工厂模式将对象的创建与使用分离，调用者不需要直接依赖具体的类。这种解耦使得代码更灵活，便于扩展和修改。
+
+    // (3).支持多态和扩展性
+    // 工厂模式可以通过简单地扩展工厂方法来支持新的对象类型，而不需要修改现有代码。这符合开闭原则（对扩展开放，对修改关闭）。
+
+    // (4).统一接口
+    // 工厂模式提供了一个统一的接口来创建对象，避免了直接使用构造函数时可能出现的复杂性和不一致性。
+
+    function Car(make, model) {
+      this.make = make; // 品牌
+      this.model = model; // 型号
+    }
+    function Truck(make, model) {  // 卡车
+      this.make = make;
+      this.model = model;
+    }
+    function VehicleFactory() {
+      this.createVehicle = function (type, make, model) {
+        switch (type) {
+          case 'car':
+            return new Car(make, model);
+          case 'truck':
+            return new Truck(make, model);
+          default:
+            throw new Error('Unknown vehicle type');
+        }
+      };
+    }
+
+    const factory = new VehicleFactory();
+    const car = factory.createVehicle('car', 'Toyota', 'Corolla');
+    const truck = factory.createVehicle('truck', 'Ford', 'F-150');
+    console.log(car); // Car { make: 'Toyota', model: 'Corolla' }
+    console.log(truck); // Truck { make: 'Ford', model: 'F-150' }
+    // 工厂模式的优点是可以根据需要创建不同类型的对象，而不需要直接使用构造函数。
+    // 为什么不直接使用构造函数是优点？
+
+    // (1).隐藏复杂性
+    // 如果直接使用构造函数，调用者需要了解每个类的具体实现和参数要求。而工厂模式通过封装这些细节，简化了调用者的工作。
+
+    // (2).减少重复代码
+    // 在直接使用构造函数的情况下，可能会在多个地方重复相同的对象创建逻辑。工厂模式将这些逻辑集中到一个地方，减少了重复代码。
+
+    // (3).更好的灵活性
+    // 如果需要更改对象的创建逻辑（例如添加默认值、验证参数等），使用工厂模式只需要修改工厂方法，而直接使用构造函数则需要修改所有调用的地方。
+
+    // (4).动态创建对象
+    // 工厂模式可以根据运行时的条件动态决定创建哪种类型的对象，而直接使用构造函数通常需要在编译时确定。
+    
+    // (5).便于扩展
+
+    // ** 简而言之，就是，我不关注怎样创建对象的，我只关注你能给我一个什么对象。
+
+
+    // 3. 观察者模式：定义对象间的一对多依赖关系，当一个对象改变状态时，所有依赖于它的对象都会得到通知并自动更新。
+    // 观察者模式的优点主要体现在以下几个方面：
+    // (1).解耦
+    // 观察者模式将被观察者和观察者之间的关系解耦，使得它们可以独立变化。被观察者不需要知道具体的观察者，只需要通知它们即可。
+    
+    // (2).灵活性
+    // 观察者模式允许动态添加和移除观察者，使得系统具有更好的灵活性。可以根据需要随时添加或删除观察者，而不需要修改被观察者的代码。
+
+    // (3).可扩展性
+    // 观察者模式可以很容易地扩展新的观察者，而不需要修改现有的代码。这符合开闭原则（对扩展开放，对修改关闭）。
+
+    // (4).广播通信
+    // 观察者模式允许被观察者向多个观察者广播通知，这使得系统具有更好的通信能力。
+    // 例如：一个新闻发布系统，当有新消息发布时，所有订阅该消息的用户都会收到通知。
+
+    // 例如：一个天气预报系统，当天气变化时，所有订阅该天气的用户都会收到通知。
+    // 例如：一个股票交易系统，当股票价格变化时，所有订阅该股票的用户都会收到通知。
+    // 例如：一个社交网络系统，当有新消息发布时，所有订阅该消息的用户都会收到通知。
+
+
+    // 4. 策略模式：定义一系列算法，将每一个算法封装起来，并使它们可以互换。
+    // 策略模式的优点主要体现在以下几个方面：
+    // (1).封装算法
+    // 策略模式将算法封装在独立的类中，使得算法的实现细节对客户端透明。客户端只需要知道如何使用策略，而不需要关心具体的实现细节。
+    
+    // (2).灵活性
+    // 策略模式允许在运行时选择不同的算法，使得系统具有更好的灵活性。可以根据需要随时切换算法，而不需要修改客户端的代码。
+
+    // (3).可扩展性
+    // 策略模式可以很容易地扩展新的算法，而不需要修改现有的代码。这符合开闭原则（对扩展开放，对修改关闭）。
+
+    // (4).避免使用条件语句
+    // 策略模式可以避免使用大量的条件语句来选择算法，使得代码更简洁和易读。
+    // 例如：一个支付系统，可以根据不同的支付方式（信用卡、支付宝、微信支付等）选择不同的支付策略。
+    // 例如：一个排序系统，可以根据不同的排序算法（快速排序、冒泡排序、选择排序等）选择不同的排序策略。
+    // 例如：一个日志系统，可以根据不同的日志级别（DEBUG、INFO、ERROR等）选择不同的日志策略。
+    // 例如：一个缓存系统，可以根据不同的缓存策略（LRU、FIFO、LFU等）选择不同的缓存策略。
+    // 例如：一个搜索系统，可以根据不同的搜索算法（线性搜索、二分搜索、哈希搜索等）选择不同的搜索策略。
+    // 例如：一个图形绘制系统，可以根据不同的绘制算法（矢量绘制、位图绘制等）选择不同的绘制策略。
+    // 例如：一个图像处理系统，可以根据不同的处理算法（模糊、锐化、去噪等）选择不同的处理策略。
+
+    // (5).避免使用大量的条件语句
+    // 策略模式可以避免使用大量的条件语句来选择算法，使得代码更简洁和易读。
+
+    // 策略模式和工厂模式的区别：
+    // 策略模式主要关注算法的选择和使用，而工厂模式主要关注对象的创建和初始化。策略模式允许在运行时选择不同的算法，而工厂模式通常在编译时确定对象的类型。策略模式通常用于需要动态选择算法的场景，而工厂模式通常用于需要创建不同类型对象的场景。
+
+    // 策略模式允许你在运行时决定使用哪个策略，而不需要修改客户端的代码。
+
+    // 举例：
+    class Context {
+      constructor(strategy) {
+        this.strategy = strategy; // 策略
+      }
+
+      setStrategy(strategy) {
+        this.strategy = strategy; // 设置策略
+      }
+
+      executeStrategy(a, b) {
+        return this.strategy.execute(a, b); // 执行策略
+      }
+    }
+
+    class AddStrategy {
+      execute(a, b) {
+        return a + b; // 加法策略
+      }
+    }
+    class SubtractStrategy {
+      execute(a, b) {
+        return a - b; // 减法策略
+      }
+    }
+    class MultiplyStrategy {
+      execute(a, b) {
+        return a * b; // 乘法策略
+      }
+    }
+    class DivideStrategy {
+      execute(a, b) {
+        return a / b; // 除法策略
+      }
+    }
+
+    const context = new Context(new AddStrategy()); // 创建上下文，使用加法策略
+    console.log(context.executeStrategy(5, 3)); // 输出：8
+    
+
+    // 5. 装饰者模式：动态地给一个对象添加一些额外的职责。
+    // 装饰者模式的优点主要体现在以下几个方面：
+    // (1).动态添加功能
+    // 装饰者模式允许在运行时动态地给对象添加功能，而不需要修改对象的代码。这使得系统具有更好的灵活性和可扩展性。
+
+    // (2).避免子类化
+    // 装饰者模式可以避免使用大量的子类来扩展对象的功能，使得代码更简洁和易读。
+    // 例如：一个图形绘制系统，可以使用装饰者模式来动态地给图形添加边框、阴影等效果，而不需要创建多个子类。
+    // 例如：一个文本编辑器，可以使用装饰者模式来动态地给文本添加粗体、斜体、下划线等效果，而不需要创建多个子类。
+    // 例如：一个电子商务系统，可以使用装饰者模式来动态地给商品添加促销、折扣、赠品等效果，而不需要创建多个子类。
+
+    // (3).组合使用
+    // 装饰者模式允许将多个装饰者组合在一起使用，使得系统具有更好的灵活性和可扩展性。
+
+    // (4).遵循单一职责原则
+    // 装饰者模式允许将对象的功能分离到不同的装饰者中，使得每个装饰者只负责一个功能。这符合单一职责原则（SRP）。
+
+    // 举例：
+    class Coffee {
+      cost() {
+        return 5; // 基础咖啡价格
+      }
+    }
+    class MilkDecorator {
+      constructor(coffee) {
+        this.coffee = coffee; // 被装饰的咖啡
+      }
+
+      cost() {
+        return this.coffee.cost() + 2; // 加入牛奶的价格
+      }
+    }
+    class SugarDecorator {
+      constructor(coffee) {
+        this.coffee = coffee; // 被装饰的咖啡
+      }
+
+      cost() {
+        return this.coffee.cost() + 1; // 加入糖的价格
+      }
+    }
+
+    const coffee = new Coffee(); // 创建基础咖啡
+    console.log(coffee.cost()); // 输出：5
+
+    const milkCoffee = new MilkDecorator(coffee); // 加入牛奶
+    console.log(milkCoffee.cost()); // 输出：7
+    
+    const sugarCoffee = new SugarDecorator(coffee); // 加入糖
+    console.log(sugarCoffee.cost()); // 输出：6
+
+    const milkSugarCoffee = new SugarDecorator(milkCoffee); // 加入牛奶和糖
+    console.log(milkSugarCoffee.cost()); // 输出：8
+
+
+    // 6. 适配器模式：将一个类的接口转换成客户希望的另一个接口。
+    // 适配器模式的优点主要体现在以下几个方面：
+    // (1).解耦
+    // 适配器模式将客户端和被适配者之间的关系解耦，使得它们可以独立变化。客户端不需要知道具体的被适配者，只需要使用适配器即可。 
+
+    // (2).灵活性
+    // 适配器模式允许在运行时选择不同的适配器，使得系统具有更好的灵活性。可以根据需要随时切换适配器，而不需要修改客户端的代码。
+
+    // (3).可扩展性
+    // 适配器模式可以很容易地扩展新的适配器，而不需要修改现有的代码。这符合开闭原则（对扩展开放，对修改关闭）。
+
+    // (4).避免修改现有代码
+    // 适配器模式允许在不修改现有代码的情况下，使用新的接口。这使得系统具有更好的兼容性和可维护性。
+
+    // (5).支持多种接口
+    // 适配器模式允许将多个接口适配到同一个接口，使得系统具有更好的灵活性和可扩展性。
+
+    // 例如：
+    
+    class OldSystem {
+      request() {
+        return 'Old system response'; // 旧系统的请求
+      }
+    }
+    class NewSystem {
+      specificRequest() {
+        return 'New system response'; // 新系统的请求
+      }
+    }
+    class Adapter {
+      constructor(newSystem) {
+        this.newSystem = newSystem; // 被适配的新系统
+      }
+
+      request() {
+        return this.newSystem.specificRequest(); // 调用新系统的请求
+      }
+    }
+
+    const oldSystem = new OldSystem(); // 创建旧系统
+    console.log(oldSystem.request()); // 输出：Old system response
+
+    const newSystem = new NewSystem(); // 创建新系统
+    const adapter = new Adapter(newSystem); // 创建适配器
+    console.log(adapter.request()); // 输出：New system response
+
+    // 7. 代理模式：为其他对象提供一种代理以控制对这个对象的访问。
+    // 代理模式的优点主要体现在以下几个方面：
+    // (1).控制访问 
+    // 代理模式允许控制对对象的访问，可以在代理中添加权限验证、日志记录等功能，而不需要修改被代理对象的代码。
+
+    // (2).延迟加载
+    // 代理模式允许在需要时才创建被代理对象，从而节省资源。
+
+    // (3).统一接口
+    // 代理模式提供了一个统一的接口来访问被代理对象，避免了直接使用被代理对象时可能出现的复杂性和不一致性。
+
+    // (4).保护被代理对象
+    // 代理模式可以保护被代理对象不被直接访问，从而避免了潜在的安全问题。
+
+    // (5).支持远程访问
+    // 代理模式可以支持远程访问，被代理对象可以在不同的地址上，而代理可以在本地访问。
+
+    // 例如：
+    class RealSubject {
+      request() {
+        return 'Real subject response'; // 被代理对象的请求
+      }
+    }
+    class Proxy {
+      constructor(realSubject) {
+        this.realSubject = realSubject; // 被代理对象
+      }
+
+      request() {
+        console.log('Proxy: Before request'); // 代理的请求前处理
+        const response = this.realSubject.request(); // 调用被代理对象的请求
+        console.log('Proxy: After request'); // 代理的请求后处理
+        return response;
+      }
+    }
+
+    const realSubject = new RealSubject(); // 创建被代理对象
+    const proxy = new Proxy(realSubject); // 创建代理
+    console.log(proxy.request()); // 输出：Proxy: Before request Real subject response Proxy: After request
+    // 代理模式的优点是可以在不修改被代理对象的代码的情况下，添加额外的功能。
+
+    // 8. 命令模式：将请求封装成对象，从而使你可以用不同的请求对客户进行参数化。
+    // 命令模式的优点主要体现在以下几个方面：
+    // (1).解耦
+    // 命令模式将请求的发送者和接收者解耦，使得它们可以独立变化。发送者不需要知道具体的接收者，只需要发送命令即可。
+
+    // (2).灵活性
+    // 命令模式允许在运行时选择不同的命令，使得系统具有更好的灵活性。可以根据需要随时切换命令，而不需要修改发送者的代码。
+
+    // (3).可扩展性
+    // 命令模式可以很容易地扩展新的命令，而不需要修改现有的代码。这符合开闭原则（对扩展开放，对修改关闭）。
+
+    // (4).支持撤销和重做
+    // 命令模式允许支持撤销和重做操作，可以将命令存储在一个队列中，执行时将命令添加到队列中，撤销时从队列中删除命令。
+    
+    class Command {
+      constructor(receiver) {
+        this.receiver = receiver; // 接收者
+      }
+
+      execute() {
+        this.receiver.action(); // 执行命令
+      }
+    }
+    class Receiver {
+      action() {
+        console.log('Receiver: Action performed'); // 接收者的操作
+      }
+    }
+
+    class Invoker {
+      constructor() {
+        this.commands = []; // 命令队列
+      }
+
+      addCommand(command) {
+        this.commands.push(command); // 添加命令到队列
+      }
+
+      executeCommands() {
+        for (const command of this.commands) {
+          command.execute(); // 执行命令
+        }
+      }
+    }
+
+    const receiver = new Receiver(); // 创建接收者
+    const command = new Command(receiver); // 创建命令
+    const invoker = new Invoker(); // 创建调用者
+    invoker.addCommand(command); // 添加命令到队列  
+    invoker.executeCommands(); // 执行命令
+    // 输出：Receiver: Action performed
+
+
+    // 9. 责任链模式：将请求的发送者和接收者解耦，使多个对象都有机会处理这个请求。
+
+    // 10. 中介者模式：用一个中介对象来封装一系列的对象交互。
+    
+    // 11. 迭代器模式：提供一种方法顺序访问一个聚合对象中的各个元素，而又不暴露该对象的内部表示。
+    // 12. 访问者模式：表示一个作用于某对象结构中的各元素的操作。
+    // 13. 状态模式：允许一个对象在其内部状态改变时改变它的行为。
+    // 14. 备忘录模式：在不暴露对象实现细节的情况下，捕获一个对象的内部状态，并在以后将其恢复。
+    // 15. 组合模式：将对象组合成树形结构以表示部分-整体的层次结构。
+    // 16. 桥接模式：将抽象部分与实现部分分离，使它们可以独立变化。
+    // 17. 外观模式：为子系统中的一组接口提供一个一致的界面。
+    // 18. 享元模式：运用共享技术来有效地支持大量细粒度的对象。
+    // 19. 模板方法模式：定义一个操作中的算法的框架，而将一些步骤延迟到子类中。
+    // 20. 原型模式：用原型实例指定创建对象的种类，并通过拷贝这些原型创建新的对象。
+    // 21. 组合模式：将对象组合成树形结构以表示部分-整体的层次结构。
+
+
+  </script>
+</body>
+
+</html>
+
+<!-- 
+
+89.95 - 77.35 = 12.6
+
+-->

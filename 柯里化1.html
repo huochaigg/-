@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>柯里化</title>
+</head>
+
+<body>
+	<script>
+		// 函数柯里化是将一个接受多个参数的函数转换成一系列嵌套的函数，每个函数只接受一个参数。
+		// 例如：
+		// 1.
+		// function add(x) {
+		//     return function(y) {
+		//         return x + y;
+		//     };
+		// }
+		// console.log(add(1)(2)); // 3
+
+		// 2.
+		// function curry(fn) {
+		// 	return function curried(...args) {
+		// 		if (args.length >= fn.length) {
+		// 			return fn(...args);
+		// 		} else {
+		// 			return function (...args2) {
+		// 				console.log(args, args2)
+		// 				return curried(...args, ...args2);
+		// 			};
+		// 		}
+		// 	};
+		// }
+		// function sum(a, b, c) {
+		// 	return a + b + c;
+		// }
+		// const curriedSum = curry(sum);
+		// console.log(curriedSum(1)(2)(3)); // 6
+		// console.log(curriedSum(1, 2)(3)); // 6
+		// console.log(curriedSum(1, 2, 3)); // 6
+		// console.log(curriedSum(1)(2)(3)(4)); // Uncaught TypeError: curriedSum(...)(...)(...) is not a function
+
+		// 3.
+		// 实现一个柯里化函数，支持任意数量的参数
+		// 并且sum后面的参数可以不传递，默认值为0
+		// 并且sum后面可以连续传递参数，不限数量
+		// 例如：sum(1) sum(1)(2) sum(1, 2)(3, 4) sum(1, 2, 3)(4, 5, 6)
+		// function curry(fn) {
+		// 	return function curried(...args) {
+		// 		if (args.length >= fn.length) {
+		// 			console.log('args', args.length, args);
+		// 			return fn(...args);
+		// 		} else {
+		// 			return function (...args2) {
+		// 				return curried(...args, ...args2);
+		// 			};
+		// 		}
+		// 	};
+		// }
+
+		// function sum(...args) {
+		// 	return args.reduce((acc, curr) => acc + curr, 0);
+		// }
+		// const curriedSum = curry(sum);
+		// console.log(curriedSum); // 1
+
+		// console.log(curriedSum(1)(2)); // Uncaught TypeError: curriedSum(...) is not a function
+		// 为什么？
+		// 因为curriedSum(1)返回的是一个函数，而不是一个数字，所以不能直接打印出来
+		// 解决方法：在curriedSum函数中判断args.length是否大于等于fn.length，如果是，则返回fn(...args)，否则返回一个函数
+
+		// console.log(curriedSum(1, 2)(3)); // 6
+		// console.log(curriedSum(1, 2, 3)(4, 5, 6)); // 21
+		// console.log(curriedSum(1)(2)(3)(4)); // 10
+
+		// 知识点：
+		// 1. 函数的length属性表示函数的参数个数
+		// 2. 函数的arguments属性表示函数的参数列表
+		// 3. 函数的apply方法可以将一个数组转换成函数的参数列表
+		// 4. 使用apply方法调用add函数时，传递的参数是一个数组，数组的长度为3
+		// 5. 使用apply方法调用add函数时，传递的参数是一个对象，对象的属性名为a、b、c，属性值为1、2、3
+
+		// function add(a, b, c) {
+		// 	return a + b + c;
+		// }
+		// console.log(add.length); // 3
+
+		// function curry(fn) {
+
+		// }
+
+		// function sum(...args) {
+		// 	return args.reduce((pre, next) => pre + next, 0)
+		// }
+
+		// const curriedSum = curry(sum)
+
+		// console.log(curriedSum(1)(2)(3, 4))
+
+
+		// 4.
+		// function curry(fn) {
+		// 	const curried = (...args) => {
+		// 		const next = (...nextArgs) => {
+		// 			if (nextArgs.length === 0) {
+		// 				// 如果没有更多参数传递，执行函数并返回结果
+		// 				return fn(...args);
+		// 			}
+		// 			// 否则，递归调用 curried，累积参数
+		// 			return curried(...args, ...nextArgs);
+		// 		};
+
+		// 		// 如果直接调用，则返回结果
+		// 		next.valueOf = () => {
+		// 			console.log('valueOf')
+		// 			return fn(...args)
+		// 		};
+		// 		next.toString = () => {
+		// 			console.log('toString')
+		// 			return fn(...args);
+		// 		}
+
+		// 		return next;
+		// 	};
+		// 	return curried();
+		// }
+
+		// function sum(...args) {
+		// 	return args.reduce((acc, curr) => acc + curr, 0); // 默认值为0
+		// }
+
+		// const curriedSum = curry(sum);
+
+		// // 示例调用
+		// console.log(curriedSum(1)(2)(3, 4) + ''); // 10
+		// console.log(curriedSum(1, 2)(3, 4) + ''); // 10
+		// console.log(+curriedSum(1, 2, 3)(4, 5, 6)); // 21
+		// console.log(+curriedSum(1)(2)(3)(4)); // 10
+
+
+		// 5.
+		// function curry(fn) {
+		// 	let allArgs = []; // 用于存储所有传递的参数
+
+		// 	function curried(...args) {
+		// 		allArgs = [...allArgs, ...args]; // 累积参数
+		// 		return curried; // 返回自身以支持链式调用
+		// 	}
+
+		// 	curried.toString = function () {
+		// 		console.log('toString')
+		// 		// 当尝试打印或计算结果时，执行函数
+		// 		return fn(...allArgs);
+		// 	};
+
+		// 	return curried;
+		// }
+
+		// function sum(...args) {
+		// 	return args.reduce((acc, curr) => acc + curr, 0); // 默认值为0
+		// }
+
+		// const curriedSum = curry(sum);
+
+		// // 示例调用
+		// console.log(curriedSum(1)(2)(3).toString()); // 6
+		// console.log(curriedSum(1, 2)(3, 4).toString()); // 10
+		// console.log(curriedSum(1, 2, 3)(4, 5, 6).toString()); // 21
+		// console.log(curriedSum(1)(2)(3)(4).toString()); // 10
+
+		// 手动实现ramda compose
+		// function compose(...fns) {
+		// 	return function (x) {
+		// 		return fns.reduceRight((acc, fn) => fn(acc), x);
+		// 	};
+		// }
+		// const add = (x) => x + 1;
+		// const multiply = (x) => x * 2;
+		// const subtract = (x) => x - 3;
+
+		// 6.完善方法
+		// function curry(fn) {
+		// 	const curried = (...args) => {
+		// 		const next = (...nextArgs) => {
+		// 			if (nextArgs.length === 0) {
+		// 				// 如果没有更多参数传递，返回结果
+		// 				return fn(...args);
+		// 			}
+		// 			// 否则，继续累积参数
+		// 			return curried(...args, ...nextArgs);
+		// 		};
+
+		// 		// 自动检测调用链结束并返回结果
+		// 		return new Proxy(next, {
+		// 			get(target, prop) {
+		// 				if (prop === Symbol.toPrimitive || prop === 'valueOf' || prop === 'toString') {
+		// 					return () => fn(...args);
+		// 				}
+		// 				return target[prop];
+		// 			},
+		// 			apply(target, thisArg, nextArgs) {
+		// 				return next(...nextArgs);
+		// 			}
+		// 		});
+		// 	};
+		// 	return curried();
+		// }
+
+		// function sum(...args) {
+		// 	return args.reduce((acc, curr) => acc + curr, 0);
+		// }
+
+		// const curriedSum = curry(sum);
+		// // 示例调用
+		// const res = curriedSum(1)(2)(3); // 自动返回结果
+		// console.log(res); // 6	
+
+		// 合到一起
+		// function add(...args) {
+		// 	let allArgs = [...args]; // 用于存储所有传递的参数
+
+		// 	const curried = (...nextArgs) => {
+		// 		if (nextArgs.length === 0) {
+		// 			// 如果没有更多参数传递，返回累积结果
+		// 			return allArgs.reduce((sum, num) => sum + num, 0);
+		// 		}
+
+		// 		// 累积参数并返回自身
+		// 		allArgs = [...allArgs, ...nextArgs];
+		// 		return curried;
+		// 	};
+
+		// 	curried.valueOf = () => {
+		// 		// 当尝试打印或计算结果时，执行函数
+		// 		return allArgs.reduce((sum, num) => sum + num, 0);
+		// 	};
+
+		// 	return curried;
+		// }
+
+		// // 示例调用
+		// const result = add(1)(2)(3)(); // 调用链结束
+		// console.log(result); // 6
+
+
+		// es5实现
+		function add(x) {
+			// 累积参数
+			function curried(y) {
+				if (typeof y === 'undefined') {
+					// 如果没有传入参数，返回累积结果
+					return x;
+				}
+				// 累积参数并返回自身
+				return add(x + y);
+			}
+
+			curried.valueOf = function () {
+				// 当尝试打印或计算结果时，返回累积结果
+				return x;
+			};
+
+			return curried;
+		}
+
+		// 示例调用
+		console.log(+add(1)(2)(3)); // 6
+		console.log(add(1)(2)(3)()); // 6
+		console.log(add(5)(10)(15)()); // 30
+		console.log(add(1)(2)()); // 3
+
+
+	</script>
+</body>
+
+</html>

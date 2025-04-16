@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        
+        // 原型链
+        // 原型链是 JavaScript 中实现继承的一种方式。
+        // 原型链是由对象的 prototype 属性组成的链表。
+        // 当访问一个对象的属性时，JavaScript 会先在对象本身查找，如果没有找到，就会沿着原型链向上查找，直到找到该属性或者到达原型链的顶端（Object.prototype）。
+        // 原型链的查找是从下往上查找的。
+        // 原型链的查找是从左往右查找的。
+        
+        // 1. 
+        function Person(name) {
+            this.name = name
+        }
+
+        function Child(age) {
+            this.age = age
+            Reflect.apply(Person, this, ['John'])
+        }
+
+        Child.prototype = Object.create(Person.prototype)
+        Child.prototype.constructor = Child
+
+        const child = new Child(18)
+
+        console.log(child) // John
+
+        // 原型对象：
+        // 1. Object.prototype
+        // 2. Function.prototype
+        // 3. Array.prototype
+
+        // 构造函数：
+        // 1. Object
+        // 2. Function
+        // 3. Array
+
+
+
+    </script>
+</body>
+</html>

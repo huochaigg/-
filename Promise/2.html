@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+
+    class MyPromise {
+      constructor(executor) {
+        this.state = 'pending'
+        this.value = null;
+        this.error = null;
+        this.onResolvedCallbacks = []; // 存储成功的回调
+        this.onRejectedCallbacks = []; // 存储失败的回调
+
+        const resolve = (value) => {
+          console.log('resolve', value)
+          this.state = 'fulfilled'
+          this.value = value
+          this.onResolvedCallbacks.forEach(callback => callback())
+        }
+
+        const reject = (error) => {
+          console.log('reject', error)
+          this.state = 'rejected'
+          this.error = error
+          this.onRejectedCallbacks.forEach(callback => callback())
+        }
+
+        try {
+          executor(resolve, reject)
+        } catch (error) {
+          reject(error)
+        }
+      }
+
+      then(onFinally, onFulfilled) {
+        console.log('then ___ this.state', this.state)
+        return new Promise((resolve, reject) => {
+          if (this.state === 'fulfilled') {
+            try {
+              const result = onFinally(this.value)
+              resolve(result)
+            } catch (error) {
+              reject(error)
+            }
+          } else if (this.state === 'rejected') {
+            try {
+              const result = onFulfilled(this.error)
+              resolve(result)
+            } catch (error) {
+              reject(error)
+            }
+          } 
+          else if (this.state === 'pending') {
+            this.onResolvedCallbacks.push(() => {
+              try {
+                const result = onFinally(this.value)
+                resolve(result)
+              } catch (error) {
+                reject(error)
+              }
+            })
+            this.onRejectedCallbacks.push(() => {
+              try {
+                const result = onFulfilled(this.error)
+                resolve(result)
+              } catch (error) {
+                reject(error)
+              }
+            })
+          }
+        })
+      }
+    }
+
+    // debugger
+
+    const promise = new MyPromise((resolve, reject) => {
+      setTimeout(() => {
+        console.log('异步执行......')
+        resolve('执行了')
+      }, 1000)
+    })
+    
+
+    promise
+      .then((data) => {
+        console.log('promise ___data', data) 
+        return data
+      })
+
+    setTimeout(() => {
+      promise
+        .then((data) => {
+          console.log('promise1 ___data', data) 
+          return data
+        })
+    }, 3000)
+
+
+  </script>
+</body>
+</html>

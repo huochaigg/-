@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let data = { price: 5, quantity: 2 }
+    let target = null
+
+    class Dep {
+      constructor() {
+        this.subscribers = new Set()
+      }
+
+      depend() {
+        if (target) this.subscribers.add(target)
+      }
+
+      notify() {
+        this.subscribers.forEach(sub => sub())
+      }
+    }
+
+    let dep = new Dep()
+    let total = 0
+
+    function watcher(myFunc) {
+      target = myFunc
+      myFunc()
+      target = null
+    }
+
+    let proxy = new Proxy(data, {
+      get(obj, key) {
+        dep.depend()
+        return obj[key]
+      },
+      set(obj, key, value) {
+        obj[key] = value
+        dep.notify()
+        return true
+      }
+    })
+
+    // 建立依赖
+    watcher(() => {
+      total = proxy.price * proxy.quantity
+      console.log(`Total is: ${total}`)
+    })
+
+    watcher(() => {
+      console.log('')
+    })
+
+    // 修改属性自动触发更新
+    proxy.price = 20  // 输出：Total is: 40
+
+
+  </script>
+</body>
+
+</html>

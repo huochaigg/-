@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set</title>
+</head>
+
+<body>
+  <script>
+
+    const mySet = new Set([1, 2, 3, 4, 5]);
+    const colorSet = new Set(['red', 'green', 'blue']);
+    console.log(mySet); // Set { 1, 2, 3, 4, 5 }
+    // Set 是一个内置对象，表示一个集合。它的元素是唯一的，且是无序的。Set 的元素可以是任何类型，包括基本类型和引用类型。Set 的常用方法有：add()、delete()、has()、clear()、forEach() 等等。
+    // 1. Set.add(value) 用于向集合中添加一个元素。它的参数是要添加的元素，返回值是 Set 对象本身。
+    mySet.add(6); // Set { 1, 2, 3, 4, 5, 6 }
+    console.log(mySet); // Set { 1, 2, 3, 4, 5, 6 }
+
+    // 2. Set.delete(value) 用于从集合中删除一个元素。它的参数是要删除的元素，返回值是一个布尔值，表示是否删除成功。
+    // mySet.delete(3); // true
+    // console.log(mySet); // Set { 1, 2, 4, 5, 6 }
+
+    // 3. Set.has(value) 用于判断集合中是否包含某个元素。它的参数是要判断的元素，返回值是一个布尔值。
+    // console.log(mySet.has(2)); // true
+    // console.log(mySet.has(3)); // false
+
+    // 4. Set.clear() 用于清空集合。它没有参数，返回值是 Set 对象本身。
+    // mySet.clear(); // Set {}
+    // console.log(mySet); // Set {}
+
+    // 5. Set.forEach(callbackFn, thisArg) 用于遍历集合中的元素。它的第一个参数是回调函数，第二个参数是 this 的值（可选）。回调函数的参数是当前元素、当前元素的值、当前集合。
+    // const mySet2 = new Set([1, 2, 3, 4, 5]);
+    // mySet2.forEach((value, key, set) => {
+    //   console.log(value); // 1 2 3 4 5
+    // });
+    // colorSet.forEach((value, key, set) => {
+    //   console.log(key); // red green blue
+    // }, mySet);
+
+    // 6. Set.size 用于获取集合的大小。它没有参数，返回值是一个数字，表示集合中元素的个数。
+    // console.log(mySet2.size); // 5
+
+    // 7. Set.entries() 用于返回一个包含集合中所有元素的迭代器。它没有参数，返回值是一个迭代器对象。
+    // const entries = mySet2.entries();
+    // for (const entry of entries) {
+    //   console.log(entry); // [1, 1] [2, 2] [3, 3] [4, 4] [5, 5]
+    // }
+
+    const mySet3 = new Set(['a', 'b', 'c', 'd', 'e']);
+    const entries2 = mySet3.entries();
+    // for (const entry of entries2) {
+    //   console.log(entry); // ['a', 'a'] ['b', 'b'] ['c', 'c'] ['d', 'd'] ['e', 'e']
+    // }
+
+    // 8. Set.keys() 用于返回一个包含集合中所有元素的迭代器。它没有参数，返回值是一个迭代器对象。
+    // const keys = mySet2.keys();
+    // for (const key of keys) {
+    //   console.log(key); // 1 2 3 4 5
+    // }
+    // const keys2 = mySet3.keys();
+    // for (const key2 of keys2) {
+    //   console.log(key2); // ['a', 'a'] ['b', 'b'] ['c', 'c'] ['d', 'd'] ['e', 'e']
+    // }
+
+    // 9. Set.values() 用于返回一个包含集合中所有元素的迭代器。它没有参数，返回值是一个迭代器对象。
+    // const values = mySet2.values();
+    // for (const value of values) {
+    //   console.log(value); // 1 2 3 4 5
+    // }
+
+    // 10. Set Symbol.iterator 用于返回一个包含集合中所有元素的迭代器。它没有参数，返回值是一个迭代器对象。
+    // const iterator = mySet2[Symbol.iterator]();
+    // for (const value of iterator) {
+    //   console.log(value); // 1 2 3 4 5
+    // }
+
+    // 11. Set Symbol.toStringTag 用于返回集合的字符串标签。它没有参数，返回值是一个字符串，表示集合的类型。
+    // console.log(mySet2[Symbol.toStringTag]); // Set
+    // console.log(Object.prototype.toString.call(mySet2)); // [object Set]
+
+    // 12. Set Symbol.species 用于返回集合的构造函数。它没有参数，返回值是一个函数，表示集合的构造函数。
+    // console.log(mySet2.constructor); // [Function: Set]
+
+    // 13. Set Symbol.unscopables 用于返回集合的不可枚举属性。它没有参数，返回值是一个对象，表示集合的不可枚举属性。
+    // console.log(mySet2[Symbol.unscopables]); // { add: true, clear: true, delete: true, forEach: true, has: true, keys: true, values: true, entries: true, size: true }
+
+
+    // 14. Set Symbol.asyncIterator 用于返回集合的异步迭代器。它没有参数，返回值是一个异步迭代器对象。
+    // const asyncIterator = mySet2[Symbol.asyncIterator]();
+    // asyncIterator.next().then(result => {
+    //   console.log(result); // { value: 1, done: false }
+    // });
+    // asyncIterator.next().then(result => {
+    //   console.log(result); // { value: 2, done: false }
+    // });
+    // asyncIterator.next().then(result => {  
+    //   console.log(result); // { value: 3, done: false }
+    // });
+    // asyncIterator.next().then(result => {
+    //   console.log(result); // { value: 4, done: false }
+    // });
+    // asyncIterator.next().then(result => {
+    //   console.log(result); // { value: 5, done: false }
+    // });
+    // asyncIterator.next().then(result => {
+    //   console.log(result); // { value: undefined, done: true }
+    // });
+
+
+    // 15. Set Symbol.toPrimitive 用于返回集合的原始值。它没有参数，返回值是一个原始值，表示集合的原始值。
+    // console.log(mySet2[Symbol.toPrimitive]); // [Function: toPrimitive]
+    // console.log(Object.prototype.toString.call(mySet2)); // [object Set]
+
+
+    // 16. Set Symbol.toString 用于返回集合的字符串表示。它没有参数，返回值是一个字符串，表示集合的字符串表示。
+    // console.log(mySet2[Symbol.toString]); // [Function: toString]
+    // console.log(Object.prototype.toString.call(mySet2)); // [object Set]
+    // console.log(mySet2.toString()); // [object Set]
+
+    // 17.手写一个 Set 类
+    class MySet {
+      constructor(iterable = []) {
+        this.items = {}; // 用对象存储集合的值
+        for (const value of iterable) {
+          this.add(value);
+        }
+      }
+
+      // 添加元素
+      add(value) {
+        const key = this._toKey(value);
+        if (!this.items.hasOwnProperty(key)) {
+          this.items[key] = value;
+        }
+        return this; // 返回集合本身，支持链式调用
+      }
+
+      // 删除元素
+      delete(value) {
+        const key = this._toKey(value);
+        if (this.items.hasOwnProperty(key)) {
+          delete this.items[key];
+          return true; // 删除成功
+        }
+        return false; // 删除失败
+      }
+
+      // 检查是否包含某个值
+      has(value) {
+        const key = this._toKey(value);
+        return this.items.hasOwnProperty(key);
+      }
+
+      // 清空集合
+      clear() {
+        this.items = {};
+      }
+
+      // 获取集合大小
+      get size() {
+        return Object.keys(this.items).length;
+      }
+
+      // 遍历集合
+      forEach(callback, thisArg) {
+        for (const key in this.items) {
+          if (this.items.hasOwnProperty(key)) {
+            callback.call(thisArg, this.items[key], this.items[key], this);
+          }
+        }
+      }
+
+      // 返回值的迭代器
+      values() {
+        return Object.values(this.items)[Symbol.iterator]();
+      }
+
+      // 返回键值对的迭代器
+      entries() {
+        return Object.entries(this.items).map(([key, value]) => [value, value])[Symbol.iterator]();
+      }
+
+      // 返回键的迭代器（与 values 相同）
+      keys() {
+        return this.values();
+      }
+
+      // 内部方法：将值转换为唯一的键
+      _toKey(value) {
+        return typeof value + JSON.stringify(value);
+      }
+    }
+
+    // const mySet4 = new MySet([1, 2, 3, 4, 5]);
+    // mySet4.add(6); // MySet { items: { 'number1': 1, 'number2': 2, 'number3': 3, 'number4': 4, 'number5': 5, 'number6': 6 } }
+    // console.log(mySet4); // MySet { items: { 'number1': 1, 'number2': 2, 'number3': 3, 'number4': 4, 'number5': 5, 'number6': 6 } }
+    // mySet4.delete(3); // MySet { items: { 'number1': 1, 'number2': 2, 'number4': 4, 'number5': 5, 'number6': 6 } }
+    // console.log(mySet4); // MySet { items: { 'number1': 1, 'number2': 2, 'number4': 4, 'number5': 5, 'number6': 6 } }
+
+    // console.log(mySet4.has(2)); // true
+    // console.log(mySet4.has(3)); // false
+    // console.log(mySet4.size); // 5
+
+
+  </script>
+</body>
+
+</html>
