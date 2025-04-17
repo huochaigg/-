@@ -256,9 +256,7 @@
   
       this.buttons.forEach((btn) => {
         if (btnsMap.has(btn)) {
-          // 创建按钮实例
-          // 绑定按钮事件
-          // 绑定中介者
+          // 创建按钮实例，并传递中介者和按钮容器，把按钮添加到容器中
           new EditorButton(btn, this.mediator, this.buttonsContainer);
         }
       });
