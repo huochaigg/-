@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      width: 100px;
+      height: 100px;
+      background: red;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box"></div>
+
+  <script>
+    function throttle(func, wait, options = {}) {
+      let timer = null;
+      let lastCallTime = 0;
+      let lastInvokeTime = 0;
+      let maxWait = options.maxWait;
+      let lastArgs, lastThis;
+      let result;
+
+      const leading = options.leading !== false;
+      const trailing = options.trailing !== false;
+
+      function invokeFunc(time) {
+        lastInvokeTime = time;
+        result = func.apply(lastThis, lastArgs);
+        lastArgs = lastThis = null;
+        return result;
+      }
+
+      function shouldInvoke(time) {
+        const timeSinceLastCall = time - lastCallTime;
+        const timeSinceLastInvoke = time - lastInvokeTime;
+
+        return (
+          lastCallTime === 0 ||
+          timeSinceLastCall >= wait ||
+          (maxWait !== undefined && timeSinceLastInvoke >= maxWait)
+        );
+      }
+
+      function startTimer(pendingFunc, delay) {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(pendingFunc, delay);
+      }
+
+      function trailingEdge(time) {
+        timer = null;
+
+        if (trailing && lastArgs) {
+          return invokeFunc(time);
+        }
+        lastArgs = lastThis = null;
+        return result;
+      }
+
+      function remainingWait(time) {
+        const timeSinceLastCall = time - lastCallTime;
+        const timeSinceLastInvoke = time - lastInvokeTime;
+        const timeUntilNext = wait - timeSinceLastCall;
+        const timeUntilMax = maxWait !== undefined ? maxWait - timeSinceLastInvoke : timeUntilNext;
+
+        return Math.min(timeUntilNext, timeUntilMax);
+      }
+
+      function throttled(...args) {
+        const now = Date.now();
+        const isInvoking = shouldInvoke(now);
+
+        lastArgs = args;
+        lastThis = this;
+        lastCallTime = now;
+
+        if (isInvoking) {
+          if (!timer) {
+            if (leading) {
+              return invokeFunc(now);
+            }
+            startTimer(() => trailingEdge(Date.now()), wait);
+          } else if (maxWait !== undefined) {
+            startTimer(() => trailingEdge(Date.now()), wait);
+            return invokeFunc(now);
+          }
+        }
+
+        if (!timer) {
+          startTimer(() => trailingEdge(Date.now()), remainingWait(now));
+        }
+
+        return result;
+      }
+
+      throttled.cancel = function () {
+        if (timer) {
+          clearTimeout(timer);
+          timer = null;
+        }
+        lastInvokeTime = 0;
+        lastCallTime = 0;
+        lastArgs = lastThis = null;
+      };
+
+      return throttled;
+    }
+
+    const throttleClick = throttle(() => {
+      console.log('333')
+    }, 1000, {
+      leading: true,
+      trailing: true,
+      // maxWait: 3000
+    })
+
+    document.querySelector('.box').onclick = () => {
+      throttleClick()
+    }
+
+  </script>
+</body>
+
+</html>

@@ -1,26 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <style>
-    .box{
+    .box {
       width: 100px;
       height: 100px;
       background-color: red;
     }
 
+    .box2 {
+      width: 100px;
+      height: 100px;
+      background-color: green;
+    }
   </style>
 </head>
+
+<!-- 防抖和节流区别 -->
+
+<!-- 防抖：高频触发只会执行一次 -->
+
+<!-- 节流：高频触发会按照固定频率执行多次 -->
+
 <body>
 
-
-  <div class="box"></div>
+  <!-- <div class="box"></div>
 
   <script>
 
-    function throttle(fn, delay) {
+    function throttle1(fn, delay) {
       let timer = null
       return function (...args) {
         if (timer) {
@@ -34,7 +46,7 @@
     }
 
 
-    const throttleClick = throttle(() => {
+    const throttleClick = throttle1(() => {
       console.log('111')
     }, 1000)
 
@@ -42,6 +54,64 @@
       throttleClick()
     }    
 
+  </script> -->
+
+
+  <div class="box2"></div>
+
+  <script>
+    function throttle2(fn, delay, options) {
+      let timer = null
+      let lastArgs = null
+      let lastThis = null
+      let lastTime = 0
+      let now = null
+      const {
+        leading, // 第一次是否必须执行
+        // trailing,  // 最后一次是否必须执行
+        // maxWait, // 最长间隔多久执行
+      } = options
+
+      return function (...args) {
+        now = Date.now() 
+        lastArgs = args
+        lastThis = this
+
+        // lastTime为0 第一次执行
+        if (leading && lastTime === 0) {
+          fn.apply(lastThis, lastArgs)
+          lastTime = now
+          return
+        }
+
+        if (!timer) {
+          // 如果现在执行时间超过delay，也算第一次
+          if (now - lastTime > delay) {
+            fn.apply(lastThis, lastArgs)
+            lastTime = now
+            return
+          }
+
+          timer = setTimeout(() => {
+            fn.apply(lastThis, lastArgs)
+            lastTime = now
+            timer = null
+          }, delay)
+        }
+      }
+    }
+
+    const throttleClick2 = throttle2(() => {
+      console.log('222')
+    }, 1000, {
+      leading: true
+    })
+
+    document.querySelector('.box2').onclick = () => {
+      throttleClick2()
+    }
+
   </script>
 </body>
+
 </html>

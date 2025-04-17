@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box{
+      width: 100px;
+      height: 100px;
+      background-color: red;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- 明天记着看，new Function 是什么意思，和不使用new有哪些区别 -->
+
+
+  <div class="box"></div>
+
+  <script>
+
+    function debounce(fn, delay) {
+      let timer = null
+      return function (...args) {
+        if (timer) {
+          return
+        }
+        timer = setTimeout(() => {
+          fn.apply(this, args)
+          timer = null
+        }, delay)
+      }
+    }
+
+
+    const debounceClick = debounce(() => {
+      console.log('111')
+    }, 1000)
+
+    document.querySelector('.box').onclick = () => {
+      debounceClick()
+    }    
+
+  </script>
+</body>
+</html>
