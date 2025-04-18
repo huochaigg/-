@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      width: 100px;
+      height: 100px;
+      background: red;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box"></div>
+
+  <script>
+    function throttle(func, wait, options = {}) {
+      let timer = null;
+      let lastExecTime = 0; // 上次执行时间
+      let lastArgs, lastThis;
+
+      const leading = options.leading !== false; // 默认 true
+      const trailing = options.trailing !== false; // 默认 true
+
+      return function (...args) {
+        const now = Date.now();
+
+        // 首次调用时，如果不允许 leading，记录时间为 now，避免立即执行
+        if (lastExecTime === 0 && !leading) {
+          lastExecTime = now;
+        }
+
+        const remaining = wait - (now - lastExecTime);
+        lastArgs = args;
+        lastThis = this;
+
+        // 如果到达了触发时间点
+        if (remaining <= 0) {
+          // 清除可能存在的尾部定时器
+          if (timer) {
+            clearTimeout(timer);
+            timer = null;
+          }
+          lastExecTime = now;
+          return func.apply(lastThis, lastArgs);  
+        }
+
+        // 启动尾部补调用（只允许一个定时器）
+        if (trailing && !timer) {
+          timer = setTimeout(() => {
+            timer = null;
+            // 如果 leading 为 false，要重置 lastExecTime 为 0，以便下一次 leading 行为正常
+            lastExecTime = leading ? Date.now() : 0;
+            func.apply(lastThis, lastArgs);
+          }, remaining);
+        }
+      };
+    }
+
+    const throttleClick = throttle(() => {
+      console.log('333')
+    }, 1000, {
+      leading: true,
+      trailing: false,
+      // maxWait: 3000
+    })
+
+    document.querySelector('.box').onclick = () => {
+      throttleClick()
+    }
+
+  </script>
+</body>
+
+</html>
