@@ -30,55 +30,56 @@
       let lastArgs = null
       let lastThis = null
       let lastTime = 0 // lastTime
-      let now = 0
       const {
-        leading, // 是否在节流开始时立即调用一次（默认 true）
-        trailing,  // 是否在节流结束时再调用一次（默认 true）
+        leading = true, // 是否在节流开始时立即调用一次（默认 true）
+        trailing = true,  // 是否在节流结束时再调用一次（默认 true）
         // maxWait, // 最长间隔多久执行
       } = options
 
       return function (...args) {
-        now = Date.now()
+        const now = Date.now()
         lastArgs = args
         lastThis = this
 
-        const remainning = delay - (now - lastTime) // 剩余时间
-
-        // 第一次调用
+        // 初次调用
         if (leading && !lastTime) {
+          fn.apply(lastThis, lastArgs)
           console.log(1)
           lastTime = now
-          fn.apply(lastThis, args)
-          return
+          timer = null
+          clearTimeout(timer)
         }
 
-        // 剩余时间小于0，或者有异常情况，则重置
-        if (remainning <= 0 || remainning > delay) {
-          lastTime = now
-          clearTimeout(timer)
-          timer = null  
+        const remainning = delay - (now - lastTime) // 剩余时间
 
+        // 超时调用：
+        if (!lastTime || remainning <= 0 || remainning > delay) {
           if (leading) {
+            fn.apply(lastThis, lastArgs)
             console.log(2)
-            fn.apply(lastThis, args)
-            return
+            lastTime = now
+            timer = null
+            clearTimeout(timer)
           }
-        } else if (trailing && !timer) {
+        }
+
+        if (trailing && !timer) {
           timer = setTimeout(() => {
             console.log(3)
             lastTime = Date.now()
-            fn.apply(lastThis. args)
+            fn.apply(lastThis, lastArgs)
             timer = null
-          }, remainning)
+          }, !lastTime ? delay : remainning)
         }
+        
       }
     }
 
     const throttleClick = throttle(() => {
       console.log('33333')
     }, 1000, {
-      leading: false,
-      trailing: true,
+      leading: true,
+      trailing: false,
     })
 
     document.querySelector('.box').onclick = () => {
