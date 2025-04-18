@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: blue;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box"></div>
+
+  <script>
+
+    function debounce(func, wait, { leading = false, trailing = true } = {}) {
+      let timeout = null;
+      let lastArgs;
+
+      return function (...args) {
+        lastArgs = args; // 始终保存最新参数
+
+        if (timeout) {
+          clearTimeout(timeout);
+        } else if (leading) {
+          // 首次触发且需要 leading 时立即执行
+          func.apply(this, args);
+        }
+
+        timeout = setTimeout(() => {
+          if (trailing) {
+            func.apply(this, lastArgs);
+          }
+          timeout = null; // 重置状态
+        }, wait);
+      };
+    }
+    
+    const debounceClick = debounce(() => {
+      console.log('333')
+    }, 1000, {
+      leading: true,
+      trailing: true,
+      // maxWait: 3000
+    })
+
+    document.querySelector('.box').onclick = () => {
+      debounceClick()
+    }
+
+
+  </script>
+</body>
+
+</html>
