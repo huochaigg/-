@@ -9,7 +9,7 @@
     .box {
       width: 100px;
       height: 100px;
-      background-color: red;
+      background-color: blue;
     }
   </style>
 </head>
@@ -32,7 +32,6 @@
       let lastTime = 0
       let now = 0
       const {
-        leading, // 是否在节流开始时立即调用一次（默认 true）
         trailing,  // 是否在节流结束时再调用一次（默认 true）
         // maxWait, // 最长间隔多久执行
       } = options
@@ -43,15 +42,13 @@
         lastThis = this
 
         const remainning = delay - (now - lastTime) // 剩余时间
-        // lastTime为0 第一次执行
-        if (leading) {
-          // 剩余时间少于于0，或者大于delay（异常情况）也算重新开始,lastTime为0 第一次执行
-          if (remainning <= 0 || remainning > delay || lastTime === 0) {
-            fn.apply(lastThis, lastArgs)
-            console.log(2)
-            lastTime = now
-            return
-          }
+        // console.log('remainning', remainning)
+        // 剩余时间少于于0，或者大于delay（异常情况）也算重新开始
+        if (remainning <= 0 || remainning > delay) {
+          fn.apply(lastThis, lastArgs)
+          console.log(2)
+          lastTime = now
+          return
         }
 
         if (trailing && !timer) {
@@ -60,16 +57,15 @@
             console.log(3)
             lastTime = Date.now()
             timer = null
-          }, remainning < 0 ? delay : remainning)
+          }, remainning)
         }
       }
     }
 
     const throttleClick = throttle(() => {
       console.log('222')
-    }, 2000, {
-      leading: true,
-      trailing: false,
+    }, 1000, {
+      trailing: true,
     })
 
     document.querySelector('.box').onclick = () => {
