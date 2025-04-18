@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: red;
+    }
+  </style>
+</head>
+
+<!-- 防抖和节流区别 -->
+
+<!-- 防抖：高频触发只会执行一次 -->
+
+<!-- 节流：高频触发会按照固定频率执行多次 -->
+
+<body>
+
+  <div class="box"></div>
+
+  <script>
+    function throttle(fn, delay, options) {
+      let timer = null
+      let lastArgs = null
+      let lastThis = null
+      let lastTime = 0
+      let now = 0
+      const {
+        leading, // 是否在节流开始时立即调用一次（默认 true）
+        trailing,  // 是否在节流结束时再调用一次（默认 true）
+        // maxWait, // 最长间隔多久执行
+      } = options
+
+      return function (...args) {
+        now = Date.now()
+        lastArgs = args
+        lastThis = this
+
+        // lastTime为0 第一次执行
+        if (leading) {
+          if (lastTime === 0) {
+            fn.apply(lastThis, lastArgs)
+            console.log(1)
+            lastTime = now
+            return
+          }
+        }
+
+        const remainning = delay - (now - lastTime) // 剩余时间
+        // console.log('remainning', remainning)
+        // 剩余时间少于于0，或者大于delay（异常情况）也算重新开始
+        if (remainning <= 0 || remainning > delay) {
+          fn.apply(lastThis, lastArgs)
+          console.log(2)
+          lastTime = now
+          return
+        }
+
+        if (trailing && !timer) {
+          timer = setTimeout(() => {
+            fn.apply(lastThis, lastArgs)
+            console.log(3)
+            lastTime = Date.now()
+            timer = null
+          }, remainning)
+        }
+      }
+    }
+
+    const throttleClick = throttle(() => {
+      console.log('222')
+    }, 1000, {
+      leading: true,
+      trailing: true,
+    })
+
+    document.querySelector('.box').onclick = () => {
+      throttleClick()
+    }
+
+  </script>
+</body>
+
+</html>
