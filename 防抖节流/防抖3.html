@@ -29,23 +29,8 @@
       } = options;
       return function (...args) {
         
-        if (leading) {
-          if (!timer) {
-            fn.apply(this, args)
-          }
-        }
-
-        if (timer) {
-          clearTimeout(timer);
-        }
-        timer = setTimeout(() => {
-          if (trailing) {
-            lastExecTime = Date.now()
-            fn.apply(this, args);
-          }
-          timer = null
-        }, delay);
-      };
+        
+      }
 
     }
 
