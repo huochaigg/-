@@ -24,10 +24,10 @@
   <script>
     const debounceClick = _.debounce(() => {
       console.log('222')
-    }, 1000, {
+    }, 300, {
       leading: true,
-      trailing: false,
-      // maxWait: 3000
+      trailing: true,
+      maxWait: 1000
     })
 
     document.querySelector('.box').onclick = () => {

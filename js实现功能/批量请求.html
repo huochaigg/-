@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    function batchRequest(urls, limit) {
+      return new Promise((resolve, reject) => {
+        const results = []         // 存储结果
+        let index = 0              // 当前请求索引
+        let activeCount = 0        // 当前活跃请求数
+
+        const total = urls.length
+
+        function next() {
+          if (index === total && activeCount === 0) {
+            resolve(results)
+            return
+          }
+
+          while (activeCount < limit && index < total) {
+            const currentIndex = index++
+            const url = urls[currentIndex]
+            activeCount++
+
+            fetch(url)
+              .then(res => res.json())
+              .then(data => {
+                results[currentIndex] = data
+              })
+              .catch(err => {
+                results[currentIndex] = err
+              })
+              .finally(() => {
+                activeCount--
+                next() // 启动下一个任务
+              })
+          }
+        }
+
+        next() // 启动初始任务
+      })
+    }
+
+    const urls = [
+      '/api/user1',
+      '/api/user2',
+      '/api/user3',
+      '/api/user4',
+      '/api/user5'
+    ]
+
+    batchRequest(urls, 2).then(results => {
+      console.log('所有请求完成:', results)
+    })
+
+
+
+  </script>
+</body>
+
+</html>

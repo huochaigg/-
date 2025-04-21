@@ -22,24 +22,54 @@
 
     function debounce(fn, delay, options) {
       let timer = null;
+      let maxWaitTimer = null;
+      let lastArgs = null;
+      let lastThis = null;
 
       const {
         leading = false,
-        trailing = true
+        trailing = true,
+        maxWait,
       } = options;
-      return function (...args) {
-        
-        
-      }
 
+      return function (...args) {
+        lastArgs = args;
+        lastThis = this
+
+        clearTimeout(timer)
+
+        if (leading && !timer) {
+          fn.apply(lastThis, lastArgs)
+          clearTimeout(maxWaitTimer)
+          maxWaitTimer = null
+        }
+
+        timer = setTimeout(() => {
+          if (trailing) {
+            fn.apply(lastThis, lastArgs)
+          }
+          clearTimeout(maxWaitTimer)
+          maxWaitTimer = null
+          timer = null
+        }, delay)
+
+        if (maxWait && !maxWaitTimer) {
+          maxWaitTimer = setTimeout(() => {
+            fn.apply(lastThis, lastArgs)
+            clearTimeout(timer)
+            maxWaitTimer = null
+          }, maxWait)
+        }
+
+      }
     }
 
     const debounceClick = debounce(() => {
       console.log('333')
     }, 1000, {
-      leading: false,
+      leading: true,
       trailing: true,
-      // maxWait: 3000
+      maxWait: 3000
     })
 
     document.querySelector('.box').onclick = () => {

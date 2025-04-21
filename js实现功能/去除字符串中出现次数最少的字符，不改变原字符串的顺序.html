@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <!-- 去除字符串中出现次数最少的字符，不改变原字符串的顺序。 -->
+  <!-- “ababac” —— “ababa”
+  “aaabbbcceeff” —— “aaabbb” -->
+
+  <script>
+
+    function removeLeastFrequentChar(str) {
+      const charCount = {};
+      for (const char of str) {
+        charCount[char] = (charCount[char] || 0) + 1;
+      }
+
+      const minCount = Math.min(...Object.values(charCount));
+      const leastFrequentChars = Object.keys(charCount).filter(char => charCount[char] === minCount);
+
+      return str.split('').filter(char => !leastFrequentChars.includes(char)).join('');
+    }
+
+    console.log(removeLeastFrequentChar("ababac")); // "ababa"
+    console.log(removeLeastFrequentChar("aaabbbcceeff")); // "aaabbb"
+  </script>
+</body>
+</html>

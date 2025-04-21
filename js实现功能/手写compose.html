@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <!-- 手写compose -->
+
+  <script>
+
+    // 基本写法
+    // const add = (a) => a + 7;
+
+    // const multiply = (a) => a * 5;
+
+    // const compose = (...fns) => {
+    //   return function (arg) {
+    //     console.log('arg', arg)
+    //     return fns.reduceRight((pre, next) => {
+    //       console.log(pre, next)
+    //       return next(pre)
+    //     }, arg)
+    //   }
+    // }
+
+    // const composed = compose(multiply, add)
+
+    // console.log(composed(8))
+
+
+    // 异步
+
+    const f1 = async (x) => {
+      await new Promise(r => setTimeout(r, 1000)); // 模拟异步
+      return x + 'A';
+    };
+
+    const f2 = (x) => {
+      return x + 'B';
+    };
+
+    const f3 = async (x) => {
+      await new Promise(r => setTimeout(r, 500));
+      return x + 'C';
+    };
+
+    f3(3).then(res => console.log(res))
+
+
+    function composeAsync(...fns) {
+      return function (arg) {
+        return fns.reduceRight((acc, fn) => {
+          return acc instanceof Promise
+            ? acc.then(fn)
+            : Promise.resolve(fn(acc));
+        }, arg);
+      };
+    }
+
+
+    const composed = composeAsync(f1, f2, f3);
+
+    composed('X').then(res => console.log(res))
+
+  </script>
+</body>
+
+</html>

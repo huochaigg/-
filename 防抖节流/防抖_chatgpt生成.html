@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: orange;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box"></div>
+
+  <script>
+
+    function debounce(fn, wait, options = {}) {
+      let timerId = null;       // 普通的 trailing 延迟定时器
+      let maxTimerId = null;    // maxWait 定时器
+      let lastArgs = null;      // 缓存的最新参数
+      let lastThis = null;      // 缓存的最新 this
+      let startTime = 0;        // 记录“本次防抖周期”第一次调用时的时间戳
+
+      const { leading = false, trailing = true, maxWait } = options;
+
+      return function debounced(...args) {
+        const now = Date.now();
+        lastArgs = args;
+        lastThis = this;
+
+        // ------ 1. 记录第一次调用的时间 ------
+        if (startTime === 0) {
+          startTime = now;
+        }
+
+        // ------ 2. 判断这次是否要立即执行（leading） ------
+        // 只有当没有任何正在运行的 trailing 定时器时，才认为是“第一波”调用
+        const callOnLeading = leading && timerId === null;
+
+        // ------ 3. 先挂好 trailing 定时器 ------
+        clearTimeout(timerId);
+        timerId = setTimeout(() => {
+          // 到 wait 后，检查是否要做 trailing
+          if (trailing) {
+            fn.apply(lastThis, lastArgs);
+          }
+          // 结束本轮防抖，清理状态
+          clearTimeout(maxTimerId);
+          maxTimerId = null;
+          timerId = null;
+          startTime = 0;
+        }, wait);
+
+        // ------ 4. 再挂 maxWait 定时器 ------
+        if (maxWait != null && maxTimerId === null) {
+          const timeSinceStart = now - startTime;
+          const remaining = maxWait - timeSinceStart;
+          // 如果已经超过 maxWait，就立即触发；否则等剩余时间
+          maxTimerId = setTimeout(() => {
+            clearTimeout(timerId);
+            timerId = null;
+            fn.apply(lastThis, lastArgs);
+            clearTimeout(maxTimerId);
+            maxTimerId = null;
+            startTime = 0;
+          }, remaining > 0 ? remaining : 0);
+        }
+
+        // ------ 5. 最后做 leading 执行 ------
+        if (callOnLeading) {
+          fn.apply(lastThis, lastArgs);
+        }
+      };
+    }
+
+
+
+    const debounceClick = debounce(() => {
+      console.log('333')
+    }, 1000, {
+      leading: true,
+      trailing: true,
+      maxWait: 3000
+    })
+
+    document.querySelector('.box').onclick = () => {
+      debounceClick()
+    }
+
+
+  </script>
+</body>
+
+</html>

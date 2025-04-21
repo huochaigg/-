@@ -47,6 +47,23 @@
       emitter.on(event, wrapper);
     }
 
+    // 使用示例
+    const emitter = mitt();
+    const handler = (evt) => {
+      console.log('Event triggered:', evt);
+    };
+    emitter.on('event', handler);
+    emitter.emit('event', { key: 'value' }); // Event triggered: { key: 'value' }
+
+    emitter.off('event', handler);
+
+    emitter.emit('event', { key: 'value' }); // 不会触发事件
+
+    // 使用once方法
+    once('event', (evt) => {
+      console.log('This will only be triggered once:', evt);
+    });
+
 
   </script>
 </body>
