@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      width: 100%;
+      height: 5000px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box scroll-container">
+
+  </div>
+
+  <script>
+
+    function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    window.onload = function () {
+      // 添加20个div元素
+      // 每个元素随机颜色，高度250px
+      for (let i = 0; i < 20; i++) {
+        const div = document.createElement('div');
+        div.style.backgroundColor = getRandomColor();
+        div.style.height = '250px';
+        div.style.width = '100%';
+        document.querySelector('.box').appendChild(div);
+      }
+    }
+  </script>
+
+  <script>
+
+    function refreshData () {
+      // 模拟数据刷新
+      console.log('刷新数据...');
+      setTimeout(() => {
+        console.log('数据刷新完成!');
+      }, 2000);
+    }
+
+    let startY = 0;
+    let isPulling = false;
+    let distance = 0;
+
+    const container = document.querySelector('.scroll-container');
+
+    container.addEventListener('touchstart', e => {
+      if (document.documentElement.scrollTop === 0) {
+        startY = e.touches[0].clientY;
+        isPulling = true;
+      }
+    });
+
+    container.addEventListener('touchmove', e => {
+      if (!isPulling) return;
+      console.log('e.touches[0]', e.touches[0])
+      distance = e.touches[0].clientY - startY;
+      if (distance > 0) {
+        container.style.transform = `translateY(${Math.min(distance, 100)}px)`;
+      }
+    });
+
+    container.addEventListener('touchend', () => {
+      if (!isPulling) return;
+      container.style.transition = 'transform 0.3s ease';
+      container.style.transform = 'translateY(0px)';
+      isPulling = false;
+
+      // 如果下拉距离足够大，触发刷新
+      if (distance > 60) {
+        refreshData();
+      }
+    });
+
+
+  </script>
+</body>
+
+</html>
