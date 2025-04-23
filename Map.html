@@ -229,6 +229,45 @@
     const uniqueArr = [...new Map(arr1.map(item => [item, item])).values()];
     console.log(uniqueArr); // [1, 2, 3, 4, 5]
 
+    // 怎么遍历 ES6 中的 Map 对象？
+    // 1. forEach() 方法：可以遍历 Map 中的每个键值对。
+    const map = new Map([['a', 1], ['b', 2], ['c', 3]]);
+    map.forEach((value, key) => {
+      console.log(key, value); // a 1 b 2 c 3
+    });
+
+    // 2. for...of 循环：可以遍历 Map 中的每个键值对。
+    for (const [key, value] of map) {
+      console.log(key, value); // a 1 b 2 c 3
+    }
+
+    // 3. entries() 方法：返回一个包含 Map 中所有键值对的迭代器。
+    const entries2 = map.entries();
+    for (const entry of entries2) {
+      console.log(entry); // ['a', 1] ['b', 2] ['c', 3]
+    }
+
+    // 4. keys() 方法：返回一个包含 Map 中所有键的迭代器。
+    const keys2 = map.keys();
+    for (const key of keys2) {
+      console.log(key); // 'a' 'b' 'c'
+    }
+
+    // 5. values() 方法：返回一个包含 Map 中所有值的迭代器。
+    
+    // 6. for...in 循环：不能直接遍历 Map 对象，但可以通过 Object.keys() 方法获取 Map 中的所有键，然后使用 for...in 循环遍历。
+    const keys3 = Object.keys(map);
+    for (const key of keys3) {
+      console.log(key, map.get(key)); // a 1 b 2 c 3
+    }
+
+    // 7. Array.from() 方法：可以将 Map 对象转换为数组，然后使用 forEach() 方法遍历。
+
+    // 8. 扩展运算符：可以将 Map 对象转换为数组，然后使用 forEach() 方法遍历。
+
+    // 9. 迭代器：可以使用 Map 对象的迭代器方法（如 entries()、keys()、values()）获取迭代器对象，然后使用 for...of 循环遍历。
+
+    //  
 
   </script>
 </body>
