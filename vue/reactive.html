@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+
+    // 实现vue3的reactive函数
+
+    function reactive(target) {
+      if (typeof target !== 'object' || target === null) {
+        return target;
+      }
+
+      const handler = {
+        get(target, key, receiver) {
+          const result = Reflect.get(target, key, receiver);
+          console.log(`Getting ${key}: ${result}`);
+          return result;
+        },
+        set(target, key, value, receiver) {
+          console.log(`Setting ${key} to ${value}`);
+          return Reflect.set(target, key, value, receiver);
+        }
+      };
+
+      return new Proxy(target, handler);
+    }
+
+    const obj = { name: 'John', age: 30 };
+    const reactiveObj = reactive(obj);
+
+    console.log(reactiveObj.name); // Getting name: John
+    reactiveObj.age = 31; // Setting age to 31
+
+    console.log(reactiveObj.age); // Getting age: 31
+    console.log(reactiveObj); // { name: 'John', age: 31 }
+
+  </script>
+</body>
+</html>

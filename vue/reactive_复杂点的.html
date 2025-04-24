@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .button {
+      width: 100px;
+      height: 100px;
+      background-color: #0082ea;
+      text-align: center;
+      line-height: 100px;
+      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="button">点击</div>
+
+  <script>
+    (function () {
+      const targetMap = new WeakMap();
+      let activeEffect = null;
+
+      function effect(fn, options = {}) {
+        const effectFn = () => {
+          activeEffect = effectFn
+          return fn() // 执行副作用函数
+        }
+        if (!options.lazy) {
+          effectFn() // 非 lazy 的 effect 立即执行
+        }
+        effectFn.scheduler = options.scheduler
+        return effectFn // 返回 runner
+      }
+
+      // 简化实现
+      // function effect(fn) {
+      //   activeEffect = fn;
+      //   fn();
+      //   activeEffect = null;
+      // }
+
+      function track(target, key) {
+        if (!activeEffect) return;
+
+        let depsMap = targetMap.get(target);
+        if (!depsMap) {
+          depsMap = new Map();
+          targetMap.set(target, depsMap);
+        }
+
+        let dep = depsMap.get(key);
+        if (!dep) {
+          dep = new Set();
+          depsMap.set(key, dep);
+        }
+
+        dep.add(activeEffect);
+      }
+
+      function trigger(target, key) {
+        const depsMap = targetMap.get(target);
+        if (!depsMap) return;
+
+        const effects = depsMap.get(key);
+        if (effects) {
+          effects.forEach(fn => fn());
+        }
+      }
+
+      function reactive(target) {
+        return new Proxy(target, {
+          get(target, key, receiver) {
+            track(target, key);
+            return Reflect.get(target, key, receiver);
+          },
+          set(target, key, value, receiver) {
+            const result = Reflect.set(target, key, value, receiver);
+            trigger(target, key);
+            return result;
+          }
+        });
+      }
+
+      function ref(initialValue) {
+        const wrapper = {
+          value: initialValue
+        };
+
+        return reactive(wrapper);
+      }
+
+      function computed(getter) {
+        let value
+        let dirty = true // 标记是否需要重新计算
+
+        const runner = effect(getter, {
+          lazy: true,
+          scheduler: () => {
+            // 响应式依赖变了
+            dirty = true
+            trigger(obj, 'value') // 通知外部使用者
+          }
+        })
+
+        const obj = {
+          get value() {
+            if (dirty) {
+              value = runner() // 手动执行 getter
+              dirty = false
+            }
+            track(obj, 'value') // 依赖收集：谁访问了我？
+            return value
+          }
+        }
+
+        return obj
+      }
+
+
+      window.ref = ref;
+      window.reactive = reactive;
+      window.effect = effect;
+      window.computed = computed;
+
+    })()
+
+
+    // 测试代码 
+    const obj = reactive({ count: 0 });
+    effect(() => {
+      console.log(obj.count);
+    });
+
+    const button = document.querySelector('.button');
+
+    const count = ref(1)
+    const doubled = computed(() => count.value * 2)
+
+    console.log('doubled', doubled.value) // 触发计算
+
+    button.addEventListener('click', () => {
+      // debugger
+      obj.count++;
+    });
+  </script>
+</body>
+
+</html>

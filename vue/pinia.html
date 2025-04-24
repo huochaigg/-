@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 实现 Pinia 的基本功能
+
+    // 创建一个全局存储对象
+    const storeMap = new Map();
+
+    function defineStore(id, options) {
+      if (storeMap.has(id)) {
+        return storeMap.get(id);
+      }
+
+      const state = options.state ? options.state() : {};
+      const getters = {};
+      const actions = options.actions || {};
+
+      // 实现 getters
+      if (options.getters) {
+        for (const [key, getterFn] of Object.entries(options.getters)) {
+          Object.defineProperty(getters, key, {
+            get: () => getterFn(state),
+          });
+        }
+      }
+
+      // 创建 store 实例
+      const store = {
+        state,
+        ...getters,
+        ...Object.keys(actions).reduce((acc, actionKey) => {
+          acc[actionKey] = actions[actionKey].bind(null, state);
+          return acc;
+        }, {}),
+      };
+
+      storeMap.set(id, store);
+      return store;
+    }
+
+    // 测试代码
+    const useCounterStore = defineStore('counter', {
+      state: () => ({
+        count: 0,
+      }),
+      getters: {
+        doubleCount: (state) => state.count * 2,
+      },
+      actions: {
+        increment(state) {
+          state.count++;
+        },
+        decrement(state) {
+          state.count--;
+        },
+      },
+    });
+
+    const counterStore = useCounterStore;
+
+    console.log('初始 count:', counterStore.state.count); // 输出: 0
+    console.log('初始 doubleCount:', counterStore.doubleCount); // 输出: 0
+
+    counterStore.increment();
+    console.log('increment 后 count:', counterStore.state.count); // 输出: 1
+    console.log('increment 后 doubleCount:', counterStore.doubleCount); // 输出: 2
+
+    counterStore.decrement();
+    console.log('decrement 后 count:', counterStore.state.count); // 输出: 0
+    console.log('decrement 后 doubleCount:', counterStore.doubleCount); // 输出: 0
+  </script>
+</body>
+
+</html>

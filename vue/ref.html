@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    // 实现vue3的ref函数（带响应式功能）
+
+    let activeEffect = null;
+
+    function effect(fn) {
+      activeEffect = fn;
+      fn(); // 立即执行一次
+      activeEffect = null;
+    }
+
+    function ref(value) {
+      const dep = new Set();
+
+      return {
+        _value: value,
+        get value() {
+          if (activeEffect) {
+            dep.add(activeEffect);
+          }
+          return this._value;
+        },
+        set value(newValue) {
+          if (newValue !== this._value) {
+            this._value = newValue;
+            dep.forEach(effect => effect());
+          }
+        }
+      };
+    }
+
+    // 测试代码
+    const myRef = ref(10);
+
+    effect(() => {
+      console.log('myRef的值是:', myRef.value);
+    });
+
+    myRef.value = 20; // 触发响应式，输出: myRef的值是: 20
+    myRef.value = 30; // 触发响应式，输出: myRef的值是: 30
+  </script>
+</body>
+
+</html>
