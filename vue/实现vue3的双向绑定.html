@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <input type="text" id="input" />
+    <p id="output"></p>
+  </div>
+
+  <script>
+
+    // ===================== 依赖收集核心 =====================
+    let activeEffect = null
+    const targetMap = new WeakMap()
+
+    function track(target, key) {
+      if (!activeEffect) return
+
+      let depsMap = targetMap.get(target)
+      if (!depsMap) targetMap.set(target, depsMap = new Map())
+
+      let dep = depsMap.get(key)
+      if (!dep) depsMap.set(key, dep = new Set())
+
+      dep.add(activeEffect)
+    }
+
+    function trigger(target, key) {
+      const depsMap = targetMap.get(target)
+      if (!depsMap) return
+
+      const dep = depsMap.get(key)
+      if (!dep) return
+
+      dep.forEach(effect => effect())
+    }
+
+    function effect(fn) {
+      const effectFn = () => {
+        activeEffect = effectFn
+        fn()
+        activeEffect = null
+      }
+      effectFn()
+      return effectFn
+    }
+
+    // ===================== reactive =====================
+    function reactive(target) {
+      return new Proxy(target, {
+        get(obj, key) {
+          track(obj, key)
+          return obj[key]
+        },
+        set(obj, key, value) {
+          obj[key] = value
+          trigger(obj, key)
+          return true
+        }
+      })
+    }
+
+    // ===================== ref 实现 =====================
+    function ref(initialValue) {
+      const wrapper = {
+        _value: initialValue,
+        get value() {
+          track(wrapper, 'value')
+          return wrapper._value
+        },
+        set value(val) {
+          wrapper._value = val
+          trigger(wrapper, 'value')
+        }
+      }
+      return wrapper
+    }
+
+
+  </script>
+
+  <script>
+
+    const state = reactive({ text: 'hello' })
+
+    // effect(() => {
+    //   document.querySelector('#output').textContent = state.text
+    // })
+
+    // document.querySelector('#input').addEventListener('input', e => {
+    //   state.text = e.target.value
+    // })
+
+
+    const message = ref('hello')
+
+    effect(() => {
+      document.querySelector('#output').textContent = message.value
+    })
+
+    document.querySelector('#input').addEventListener('input', e => {
+      message.value = e.target.value
+    })
+  </script>
+</body>
+
+</html>

@@ -210,6 +210,34 @@
         cat2.speak(); // 调用子类方法，输出'猫叫声'
 
 
+        // 20.
+        const options = {
+            name: 'John',
+            func: {
+                getName() {
+                    console.log('getName', this.name); 
+                },
+                getName2: () => {
+                    console.log('getName2', this.name); 
+                }, 
+                getName3: function () {
+                    console.log('getName3', this.name); 
+                },
+                // getName4: function() {
+                //     console.log('getName4', this.name); 
+                // }.bind(options) // 使用bind方法，this指向options对象
+            },
+            func2: {
+                // getName: options.func.getName.bind(options), // 报错 options还没有初始化完成
+                // getName3: options.func.getName3.bind(options), // 报错
+            }
+        }
+        options.func.getName(); // 调用方法，输出undefined
+        options.func.getName2(); // 调用方法，输
+        options.func.getName3(); // 调用方法，输出undefined
+        options.func.getName4(); // 
+        // options.func2.getName(); // 
+        options.func2.getName3(); // 
     </script>
 </body>
 </html>
