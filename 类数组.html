@@ -24,6 +24,11 @@
         // 类数组对象是指具有 length 属性和索引属性的对象，但不是数组实例。
         // 例如，arguments 对象、DOM NodeList、HTMLCollection 等都属于类数组对象。
         // 类数组对象可以使用 Array.from() 方法转换为真正的数组，或者使用 Array.prototype.slice.call() 方法进行转换。
+
+        // 类数组和数组的区别是什么？
+        // 1. 类数组对象是一个对象，具有 length 属性和索引属性，但不是数组实例。
+        // 2. 类数组对象没有数组的方法，例如 push、pop、shift、unshift 等。 
+
         // 1. arguments 对象
         function sum() {
             // arguments 是一个类数组对象
