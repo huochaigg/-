@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+
+    let list = [1,2, 3, 5];
+
+    console.log(list.some(item => item % 2 === 0))
+
+
+    // 手写some
+    Array.prototype.mySome = function(callback, thisArgs) {
+      if (typeof callback !== 'function') {
+        throw new Error('callback mast be a function')
+      }
+
+      let that = this || []
+
+      for (let i = 0; i < that.length; i++) {
+        if (i in that && callback(that[i])) {
+          return true
+        }
+      }
+      return false;
+    }
+
+
+    console.log(list.mySome(item => item % 2 === 0));
+    
+
+  </script>
+</body>
+</html>

@@ -57,24 +57,6 @@
 				return Reflect.getOwnPropertyDescriptor(target, property)
 			},
 
-			// defineProperty是一个拦截器，用于拦截对象的属性定义操作
-			// 例如：Object.defineProperty()等操作
-			defineProperty(target, property, descriptor) {
-				console.log('defineProperty', target, property, descriptor)
-				return Reflect.defineProperty(target, property, descriptor)
-				// 该拦截器返回一个布尔值，表示属性定义是否成功
-				// 如果返回true，则表示属性定义成功；如果返回false，则表示属性定义失败
-				// 如何定义或修改对象 enumerable、configurable、writable等属性
-				// 1. 使用Object.defineProperty()方法定义对象属性reate
-				// 2. 使用Object.defineProperties()方法定义多个对象属性
-				// 3. 使用Object.create()方法创建对象时定义对象属性
-				// 4. 使用Object.assign()方法合并对象时定义对象属性
-				// 5. 使用Object.freeze()方法冻结对象时定义对象属性
-				// 6. 使用Object.seal()方法密封对象时定义对象属性
-				// 7. 使用Object.preventExtensions()方法防止对象扩展时定义对象属性
-				// 8. 使用Object.isExtensible()方法判断对象是否可扩展时定义对象属性
-			},
-
 			// preventExtensions是一个拦截器，用于拦截对象的防止扩展操作
 			// 例如：Object.preventExtensions()等操作
 			// 该拦截器返回一个布尔值，表示对象是否可扩展

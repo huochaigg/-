@@ -6,6 +6,41 @@
   <title>Document</title>
 </head>
 <body>
-  
+  <script>
+
+    const list = [1, 2, 3, 4, 5]
+    const res = list.reduce((cur, next) => cur + next, 100)
+
+    Array.prototype.myReduce = function (callback, initVal) {
+      // fn 是一个函数，init 是初始值
+      if (typeof callback !== 'function') {
+        throw new TypeError('callback must be a function')
+      }
+      
+      let that = this || [];
+      let accumulator; 
+      let index = 0;
+      let len = that.length;
+
+      if (initVal) {
+        index = 1
+        accumulator = initVal
+      } else {
+        index = 0
+        accumulator = that[0]
+      }
+
+      for (let i = index; i < len; i++) {
+        accumulator = callback(accumulator, that[i], i, that)
+      }
+
+      return accumulator;
+    }
+
+    console.log(
+      list.myReduce((cur, next) => cur + next * 2, 100)
+    )
+
+  </script>
 </body>
 </html>

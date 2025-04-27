@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    const list = [1, 2, 3, 4, 5, 6];
+
+    const result = list.filter(item => item % 2 === 0)
+    console.log(result)
+
+    Array.prototype.myFilter = function(callback) {
+      if (typeof callback !== 'function') {
+        throw TypeError('callback must be a function')
+      }
+      
+      const that = this || [];
+      const len = that.length;
+      const result = []
+
+      for (let i = 0; i < that.length; i ++) {
+        if (i in that && callback(that[i])) {
+          result.push(that[i])
+        }
+      }
+
+      return result;
+    }
+
+    console.log(list.myFilter(item => item % 2 === 0))
+
+  </script>
+</body>
+</html>
