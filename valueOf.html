@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    const obj = {
+      [Symbol.toPrimitive](hint) {
+        if (hint === "number") {
+          return 42;
+        }
+        return "hello";
+      }
+    };
+
+    const obj2 = {
+      valueOf() {
+        return 3
+      }
+    }
+
+    const obj3 = {
+      toString() {
+        return '5'
+      }
+    }
+
+    console.log(obj2 + obj3)
+
+    const a = {
+      valueOf() {
+        return 2;
+      }
+    };
+    const b = {
+      toString() {
+        return '3';
+      }
+    };
+    console.log(a + b); // 23
+
+  </script>
+</body>
+
+</html>

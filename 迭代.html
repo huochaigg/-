@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+
+    // 哪些js对象可以迭代：
+    // Array, Set, Map, String, TypedArray, arguments, NodeList, HTMLCollection, Generator, AsyncGenerator
+
+    // arguments 是一个类数组对象，包含函数的参数。它是一个可迭代对象，可以使用 for...of 循环进行迭代。
+    // 1. 使用 for...of 循环迭代 arguments 对象
+    // 2. 使用 Array.from() 方法将 arguments 对象转换为数组
+    // 3. 使用扩展运算符将 arguments 对象转换为数组
+    // 4. 使用 Array.prototype.slice() 方法将 arguments 对象转换为数组
+    function example() {
+      console.log(Array.prototype.slice.call(arguments)); // [1, 2, 3]
+    }
+    example(1, 2, 3); // 1 2 3
+    // function example2() {
+    //   console.log(Array.prototype.map.call(arguments)); // [1, 2, 3]
+    // }
+    // example2(1, 2, 3); // 报错 Uncaught TypeError: undefined is not a function
+    // function example3() {
+    //   console.log(Array.prototype.filter.call(arguments)); // [1, 2, 3]
+    // }
+    // example3(1, 2, 3); // 报错 Uncaught TypeError: undefined is not a function
+
+    // 5. 使用 forEach() 方法迭代 arguments 对象
+    // function example4() {
+    //   Array.prototype.forEach.call(arguments, function (item) {
+    //     console.log(item); // 1 2 3
+    //   });
+    // }
+    // example4(1, 2, 3); // 1 2 3
+
+    // 6. 使用 for...in 循环迭代 arguments 对象
+    // function example5() {
+    //   for (let i in arguments) {
+    //     console.log(i); // 0 1 2
+    //   }
+    // }
+    // example5(1, 2, 3); // 0 1 2
+
+    // 7. Reflect.apply() 方法调用函数，并传递 arguments 对象作为参数
+    function example6() {
+      console.log('arguments', [...arguments]); 
+      console.log(Reflect.apply(Array.prototype.slice, arguments, [0])) // [1, 2, 3]
+    }
+    example6(1, 2, 3); // 1 2 3
+
+    // for ...of 可以迭代的对象：
+    // Array, Set, Map, String, TypedArray, arguments, NodeList, HTMLCollection, Generator, 
+
+    // for await ...of
+    // AsyncGenerator, AsyncIterable
+    // 举例：
+    async function* asyncGenerator() {
+      yield 1;
+      yield 2;
+      yield 3;
+    }
+    (async () => {
+      for await (const num of asyncGenerator()) {
+        console.log(num);
+      }
+    })();
+
+
+    // forEach() 方法可以迭代的对象：
+    // Array, NodeList, HTMLCollection（Chrome 版本 51+ 才支持）, Map, Set
+
+    // for...in 可以迭代的对象：
+    // arguments, Object, Array, String, TypedArray, NodeList, HTMLCollection
+
+    // map 可以迭代的对象：
+    // Array, TypedArray
+
+    // filter 可以迭代的对象：
+    // Array, TypedArray
+
+    // 
+  </script>
+</body>
+</html>
