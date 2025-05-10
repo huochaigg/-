@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cyberpunk 2077 Grid</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+      background: radial-gradient(ellipse at center, #2c003e 0%, #000 100%);
+      font-family: sans-serif;
+      cursor: none;
+    }
+
+    .grid {
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background-image:
+        linear-gradient(to right, rgba(255, 0, 128, 0.15) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 0, 128, 0.15) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      animation: moveGrid 60s linear infinite;
+    }
+
+    @keyframes moveGrid {
+      from {
+        transform: translate(0, 0);
+      }
+      to {
+        transform: translate(40px, 40px);
+      }
+    }
+
+    .cursor-glow {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(255,0,255,0.3) 0%, transparent 70%);
+      pointer-events: none;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: screen;
+    }
+
+    .overlay-gradient {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(255, 0, 255, 0.2), transparent 60%);
+      pointer-events: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="overlay-gradient"></div>
+  <div class="cursor-glow" id="glow"></div>
+
+  <script>
+    const glow = document.getElementById('glow');
+    document.addEventListener('mousemove', (e) => {
+      glow.style.left = `${e.clientX}px`;
+      glow.style.top = `${e.clientY}px`;
+    });
+  </script>
+</body>
+</html>

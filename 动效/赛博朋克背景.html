@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cyberpunk Background</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: radial-gradient(circle at center, #0ff 0%, #000 80%);
+      height: 100vh;
+      width: 100vw;
+      cursor: none;
+    }
+
+    .glow-lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(0, 255, 255, 0.1),
+        rgba(0, 255, 255, 0.1) 2px,
+        transparent 2px,
+        transparent 20px
+      );
+      pointer-events: none;
+      animation: scrollLines 20s linear infinite;
+    }
+
+    @keyframes scrollLines {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-20%, -20%); }
+    }
+
+    .cursor-light {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(0,255,255,0.3) 0%, transparent 80%);
+      pointer-events: none;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: screen;
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-lines"></div>
+  <div class="cursor-light" id="light"></div>
+
+  <script>
+    const light = document.getElementById('light');
+
+    document.addEventListener('mousemove', (e) => {
+      const { clientX, clientY } = e;
+      light.style.left = `${clientX}px`;
+      light.style.top = `${clientY}px`;
+    });
+  </script>
+</body>
+</html>

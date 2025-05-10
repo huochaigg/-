@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cyberpunk Grid</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #0a0a15;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<canvas id="cyberCanvas"></canvas>
+<script>
+  const canvas = document.getElementById("cyberCanvas");
+  const ctx = canvas.getContext("2d");
+  let w = canvas.width = window.innerWidth;
+  let h = canvas.height = window.innerHeight;
+
+  const gridSize = 32;
+  const gridLines = [];
+  const sparks = [];
+  const MAX_SPARKS = 50;
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+    buildGrid();
+  }
+
+  window.addEventListener("resize", resize);
+
+  function buildGrid() {
+    gridLines.length = 0;
+    for (let x = 0; x <= w; x += gridSize) {
+      gridLines.push({ x1: x, y1: 0, x2: x, y2: h });
+    }
+    for (let y = 0; y <= h; y += gridSize) {
+      gridLines.push({ x1: 0, y1: y, x2: w, y2: y });
+    }
+  }
+
+  function createSpark(x, y) {
+    const path = [{ x, y }];
+    let current = { x, y };
+    const steps = 3 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < steps; i++) {
+      const dir = Math.random() < 0.5 ? "x" : "y";
+      const delta = (Math.random() < 0.5 ? -1 : 1) * gridSize;
+      current = { ...current, [dir]: current[dir] + delta };
+      if (current.x < 0 || current.x > w || current.y < 0 || current.y > h) break;
+      path.push({ ...current });
+    }
+    sparks.push({ path, progress: 0, color: Math.random() > 0.5 ? '#ffee00' : '#8f00ff' });
+    if (sparks.length > MAX_SPARKS) sparks.shift();
+  }
+
+  document.addEventListener("mousemove", (e) => {
+    const radius = 50;
+    for (let dx = -radius; dx <= radius; dx += gridSize) {
+      for (let dy = -radius; dy <= radius; dy += gridSize) {
+        if (dx*dx + dy*dy < radius*radius) {
+          createSpark(e.clientX + dx, e.clientY + dy);
+        }
+      }
+    }
+  });
+
+  function drawGrid() {
+    for (const line of gridLines) {
+      const grad = ctx.createLinearGradient(line.x1, line.y1, line.x2, line.y2);
+      grad.addColorStop(0, "rgba(143,0,255,0.05)");
+      grad.addColorStop(1, "rgba(255,238,0,0.05)");
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 0.7;
+      ctx.beginPath();
+      ctx.moveTo(line.x1, line.y1);
+      ctx.lineTo(line.x2, line.y2);
+      ctx.stroke();
+    }
+  }
+
+  function drawSparks() {
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const s = sparks[i];
+      ctx.strokeStyle = s.color.replace(')', `,${1 - s.progress})`).replace('rgb', 'rgba');
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      const pts = s.path;
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let j = 1; j < pts.length; j++) {
+        ctx.lineTo(pts[j].x, pts[j].y);
+      }
+      ctx.stroke();
+      s.progress += 0.1;
+      if (s.progress >= 1) sparks.splice(i, 1);
+    }
+  }
+
+  function drawGlow() {
+    if (!sparks.length) return;
+    const last = sparks[sparks.length - 1];
+    const origin = last.path[0];
+    const grad = ctx.createRadialGradient(origin.x, origin.y, 0, origin.x, origin.y, 60);
+    grad.addColorStop(0, last.color.replace(')', ',0.15)').replace('rgb', 'rgba'));
+    grad.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(origin.x, origin.y, 60, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function animate() {
+    ctx.fillStyle = "rgba(10,10,21,0.3)";
+    ctx.fillRect(0, 0, w, h);
+    drawGrid();
+    drawSparks();
+    // drawGlow();
+    requestAnimationFrame(animate);
+  }
+
+  buildGrid();
+  animate();
+</script>
+</body>
+</html>
