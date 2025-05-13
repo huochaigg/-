@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="./redux.js"></script>
+</head>
+
+<body>
+  <script>
+    function thunk({ getState, dispatch }) {
+      return next => {
+        return action => {
+          if (typeof action === 'function') {
+            return action(dispatch, getState)
+          }
+          return next(action)
+        }
+      }
+    }
+
+    function reducer(state = { count: 0 }, action) {
+      switch (action.type) {
+        case 'INCREMENT':
+          return { ...state, count: state.count + 1 }
+        case 'DECREMENT':
+          return { ...state, count: state.count - 1 }
+        default:
+          return state
+      }
+    }
+
+    const enhancer = applyMiddleware(thunk)
+    console.log('enhancer', enhancer)
+
+    const enhancedCreateStore = enhancer(createStore)  // 这里的 createStore 是上面定义的 createStore 函数
+    console.log('enhancedCreateStore', enhancedCreateStore) 
+
+    const store = enhancedCreateStore(reducer, { count: 0 })
+    console.log('store', store)
+
+
+    const store2 = applyMiddleware(thunk)(createStore)(reducer, { count: 0 })
+
+  </script>
+</body>
+
+</html>

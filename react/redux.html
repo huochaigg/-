@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="./redux.js"></script>
+</head>
+
+<body>
+
+  <script>
+
+    function logger({ getState, dispatch }) {
+      return next => action => {
+        console.log('prev state', getState())
+        console.log('action', action)
+        const result = next(action)
+        console.log('next state', getState())
+        return result
+      }
+    }
+
+    function thunk({ getState, dispatch }) {
+      return next => action => {
+        if (typeof action === 'function') {
+          return action(dispatch, getState)
+        }
+        return next(action)
+      }
+    }
+
+    // counterReducer.js
+    function counterReducer(state = 0, action) {
+      switch (action.type) {
+        case 'INCREMENT': return state + 1;
+        case 'DECREMENT': return state - 1;
+        default: return state;
+      }
+    }
+
+    // userReducer.js
+    function userReducer(state = { name: '', age: 0 }, action) {
+      switch (action.type) {
+        case 'SET_USER':
+          return { ...state, ...action.payload };
+        default:
+          return state;
+      }
+    }
+
+    const store = createStore(
+      combineReducers({
+        counter: counterReducer,
+        user: userReducer
+      }),
+      applyMiddleware(logger, thunk)
+    )
+
+  </script>
+</body>
+
+</html>
