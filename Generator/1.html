@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    .box{
+      width: 100px;
+      height: 100px;
+      background-color: rgba(52, 159, 141, 0.669);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box"></div>
+
+  <script>
+
+    function* trafficLight() {
+      while (true) {
+        yield 'red';
+        yield 'green';
+        yield 'yellow';
+      }
+    }
+
+    const light = trafficLight();
+    console.log(light)
+    console.log(light.next()) // { value: 'red', done: false }
+
+    document.querySelector('.box').onclick = () => {
+      const currentLight = light.next().value;
+      console.log(currentLight)
+    };
+
+
+  </script>
+</body>
+
+</html>

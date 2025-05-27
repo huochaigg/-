@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>多级联动 - selected 索引 + 树结构</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    .container { display: flex; gap: 20px; margin: 20px; }
+    .level-box { border: 1px solid #ccc; padding: 10px; min-width: 180px; }
+    .level-title { font-weight: bold; margin-bottom: 10px; }
+    .module {
+      padding: 10px;
+      margin-bottom: 6px;
+      border: 1px solid #ddd;
+      background: #f7f7f7;
+      cursor: pointer;
+    }
+    .module.active {
+      background: #409eff;
+      color: white;
+      border-color: #409eff;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="levels-container"></div>
+
+<script>
+  // 模拟树形结构数据（可根据业务异步替换 children）
+  const treeData = [
+    {
+      level: '0',
+      data: { id: 'A', name: 'A' },
+      children: [
+        {
+          level: '1',
+          data: { id: 'A1', name: 'A-1' },
+          children: [
+            {
+              level: '2',
+              data: { id: 'A1a', name: 'A1-a' },
+              children: []
+            }
+          ]
+        },
+        {
+          level: '1',
+          data: { id: 'A2', name: 'A-2' },
+          children: []
+        }
+      ]
+    },
+    {
+      level: '0',
+      data: { id: 'B', name: 'B' },
+      children: [
+        {
+          level: '1',
+          data: { id: 'B1', name: 'B-1' },
+          children: [
+            {
+              level: '2',
+              data: { id: 'B1a', name: 'B1-a' },
+              children: []
+            },
+            {
+              level: '2',
+              data: { id: 'B1b', name: 'B1-b' },
+              children: []
+            }
+          ]
+        }
+      ]
+    }
+  ];
+
+  const selected = []; // 每层选中的下标，如 [0,1,0]
+
+  // 递归渲染每一层
+  function render() {
+    const $container = $('#levels-container').empty();
+
+    let currentLevel = treeData;
+    let level = 0;
+
+    while (currentLevel && currentLevel.length > 0) {
+      const $box = $('<div class="level-box"></div>');
+      $box.append(`<div class="level-title">第 ${level + 1} 级</div>`);
+
+      currentLevel.forEach((item, index) => {
+        const isActive = selected[level] === index;
+        const $mod = $('<div class="module"></div>')
+          .text(item.data.name)
+          .toggleClass('active', isActive)
+          .on('click', () => {
+            selected[level] = index;
+            selected.length = level + 1; // 清除之后的选中记录
+            render();
+          });
+
+        $box.append($mod);
+      });
+
+      $container.append($box);
+
+      const selectedIndex = selected[level];
+      currentLevel = currentLevel[selectedIndex]?.children || null;
+      level++;
+    }
+  }
+
+  render();
+</script>
+
+</body>
+</html>

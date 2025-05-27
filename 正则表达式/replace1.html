@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    const url = 'https://xx.com/?a=1&b=2';
+    const obj = {};
+    url.replace(/[?&](\w+)=([^&]+)/g, (_, key, val) => {
+      console.log(key, val);
+      return obj[key] = val
+    });
+
+    console.log('obj', obj);
+
+
+  </script>
+</body>
+
+</html>

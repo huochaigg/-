@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const re = /abc(\d+)/g;
+    const re2 = /abc/g;
+    const result = re.exec('abc123abc456');
+    // => ["abc123", "123"], result.index = 0
+
+    const result2 = re2.exec('abc123abc456');
+    console.log(result2); // => ["abc"], result2.index = 0
+
+    const result3 = re2.exec('abc123abc456');
+    console.log(result3); // => ["abc"], result3.index = 3
+
+    const result4 = re2.exec('abc123abc456');1
+    console.log(result4); // => ["abc"], result4.index = 6
+
+    const result5 = re2.exec('abc123abc456');
+    console.log(result5); // => null
+  </script>
+</body>
+
+</html>

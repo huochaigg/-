@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MySet Implementation</title>
+</head>
+<body>
+  <script>
+    class MySet {
+      constructor() {
+        this.set = Object.create(null); // 避免原型链上的属性干扰
+      }
+
+      add(value) {
+        if (!this.has(value)) {
+          this.set[value] = true;
+        }
+      }
+
+      has(value) {
+        return Object.prototype.hasOwnProperty.call(this.set, value);
+      }
+
+      delete(value) {
+        if (this.has(value)) {
+          delete this.set[value];
+        }
+      }
+
+      clear() {
+        this.set = Object.create(null);
+      }
+
+      size() {
+        return Object.keys(this.set).length;
+      }
+
+      values() {
+        return Object.keys(this.set);
+      }
+    }
+
+    // 测试代码
+    const mySet = new MySet();
+    mySet.add('a');
+    mySet.add('b');
+    mySet.add('a'); // 重复添加
+    console.log(mySet.values()); // ['a', 'b']
+    console.log(mySet.size()); // 2
+    mySet.delete('a');
+    console.log(mySet.values()); // ['b']
+    mySet.clear();
+    console.log(mySet.values()); // []
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <!-- <script>
+    var a = 10;
+    function foo() {
+      console.log(a);
+      var a = 20;
+    }
+    foo(); // 输出什么？
+    // 输出：undefined
+    // 解析：函数内的变量提升，a在函数内被提升到顶部，但赋值在console.log之后，所以输出undefined
+  </script> -->
+
+  <!-- <script>
+    var a = 10;
+    function foo() {
+      console.log(a);
+      // var a = 20;
+      a = 20;
+    }
+    foo(); // 输出什么？
+
+  </script> -->
+
+  <script>
+    var a = 10;
+    function a() {
+      // console.log(a);
+      var a = 20;
+      console.log(a); 
+    }
+    console.log(a); // 输出什么？
+    a(); // 输出什么？
+
+  </script>
+</body>
+
+</html>

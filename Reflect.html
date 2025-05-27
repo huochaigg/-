@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
 </head>
+
 <body>
   <script>
 
@@ -21,8 +23,8 @@
     const value = Reflect.get(obj, 'a'); // 1
     console.log(value); // 1
     const obj1 = { a: 1, b: 2, c: undefined };
-    const value2 = Reflect.get(obj, 'c', obj1); 
-    console.log(value2); 
+    const value2 = Reflect.get(obj, 'c', obj1);
+    console.log(value2);
 
     // 2. Reflect.set(target, propertyKey, value, receiver)
     // 用于设置对象的属性值。它的第一个参数是目标对象，第二个参数是属性名，第三个参数是属性值，第四个参数是接收者（可选）。
@@ -54,11 +56,39 @@
     // 1提供了对构造函数调用的更细粒度控制。
     // 2支持动态构造函数调用。
     // 3在继承和代理场景中非常有用。
-    function Person(name) {
+    // function Person(name) {
+    //   this.name = name;
+    // }
+    // const person = Reflect.construct(Person, ['John']); // { name: 'John' }
+
+    // const obj5 = {
+    //   Fun1: function (name) {
+    //     this.name = name;
+    //   },
+    //   Fun2: function (age) {
+    //     this.age = age;
+    //   }
+    // }
+
+    // const fn = new obj5.Fun1('John');
+    // console.log(fn); // { name: 'John' }
+
+    function Parent(name) {
       this.name = name;
     }
-    const person = Reflect.construct(Person, ['John']); // { name: 'John' }
+    function Child(name) {
+      this.childOnly = true;
+      return Reflect.construct(Parent, [name], new.target); // 继承正确的原型链
+    }
+    Child.prototype = Object.create(Parent.prototype);
+    Child.prototype.constructor = Child;
+
+    const c = new Child('Lily');
+    console.log(c instanceof Child);  // ✅ true
+    console.log(c instanceof Parent); // ✅ true
+
 
   </script>
 </body>
+
 </html>

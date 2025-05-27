@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>多级联动模块选择器</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body { font-family: sans-serif; }
+    .container { margin: 20px; }
+    .level-box { margin-bottom: 20px; }
+    .module { display: inline-block; padding: 15px 25px; margin: 10px; border: 1px solid #ccc; background: #eee; cursor: pointer; }
+    .module.active { background: #409eff; color: white; border-color: #409eff; }
+    .nav-buttons { margin-bottom: 20px; }
+    .nav-buttons button { margin-right: 10px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="nav-buttons">
+    <button id="backBtn">← 返回上一级</button>
+    <span>当前层级：<span id="levelNum">0</span></span>
+  </div>
+  <div id="levels"></div>
+</div>
+
+<script>
+  const MAX_LEVELS = 7;
+
+  // 模拟异步请求下一级数据
+  function mockFetch(levelIndex, parentId) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        const list = [];
+        for (let i = 1; i <= 3; i++) {
+          list.push({
+            id: `${parentId || 'root'}-${i}`,
+            name: `Level ${levelIndex} - ${i}`
+          });
+        }
+        resolve(list);
+      }, 300); // 模拟延迟
+    });
+  }
+
+  // 存储每一级的状态
+  const levels = Array.from({ length: MAX_LEVELS }, () => ({
+    selectedId: null,
+    modules: []
+  }));
+
+  let currentLevel = 0;
+
+  async function init() {
+    if (levels[0].modules.length === 0) {
+      levels[0].modules = await mockFetch(0, null);
+    }
+    render();
+  }
+
+  function render() {
+    $('#levels').empty();
+    $('#levelNum').text(currentLevel);
+
+    const level = levels[currentLevel];
+    const $box = $('<div class="level-box"></div>');
+
+    level.modules.forEach(mod => {
+      const $mod = $('<div class="module"></div>').text(mod.name).attr('data-id', mod.id);
+      if (level.selectedId === mod.id) {
+        $mod.addClass('active');
+      }
+      $mod.on('click', async () => {
+        level.selectedId = mod.id;
+
+        // 清除下级缓存
+        for (let i = currentLevel + 1; i < MAX_LEVELS; i++) {
+          levels[i].modules = [];
+          levels[i].selectedId = null;
+        }
+
+        // 预加载下一级（如未加载）
+        if (currentLevel + 1 < MAX_LEVELS && levels[currentLevel + 1].modules.length === 0) {
+          levels[currentLevel + 1].modules = await mockFetch(currentLevel + 1, mod.id);
+        }
+
+        currentLevel++;
+        render();
+      });
+      $box.append($mod);
+    });
+
+    $('#levels').append($box);
+  }
+
+  $('#backBtn').on('click', () => {
+    if (currentLevel > 0) {
+      currentLevel--;
+      render();
+    }
+  });
+
+  init();
+</script>
+
+</body>
+</html>
