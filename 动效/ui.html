@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图片处理工具</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f4f4f4;
+    }
+    header {
+      width: 100%;
+      padding: 10px;
+      background-color: #0078d7;
+      color: white;
+      text-align: center;
+      font-size: 1.5em;
+    }
+    .container {
+      margin: 20px;
+      width: 90%;
+      max-width: 600px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+    }
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #0078d7;
+      color: white;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    button:hover {
+      background-color: #005a9e;
+    }
+    .image-list {
+      list-style: none;
+      padding: 0;
+    }
+    .image-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    .image-list li:last-child {
+      border-bottom: none;
+    }
+    .image-list img {
+      max-height: 50px;
+      margin-right: 10px;
+    }
+    .settings {
+      margin-top: 20px;
+    }
+    .settings label {
+      display: block;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>图片处理工具</header>
+  <div class="container">
+    <div class="button-group">
+      <button id="selectImage">选择图片</button>
+      <button id="goBack">返回上一页</button>
+    </div>
+    <ul class="image-list" id="imageList">
+      <li>
+        <img src="https://via.placeholder.com/50" alt="示例图片">
+        <span>示例图片1</span>
+      </li>
+      <li>
+        <img src="https://via.placeholder.com/50" alt="示例图片">
+        <span>示例图片2</span>
+      </li>
+    </ul>
+    <div class="settings">
+      <label>
+        操作类型:
+        <select id="operationType">
+          <option value="resize">调整大小</option>
+          <option value="crop">裁剪</option>
+          <option value="filter">滤镜</option>
+        </select>
+      </label>
+    </div>
+  </div>
+</body>
+</html>

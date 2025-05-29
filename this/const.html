@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    
+    const fun1 = () => {
+      console.log('fun1', this); // this指向window对象
+    };
+
+    fun1();
+
+    const fun2 = function() {
+      console.log('fun2', this); // this指向window对象
+    };
+    fun2();
+
+    function fun3() {
+      console.log('fun3', this); // this指向window对象
+    }
+    fun3();
+
+  </script>
+
+  <script>
+    'use strict';
+
+    const fun4 = () => {
+      console.log('fun4', this); // this指向window
+    };  
+    fun4();
+
+    function fun5() {
+      console.log('fun5', this); // this指向undefined
+    }
+    fun5();
+
+  </script>
+</body>
+</html>
