@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .parent {
+      overflow: hidden;
+      background: red;
+      /* 触发 BFC，阻止 child 的 margin-top 与 parent 合并 */
+    }
+
+    .child {
+      margin-top: 20px;
+      background: green;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="parent">
+    <div class="child"></div>
+  </div>
+</body>
+
+</html>
