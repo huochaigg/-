@@ -493,6 +493,31 @@
     // 16. 桥接模式：将抽象部分与实现部分分离，使它们可以独立变化。
     // 17. 外观模式：为子系统中的一组接口提供一个一致的界面。
     // 18. 享元模式：运用共享技术来有效地支持大量细粒度的对象。
+    class Flyweight {
+      constructor(intrinsicState) {
+        this.intrinsicState = intrinsicState; // 内部状态
+      }
+
+      operation(extrinsicState) {
+        console.log(`Intrinsic State: ${this.intrinsicState}, Extrinsic State: ${extrinsicState}`); // 外部状态
+      }
+    }
+    class FlyweightFactory {
+      constructor() {
+        this.flyweights = {}; // 存储享元对象
+      }
+
+      getFlyweight(intrinsicState) {
+        if (!this.flyweights[intrinsicState]) {
+          this.flyweights[intrinsicState] = new Flyweight(intrinsicState); // 创建新的享元对象
+        }
+        return this.flyweights[intrinsicState]; // 返回已有的享元对象
+      }
+    } 
+
+    const flyweightFactory = new FlyweightFactory();
+    const flyweight1 = flyweightFactory.getFlyweight('State1'); // 获取享元对象
+
     // 19. 模板方法模式：定义一个操作中的算法的框架，而将一些步骤延迟到子类中。
     // 20. 原型模式：用原型实例指定创建对象的种类，并通过拷贝这些原型创建新的对象。
     // 21. 组合模式：将对象组合成树形结构以表示部分-整体的层次结构。
