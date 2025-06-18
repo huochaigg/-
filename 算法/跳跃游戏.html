@@ -8,8 +8,22 @@
 </head>
 
 <body>
+
   <script>
 
+    // 跳跃游戏 (Jump Game) - LeetCode 前端算法题解
+    // 问题描述
+    // 给定一个非负整数数组 nums，你最初位于数组的第一个下标。数组中的每个元素代表你在该位置可以跳跃的最大长度。判断你是否能够到达最后一个下标。
+
+    // 示例：
+    // 输入: nums = [2,3,1,1,4]
+    // 输出: true
+    // 解释: 可以先跳 1 步从下标 0 到 1，然后再跳 3 步到达最后一个下标。
+    // 输入: nums = [3,2,1,0,4]
+    // 输出: false
+    // 解释: 无论怎样，总会到达下标为 3 的位置。但该位置的最大跳跃长度是 0，所以永远不可能到达最后一个下标。
+
+    // 贪心算法
     function canJump(nums) {
       let maxReach = 0;
       for (let i = 0; i < nums.length; i++) {
@@ -20,6 +34,23 @@
         if (maxReach >= nums.length - 1) return true; // 已经可以到达终点
       }
       return true;
+    };
+
+    // 动态规划
+    function canJump (nums) {
+      const dp = new Array(nums.length).fill(false);
+      dp[0] = true;
+
+      for (let i = 1; i < nums.length; i++) {
+        for (let j = 0; j < i; j++) {
+          if (dp[j] && j + nums[j] >= i) {
+            dp[i] = true;
+            break;
+          }
+        }
+      }
+
+      return dp[nums.length - 1];
     };
 
     // 测试用例
