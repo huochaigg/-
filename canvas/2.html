@@ -44,10 +44,19 @@
     let offsetY = 0;
 
     // 定义二维码对象
-    const qrCodes = [
-      { x: 50, y: 50, width: 150, height: 150, text: "https://example.com/1", color: "#ff0000", isDragging: false, zIndex: 1 },
-      { x: 250, y: 250, width: 150, height: 150, text: "https://example.com/2", color: "#0000ff", isDragging: false, zIndex: 2 },
-    ];
+    let qrCodes = Array.from({ length: 24 }, (_, i) => {
+      const id = i + 1;
+      return {
+        id,
+        text: `https://${id}.com`,
+        color: getColor(id), // 自定义颜色函数
+        x: getXById(id),
+        y: getYById(id),
+        width: 150,
+        height: 150,
+        zIndex: id  // 初始 zIndex 按顺序
+      };
+    });
 
     // 绘制二维码到 canvas
     function drawQRCode(qrCode) {
