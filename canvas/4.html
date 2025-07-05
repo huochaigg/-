@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>离屏Canvas优化二维码拖动</title>
   <style>
     canvas {
       border: 1px solid black;
     }
   </style>
-  <!-- qrcode.js（建议本地或CDN） -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <!-- 引入 qrcode-generator.js -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.min.js"></script>
 </head>
-<body>
-  <canvas id="canvas" width="500" height="500"></canvas>
 
+<body>
+  <canvas id="canvas" style="width: 100vw; height: 100vh;"></canvas>
   <script>
     const dpr = window.devicePixelRatio || 1;
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
 
     // 适配高分屏
     canvas.width = canvas.clientWidth * dpr;
@@ -29,31 +30,69 @@
     let offsetX = 0;
     let offsetY = 0;
 
-    const qrCodes = [
-      { x: 50, y: 50, width: 150, height: 150, text: "https://example.com/1", color: "#ff0000", isDragging: false, zIndex: 1 },
-      { x: 250, y: 250, width: 150, height: 150, text: "https://example.com/2", color: "#0000ff", isDragging: false, zIndex: 2 },
-    ];
+    // 定义二维码对象
+    let qrCodes = Array.from({ length: 200 }, (_, i) => {
+      const id = i + 1;
+      return {
+        id,
+        text: `https://${id}.com`,
+        color: getColor(), // 随机颜色
+        x: getXById(id),
+        y: getYById(id),
+        width: 100,
+        height: 100,
+        zIndex: id, // 初始 zIndex 按顺序
+      };
+    });
 
-    // 生成二维码并缓存为离屏 Canvas
+    // 生成随机颜色
+    function getColor() {
+      const r = Math.floor(Math.random() * 256);
+      const g = Math.floor(Math.random() * 256);
+      const b = Math.floor(Math.random() * 256);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    // 根据 ID 计算初始位置
+    function getXById(id) {
+      return ((id - 1) % 16) * 100;
+    }
+    function getYById(id) {
+      return Math.floor((id - 1) / 16) * 100;
+    }
+
+    // 使用 qrcode-generator.js 生成二维码并缓存为离屏 Canvas
     function generateQRCodeToOffCanvas(qrCode) {
-      const tempDiv = document.createElement("div");
-      const qrGenerator = new QRCode(tempDiv, {
-        text: qrCode.text,
-        width: qrCode.width,
-        height: qrCode.height,
-        colorDark: qrCode.color,
-        colorLight: "#ffffff",
-      });
+      const qr = qrcode(0, "L"); // 版本 0，容错级别 L
+      qr.addData(qrCode.text);
+      qr.make();
 
-      const qrCanvas = tempDiv.querySelector("canvas");
-      if (qrCanvas) {
-        const offCanvas = document.createElement("canvas");
-        offCanvas.width = qrCode.width;
-        offCanvas.height = qrCode.height;
-        const offCtx = offCanvas.getContext("2d");
-        offCtx.drawImage(qrCanvas, 0, 0);
-        qrCode.offCanvas = offCanvas;
+      const modules = qr.getModuleCount();
+      const cellSize = qrCode.width / modules;
+
+      const offCanvas = document.createElement("canvas");
+      offCanvas.width = qrCode.width;
+      offCanvas.height = qrCode.height;
+      const offCtx = offCanvas.getContext("2d");
+
+      offCtx.fillStyle = "#ffffff"; // 背景色
+      offCtx.fillRect(0, 0, qrCode.width, qrCode.height);
+
+      for (let row = 0; row < modules; row++) {
+        for (let col = 0; col < modules; col++) {
+          if (qr.isDark(row, col)) {
+            offCtx.fillStyle = qrCode.color; // 二维码颜色
+            offCtx.fillRect(
+              col * cellSize,
+              row * cellSize,
+              cellSize,
+              cellSize
+            );
+          }
+        }
       }
+
+      qrCode.offCanvas = offCanvas;
     }
 
     // 初始化二维码缓存
@@ -62,7 +101,13 @@
     // 绘制单个二维码
     function drawQRCode(qrCode) {
       if (qrCode.offCanvas) {
-        ctx.drawImage(qrCode.offCanvas, qrCode.x, qrCode.y, qrCode.width, qrCode.height);
+        ctx.drawImage(
+          qrCode.offCanvas,
+          qrCode.x,
+          qrCode.y,
+          qrCode.width,
+          qrCode.height
+        );
       }
     }
 
@@ -89,7 +134,7 @@
       const mouseX = event.clientX - rect.left;
       const mouseY = event.clientY - rect.top;
 
-      qrCodes.forEach(qrCode => {
+      qrCodes.forEach((qrCode) => {
         if (isMouseInQRCode(mouseX, mouseY, qrCode)) {
           qrCode.isDragging = true;
           offsetX = mouseX - qrCode.x;
@@ -110,7 +155,7 @@
 
       let needsRedraw = false;
 
-      qrCodes.forEach(qrCode => {
+      qrCodes.forEach((qrCode) => {
         if (qrCode.isDragging) {
           qrCode.x = mouseX - offsetX;
           qrCode.y = mouseY - offsetY;
@@ -125,14 +170,14 @@
 
     // 鼠标释放
     canvas.addEventListener("mouseup", () => {
-      qrCodes.forEach(qrCode => {
+      qrCodes.forEach((qrCode) => {
         qrCode.isDragging = false;
       });
     });
 
     // 鼠标移出画布
     canvas.addEventListener("mouseleave", () => {
-      qrCodes.forEach(qrCode => {
+      qrCodes.forEach((qrCode) => {
         qrCode.isDragging = false;
       });
     });
@@ -141,4 +186,5 @@
     draw();
   </script>
 </body>
+
 </html>
