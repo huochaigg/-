@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>二维码拖拽 + Worker</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas" width="600" height="600"></canvas>
+
+  <script>
+    function getColor() {
+      // 生成随机颜色
+      const r = Math.floor(Math.random() * 256);
+      const g = Math.floor(Math.random() * 256);
+      const b = Math.floor(Math.random() * 256);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function getXById(id) {
+      return ((id - 1) % 5) * 100; 
+    }
+    function getYById(id) {
+      return Math.floor((id - 1) / 5) * 100;
+    }
+
+  </script>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = canvas.clientWidth * dpr;
+    canvas.height = canvas.clientHeight * dpr;
+    ctx.scale(dpr, dpr);
+
+    const worker = new Worker('./5_webworker.js');
+
+    let qrCodes = Array.from({ length: 24 }, (_, i) => {
+      const id = i + 1;
+      return {
+        id,
+        text: `https://${id}.com`,
+        color: getColor(id), // 自定义颜色函数
+        x: getXById(id),
+        y: getYById(id),
+        width: 150,
+        height: 150,
+        zIndex: id  // 初始 zIndex 按顺序
+      };
+    });
+
+    let currentMaxZIndex = qrCodes.length;
+    let dragging = null;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    function redraw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      qrCodes
+        .sort((a, b) => a.zIndex - b.zIndex)
+        .forEach(qr => {
+          if (qr.bitmap) {
+            ctx.drawImage(qr.bitmap, qr.x, qr.y, qr.width, qr.height);
+          }
+        });
+    }
+
+    worker.onmessage = function (e) {
+      const { id, bitmap, x, y, width, height } = e.data;
+      console.log('onmessage 收到消息:', e.data);
+      const target = qrCodes.find(qr => qr.id === id);
+      if (target) {
+        target.bitmap = bitmap;
+        redraw();
+      }
+    };
+
+    qrCodes.forEach(qr => {
+      worker.postMessage(qr);
+    });
+
+    canvas.addEventListener('mousedown', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const sorted = [...qrCodes].sort((a, b) => b.zIndex - a.zIndex);
+      for (const qr of sorted) {
+        if (
+          mouseX >= qr.x && mouseX <= qr.x + qr.width &&
+          mouseY >= qr.y && mouseY <= qr.y + qr.height
+        ) {
+          dragging = qr;
+          offsetX = mouseX - qr.x;
+          offsetY = mouseY - qr.y;
+
+          // 放到最上层
+          currentMaxZIndex++;
+          qr.zIndex = currentMaxZIndex;
+          break;
+        }
+      }
+
+      redraw();
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (!dragging) return;
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      dragging.x = mouseX - offsetX;
+      dragging.y = mouseY - offsetY;
+      redraw();
+    });
+
+    canvas.addEventListener('mouseup', () => dragging = null);
+    canvas.addEventListener('mouseleave', () => dragging = null);
+  </script>
+</body>
+
+</html>

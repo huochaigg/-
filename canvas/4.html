@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>离屏Canvas优化二维码拖动</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+  <!-- qrcode.js（建议本地或CDN） -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <canvas id="canvas" width="500" height="500"></canvas>
+
+  <script>
+    const dpr = window.devicePixelRatio || 1;
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // 适配高分屏
+    canvas.width = canvas.clientWidth * dpr;
+    canvas.height = canvas.clientHeight * dpr;
+    ctx.scale(dpr, dpr);
+
+    let currentZIndex = 1;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    const qrCodes = [
+      { x: 50, y: 50, width: 150, height: 150, text: "https://example.com/1", color: "#ff0000", isDragging: false, zIndex: 1 },
+      { x: 250, y: 250, width: 150, height: 150, text: "https://example.com/2", color: "#0000ff", isDragging: false, zIndex: 2 },
+    ];
+
+    // 生成二维码并缓存为离屏 Canvas
+    function generateQRCodeToOffCanvas(qrCode) {
+      const tempDiv = document.createElement("div");
+      const qrGenerator = new QRCode(tempDiv, {
+        text: qrCode.text,
+        width: qrCode.width,
+        height: qrCode.height,
+        colorDark: qrCode.color,
+        colorLight: "#ffffff",
+      });
+
+      const qrCanvas = tempDiv.querySelector("canvas");
+      if (qrCanvas) {
+        const offCanvas = document.createElement("canvas");
+        offCanvas.width = qrCode.width;
+        offCanvas.height = qrCode.height;
+        const offCtx = offCanvas.getContext("2d");
+        offCtx.drawImage(qrCanvas, 0, 0);
+        qrCode.offCanvas = offCanvas;
+      }
+    }
+
+    // 初始化二维码缓存
+    qrCodes.forEach(generateQRCodeToOffCanvas);
+
+    // 绘制单个二维码
+    function drawQRCode(qrCode) {
+      if (qrCode.offCanvas) {
+        ctx.drawImage(qrCode.offCanvas, qrCode.x, qrCode.y, qrCode.width, qrCode.height);
+      }
+    }
+
+    // 绘制所有二维码
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      qrCodes
+        .sort((a, b) => a.zIndex - b.zIndex)
+        .forEach(drawQRCode);
+    }
+
+    function isMouseInQRCode(mouseX, mouseY, qrCode) {
+      return (
+        mouseX >= qrCode.x &&
+        mouseX <= qrCode.x + qrCode.width &&
+        mouseY >= qrCode.y &&
+        mouseY <= qrCode.y + qrCode.height
+      );
+    }
+
+    // 鼠标按下
+    canvas.addEventListener("mousedown", (event) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
+
+      qrCodes.forEach(qrCode => {
+        if (isMouseInQRCode(mouseX, mouseY, qrCode)) {
+          qrCode.isDragging = true;
+          offsetX = mouseX - qrCode.x;
+          offsetY = mouseY - qrCode.y;
+          currentZIndex++;
+          qrCode.zIndex = currentZIndex;
+        }
+      });
+
+      draw();
+    });
+
+    // 鼠标移动
+    canvas.addEventListener("mousemove", (event) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
+
+      let needsRedraw = false;
+
+      qrCodes.forEach(qrCode => {
+        if (qrCode.isDragging) {
+          qrCode.x = mouseX - offsetX;
+          qrCode.y = mouseY - offsetY;
+          needsRedraw = true;
+        }
+      });
+
+      if (needsRedraw) {
+        draw();
+      }
+    });
+
+    // 鼠标释放
+    canvas.addEventListener("mouseup", () => {
+      qrCodes.forEach(qrCode => {
+        qrCode.isDragging = false;
+      });
+    });
+
+    // 鼠标移出画布
+    canvas.addEventListener("mouseleave", () => {
+      qrCodes.forEach(qrCode => {
+        qrCode.isDragging = false;
+      });
+    });
+
+    // 初始绘制
+    draw();
+  </script>
+</body>
+</html>
