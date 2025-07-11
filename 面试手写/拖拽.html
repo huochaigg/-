@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .item {
+      padding: 10px 20px;
+      background: #4caf50;
+      color: white;
+      cursor: grab;
+      border-radius: 6px;
+      user-select: none;
+    }
+
+    .drag-over {
+      outline: 2px dashed #000;
+    }
+  </style>
+
+  <div class="container" id="drag-list"></div>
+</head>
+
+<body>
+  <script>
+    const items = ['One', 'Two', 'Three', 'Four', 'Five']
+    const container = document.getElementById('drag-list')
+
+    function renderList() {
+      container.innerHTML = ''
+      items.forEach((text, index) => {
+        const el = document.createElement('div')
+        el.className = 'item'
+        el.draggable = true
+        el.textContent = text
+        el.dataset.index = index
+
+        // 拖拽事件绑定
+        el.ondragstart = (e) => {
+          e.dataTransfer.setData('text/plain', index)
+          // 设置拖拽效果
+          // e.dataTransfer是一个DataTransfer对象，用于在拖拽操作中存储数据
+          // 这里设置拖拽时显示的文本
+         
+          // 设置拖拽时的光标样式
+          e.dataTransfer.effectAllowed = 'move'
+        }
+
+        el.ondragover = (e) => {
+          e.preventDefault()
+          el.classList.add('drag-over')
+        }
+
+        el.ondragleave = () => {
+          el.classList.remove('drag-over')
+        }
+
+        el.ondrop = (e) => {
+          e.preventDefault()
+          const fromIndex = Number(e.dataTransfer.getData('text/plain'))
+          const toIndex = Number(el.dataset.index)
+          el.classList.remove('drag-over')
+          swapItems(fromIndex, toIndex)
+        }
+        
+        container.appendChild(el)
+      })
+    }
+
+    function swapItems(from, to) {
+      const item = items.splice(from, 1)[0]
+      items.splice(to, 0, item)
+      renderList()
+    }
+
+    renderList()
+
+  </script>
+</body>
+
+</html>
