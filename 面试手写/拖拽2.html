@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拖拽排序</title>
+  <style>
+    .container {
+      width: 300px;
+      margin: 20px auto;
+      padding: 0;
+      list-style: none;
+      border: 1px solid #ccc;
+    }
+
+    .item {
+      padding: 10px;
+      margin: 5px 0;
+      background-color: #f0f0f0;
+      border: 1px solid #ddd;
+      cursor: grab;
+    }
+
+    .dragging {
+      background-color: #d0d0d0;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+
+<body>
+  <ul class="container" id="drag-list"></ul>
+
+  <script>
+    const items = ['One', 'Two', 'Three', 'Four', 'Five'];
+    const container = document.getElementById('drag-list');
+
+    // 初始化列表
+    items.forEach((item, index) => {
+      const fragment = document.createDocumentFragment();
+      const li = document.createElement('li');
+      li.textContent = item;
+      li.className = 'item';
+      li.draggable = true; // 设置为可拖拽
+      li.dataset.index = index; // 保存索引
+      fragment.appendChild(li);
+      container.appendChild(fragment);
+    });
+
+    let draggingElement = null;
+
+    // 监听拖拽开始事件
+    container.addEventListener('dragstart', (e) => {
+      draggingElement = e.target;
+      draggingElement.classList.add('dragging');
+    });
+
+    // 监听拖拽结束事件
+    container.addEventListener('dragend', (e) => {
+      draggingElement.classList.remove('dragging');
+      draggingElement = null;
+    });
+
+    // 监听拖拽进入目标区域事件
+    container.addEventListener('dragover', (e) => {
+      e.preventDefault(); // 阻止默认行为以允许放置
+      const target = e.target;
+      console.log('target', target);
+      if (target.classList.contains('item') && target !== draggingElement) {
+        const draggingIndex = +draggingElement.dataset.index; // 获取正在拖拽元素的索引
+        const targetIndex = +target.dataset.index; // 获取目标元素的索引
+
+        // 根据索引调整顺序
+        if (draggingIndex < targetIndex) {
+          // insertBefore 在目标元素之后插入
+          container.insertBefore(draggingElement, target.nextSibling);
+        } else {
+          container.insertBefore(draggingElement, target);
+        }
+
+        // 更新索引
+        Array.from(container.children).forEach((child, index) => {
+          child.dataset.index = index;
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>
