@@ -64,7 +64,7 @@
 
     // 监听拖拽进入目标区域事件
     container.addEventListener('dragover', (e) => {
-      e.preventDefault(); // 阻止默认行为以允许放置
+      // e.preventDefault(); // 阻止默认行为以允许放置
       const target = e.target;
       console.log('target', target);
       if (target.classList.contains('item') && target !== draggingElement) {

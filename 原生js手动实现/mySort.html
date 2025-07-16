@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 1. 使用数组的 sort 方法对数字进行排序
+    const numbers = [5, 3, 8, 1, 2];
+    numbers.sort((a, b) => a - b);
+    console.log('Sorted numbers:', numbers);
+
+    // 2. 使用数组的 sort 方法对字符串进行排序
+    const strings = ['banana', 'apple', 'cherry'];
+    strings.sort();
+    console.log('Sorted strings:', strings);
+
+    // 3. 使用数组的 sort 方法对对象数组进行排序
+    const objects = [
+      { name: 'John', age: 30 },
+      { name: 'Jane', age: 25 },
+      { name: 'Jack', age: 35 }
+    ];
+    objects.sort((a, b) => a.age - b.age);
+    console.log('Sorted objects by age:', objects);
+
+    // 实现sort函数
+    function mySort(arr, compareFn) {
+      for (let i = 0; i < arr.length - 1; i++) {
+        for (let j = 0; j < arr.length - 1 - i; j++) {
+          if (compareFn(arr[j], arr[j + 1]) > 0) {
+            // 交换元素
+            [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+          }
+        }
+      }
+      return arr;
+    }
+
+    // 使用自定义的 mySort 函数对数字进行排序
+    const myNumbers = [5, 3, 8, 1, 2];
+    mySort(myNumbers, (a, b) => a - b);
+  </script>
+</body>
+</html>
