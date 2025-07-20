@@ -11,9 +11,9 @@
         // call,apply,bind详解
 
         // call: 立即执行函数，并改变this指向
-        function greet(greeting) {
-            console.log(`${greeting}, ${this.name}`);
-        }
+        // function greet(greeting) {
+        //     console.log(`${greeting}, ${this.name}`);
+        // }
 
         // const person = { name: 'Alice' };
         // greet.call(person, 'Hello'); // Hello, Alice    
@@ -96,23 +96,24 @@
         // };
 
         // 实现自定义bind方法
-        Function.prototype.myBind = function(context, ...args) {
-            context = context || globalThis;
-            context.fn = this; // 保存原函数的引用
-            return function(...newArgs) {
-                const result = context.fn(...args, ...newArgs); // 执行函数并传入参数
-                delete context.fn; // 删除临时函数
-                return result; // 返回结果
-            };
-        };
-        const dog2 = {
-            name: 'liyang',
-        }
-        function bark2(name) {
-            console.log(`${name}: wangwang`);
-        }
-        const boundBark = bark2.myBind(dog2, 'liyang');
-        boundBark(); // liyang: wangwang
+        // Function.prototype.myBind = function(context, ...args) {
+        //     context = context || globalThis;
+        //     context.fn = this; // 保存原函数的引用
+        //     return function(...newArgs) {
+        //         const result = context.fn(...args, ...newArgs); // 执行函数并传入参数
+        //         delete context.fn; // 删除临时函数
+        //         return result; // 返回结果
+        //     };
+        // };
+        // const dog2 = {
+        //     name: 'liyang',
+        // }
+        // function bark2(name) {
+        //     console.log(`${name}: wangwang`);
+        // }
+        // const boundBark = bark2.myBind(dog2, 'liyang');
+        // boundBark(); // liyang: wangwang
+
     </script>
 </body>
 </html>

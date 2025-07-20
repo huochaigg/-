@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    class MyPromise {
+      #status = 'pending';
+      #value = null;
+      #error = null;
+      #onResolveCallbacks = []
+      #onRejectCallbacks = []
+
+      constructor(execute) {
+        const resolve = (value) => {
+          this.status = 'fulfilled'
+          this.value = value
+          this.onResolveCallbacks.forEach(callback => callback())
+        }
+
+        const reject = (error) => {
+          this.status = 'rejected'
+          this.error = error;
+          this.onRejectCallbacks.forEach(callback => callback())
+        }
+
+        try {
+          execute(resolve, reject)
+        } catch (err) {
+          reject(err)
+        }
+      }
+
+      then(onFulfilled, onRejected) {
+        const _onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : v => v;
+        const _onRejected = typeof onRejected === 'function' ? onRejected : r => { throw r };
+        return new MyPromise((resolve, reject) => {
+          if (this.status === 'pending') {
+            this.onResolvedCallbacks.push(() => {
+              try {
+                const result = _onFulfilled(this.value);
+                resolve(result);
+              } catch (error) {
+                reject(error);
+              }
+            });
+            this.onRejectCallbacks.push(() => {
+              try {
+                const result = _onRejected(this.error);
+                resolve(result);
+              } catch (error) {
+                reject(error);
+              }
+            });
+          } else if (this.status === 'fulfilled') {
+            try {
+              const result = _onFulfilled(this.value); 
+              resolve(result);
+            } catch (error) {
+              reject(error); 
+            }
+          } else if (this.status === 'rejected') {
+            try {
+              const result = _onRejected(this.error); 
+              resolve(result);
+            } catch (error) {
+              reject(error); 
+            }
+          }
+        })
+      }
+
+      catch(onRejected) {
+        return this.then(null, onRejected)
+      }
+    }
+  </script>
+</body>
+</html>

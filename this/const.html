@@ -6,38 +6,57 @@
   <title>Document</title>
 </head>
 <body>
+  <div class="box" style="width: 100px; height: 100px; background: red;"></div>
   <script>
     
-    const fun1 = () => {
-      console.log('fun1', this); // this指向window对象
-    };
+    // const fun1 = () => {
+    //   console.log('fun1', this); // this指向window对象
+    // };
 
-    fun1();
+    // fun1();
 
-    const fun2 = function() {
-      console.log('fun2', this); // this指向window对象
-    };
-    fun2();
+    // const fun2 = function() {
+    //   console.log('fun2', this); // this指向window对象
+    // };
+    // fun2();
 
-    function fun3() {
-      console.log('fun3', this); // this指向window对象
-    }
-    fun3();
+    // function fun3() {
+    //   console.log('fun3', this); // this指向window对象
+    // }
+    // fun3();
 
   </script>
 
   <script>
-    'use strict';
+    // 'use strict';
 
-    const fun4 = () => {
-      console.log('fun4', this); // this指向window
-    };  
-    fun4();
+    // const fun4 = () => {
+    //   console.log('fun4', this); // this指向window
+    // };  
+    // fun4();
 
-    function fun5() {
-      console.log('fun5', this); // this指向undefined
+    // function fun5() {
+    //   console.log('fun5', this); // this指向undefined
+    // }
+    // fun5();
+
+  </script>
+
+  <script>
+    function Person(name) {
+      console.log('this', this); // this指向新创建的对象
     }
-    fun5();
+    // Person('张三'); // this指向window对象
+    // new Person('李四'); // this指向新创建的对象
+    // const person = new Person('王五'); // this指向新创建的对象
+
+    const box = document.querySelector('.box');
+    
+    box.addEventListener('click', function() {
+      console.log('this', this); // this指向box元素
+    });
+
+    box.addEventListener('click', Person.bind({ name: '老王' })); // this指向绑定的对象
 
   </script>
 </body>
