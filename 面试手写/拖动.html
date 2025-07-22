@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box{
+      width: 100px;
+      height: 100px;
+      background: red;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box"></div>
+
+  <script>
+    const box = document.querySelector('.box')
+
+    // 监听鼠标按下事件
+    box.addEventListener('mousedown', (e) => {
+      // 获取鼠标相对于盒子的位置
+      const offsetX = e.clientX - box.offsetLeft
+      const offsetY = e.clientY - box.offsetTop
+
+      // 监听鼠标移动事件
+      const onMouseMove = (e) => {
+        // 更新盒子的位置
+        box.style.left = `${e.clientX - offsetX}px`
+        box.style.top = `${e.clientY - offsetY}px`
+      }
+
+      // 监听鼠标松开事件
+      const onMouseUp = () => {
+        document.removeEventListener('mousemove', onMouseMove)
+        document.removeEventListener('mouseup', onMouseUp)
+      }
+
+      document.addEventListener('mousemove', onMouseMove)
+      document.addEventListener('mouseup', onMouseUp)
+    })
+  </script>
+</body>
+</html>
