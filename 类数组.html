@@ -228,7 +228,11 @@
             return -1; // 如果未找到，返回 -1
         };
         
-        
+        function todo(...args) {
+            console.log(args, Array.isArray(args)); // 输出参数和类型
+        }
+
+        todo(1, 2, 3);
     </script>
 </body>
 </html>
