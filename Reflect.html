@@ -24,7 +24,7 @@
     console.log(value); // 1
     const obj1 = { a: 1, b: 2, c: undefined };
     const value2 = Reflect.get(obj, 'c', obj1);
-    console.log(value2);
+    console.log(value2); 
 
     // 2. Reflect.set(target, propertyKey, value, receiver)
     // 用于设置对象的属性值。它的第一个参数是目标对象，第二个参数是属性名，第三个参数是属性值，第四个参数是接收者（可选）。

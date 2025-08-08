@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+
+<body>
+	<script>
+
+		function TreeNode(val) {
+			this.val = val;
+			this.left = this.right = null;
+		}
+
+		var preorderTraversal = function (root) {
+			if (!root) return []
+			let stack = [root]
+			let res = []
+			while (stack.length) {
+				let node = stack.pop()
+				res.push(node.val)
+				if (node.right) stack.push(node.right)
+				if (node.left) stack.push(node.left)
+			}
+			return res
+		};
+
+		var preorderTraversal2 = function (root) {
+			if (!root) return []
+			let stack = []
+			let res = []
+
+			let node = root
+			while (stack.length || node) {
+				while (node) {
+					res.push(node.val)
+					stack.push(node)
+					node = node.left
+				}
+				node = stack.pop()
+				node = node.right
+			}
+			return res
+		};
+
+		const root = new TreeNode(1)
+		root.left = new TreeNode(2)
+		root.right = new TreeNode(3)
+		root.left.left = new TreeNode(4)
+		root.left.right = new TreeNode(5)
+		console.log('root', root)
+		debugger
+		console.log(preorderTraversal(root))
+		console.log(preorderTraversal2(root))
+
+	</script>
+
+	<script>
+
+
+	</script>
+</body>
+
+</html>
