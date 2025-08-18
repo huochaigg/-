@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const flatArray = [
+      { id: 1, name: 'Node 1', parentId: null },
+      { id: 2, name: 'Node 2', parentId: 1 },
+      { id: 3, name: 'Node 3', parentId: 1 },
+      { id: 4, name: 'Node 4', parentId: 2 },
+      { id: 5, name: 'Node 5', parentId: null },
+    ];
+
+    function arrayToTree(arr) {
+      const map = new Map()
+      for (const item of arr) {
+        map.set(item.id, item)
+      }
+
+      const result = []
+      for (let item of arr) {
+        if (item.parentId && map.get(item.parentId)) {
+          const current = map.get(item.parentId)
+          current.children = [...Array.isArray(current.children) ? current.children : [], item]
+        } else {
+          result.push(item)
+        }
+      }
+      return result;
+    }
+
+    console.log(arrayToTree(flatArray))
+
+  </script>
+</body>
+
+</html>

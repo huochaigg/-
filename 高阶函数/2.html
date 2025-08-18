@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+
+<body>
+	<script>
+
+		
+		Function.prototype.before = function (callback) {
+			const self = this;
+			return function (...args) {
+				callback.apply(this, args);
+				return self.apply(this, args);
+			};
+		};
+
+		Function.prototype.after = function (callback) {
+			const self = this;
+			return function (...args) {
+				const ret = self.apply(this, args);
+				callback.apply(this, args);
+				return ret;
+			};
+		};
+
+		let func = function () {
+			console.log(2);
+		};
+
+		debugger;
+
+		// 链式调用需要赋值
+		func = func
+			.before(function () { console.log(1); })
+			.after(function () { console.log(3); });
+
+		func();
+	</script>
+</body>
+
+</html>
