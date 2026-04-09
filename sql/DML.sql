@@ -1,3 +1,5 @@
+-- 表更新
+
 -- 插入数据
 insert into users (Country, age, gender) values ('唐山', 30, 0);
 insert into users (Country, age, gender) values ('茂名', 25, 1);
@@ -5,6 +7,12 @@ insert into users (Country, age, gender) values ('茂名', 25, 1);
 -- 插入全部
 insert into users values (default, default, '北京', 30, 0, 'Product Manager');
 insert into users values (default, default, '上海', 25, 1, 'Teacher');
+insert into users values (default, default, '九江', 18, 1, 'Teacher');
+insert into users values (default, default, '九江', 35, 1, 'Developer');
+insert into users values (default, default, '江苏', 35, 1, 'Developer');
+insert into users values (default, default, '江阴', 35, 1, 'Developer');
+insert into users values (default, default, '九江', 30, 1, 'Product Manager');
+
 
 -- 批量添加数据
 insert into users (Country, age, gender) values ('九江', 19, 0), ('抚州', 45, 1);
