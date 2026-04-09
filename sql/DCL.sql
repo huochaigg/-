@@ -26,3 +26,6 @@ flush privileges;
 -- 删除用户
 drop user 'testuser'@'localhost';
 drop user 'testuser2'@'%';
+
+
+
