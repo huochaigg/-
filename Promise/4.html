@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+
+    class MyPromise {
+      #state = 'pending';
+      #value = undefined
+      #reson = undefined
+      #onFulfilledCallbacks = []
+      #onRejectedCallbacks = []
+
+      constructor (executer) {
+        const resolve = (data) => {
+          if (this.#state = 'pending') {
+            queueMicrotask(() => {
+              this.#state = 'fulfilled'
+              this.#reson = data
+              this.#onFulfilledCallbacks.forEach(fn = fn(this.#value))
+            })
+          }
+        }
+
+        const reject = (err) => {
+          if (this.#state = 'pending') {
+            queueMicrotask(() => {
+              this.#state = 'rejected'
+              this.#reson = err
+              this.#onRejectedCallbacks.forEach(fn = fn(this.#reson))
+            })
+          }
+        }
+        
+        try {
+          executer(resolve, reject)
+        } catch (err) {
+          reject(err)
+        }
+      }
+
+      then(onFulfilled, onRejected) {
+        const _onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : v => v
+        const _onRejected = typeof onRejected === 'function' ? onRejected : err => { throw err }
+        return new MyPromise((resolve, reject) => {
+          if (this.#state === 'pending') {
+            this.#onFulfilledCallbacks.forEach(() => {
+              try {
+                const result = _onFulfilled(this.#value)
+                resolve(result)
+              } catch (err) {
+                reject(err)
+              }
+            })
+            this.#onRejectedCallbacks.forEach(() => {
+              try {
+                const result = _onRejected(this.#value)
+                resolve(result)
+              } catch (err) {
+                reject(err)
+              }
+            })
+          } else if (this.#state === 'fulfilled') {
+            try {
+              const result = _onFulfilled(this.#value)
+              resolve(result)
+            } catch (err) {
+              reject(err)
+            }
+          } else if (this.#state === 'rejected') {
+            try {
+              const result = _onRejected(this.#value)
+              resolve(result)
+            } catch (err) {
+              reject(err)
+            }
+          }
+        })
+      }
+
+      catch(onRejected) {
+        return this.then(null, onRejected)
+      }
+
+      
+    }
+
+  </script>
+</body>
+</html>
