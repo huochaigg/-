@@ -71,3 +71,51 @@ select id, Country,
     else '其他'
   end as age_label
 from users;
+
+
+
+-- 可以为null,因为有些同学旷考了
+create table score (
+  id int primary key auto_increment,
+  name varchar(20),
+  math int null,
+  english int null,
+  chinese int null
+);
+
+insert into score (name, math, english, chinese) values 
+ ('张三', 90, 80, 70),
+ ('李四', 80, 70, 60),
+ ('王五', 70, 60, 50),
+ ('赵六', null, null, null),
+ ('孙七', 40, 30, 20),
+ ('周八', 93, 85, 77);
+
+select * from score; 
+
+delete from score; -- 删除所有数据
+drop table score; -- 删除表
+
+select id, name,
+  case
+    when math < 60 then '不及格'
+    when math >= 60 and math < 80 then '及格'
+    when math >= 80 and math < 90 then '良好'
+    when math >= 90 then '优秀'
+    else '缺考'
+  end as `数学`,
+  case
+    when english < 60 then '不及格'
+    when english >= 60 and english < 80 then '及格'
+    when english >= 80 and english < 90 then '良好'
+    when english >= 90 then '优秀'
+    else '缺考'
+  end as `英语`,
+  case
+    when chinese < 60 then '不及格'
+    when chinese >= 60 and chinese < 80 then '及格'
+    when chinese >= 80 and chinese < 90 then '良好'
+    when chinese >= 90 then '优秀'
+    else '缺考'
+  end as `语文`
+from score;
