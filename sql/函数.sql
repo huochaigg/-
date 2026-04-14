@@ -21,7 +21,7 @@ select ceil(10.1);
 select floor(10.1);
 select mod(10, 3); -- 返回10除以3的余数
 select rand();
-select round(1, 2); - 返回1保留2位小数;
+select round(1, 2); -- 返回1保留2位小数;
 select truncate(1.23456, 2); -- 返回1.23456保留2位小数
 select truncate(1.236, 2); -- 返回1.23
 
