@@ -24,6 +24,9 @@ drop database if exists test; -- 如果数据库存在，则删除数据库, 如
 -- 使用数据库
 use test;
 
+select * from test.dept;
+select * from test.emp;
+select * from emp;
 
 -- 创建表
 create table users ( -- 和下面的有什么区别: 如果表不存在，则创建表，如果表存在，则不创建，并返回0，不报错

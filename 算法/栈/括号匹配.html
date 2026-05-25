@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <h1>hello world</h1>
+  <script>
+    
+    function isValid (str) {
+      const stack = []
+      const map = {
+        ')': '(',
+        ']': '[',
+        '}': '{'
+      }
+
+      const values = Object.values(map)
+      for (let item of str) {
+        if (values.includes(item)) {
+          stack.push(item)
+        } else {
+          const top = stack.pop()
+          if (top !== map[item]) {
+            return false
+          }
+        }
+      }
+
+      return stack.length === 0
+    }
+
+    console.log('{[()]}', isValid('{[()]}'))
+
+    console.log('{[(}]}', isValid('{[(}]}'))
+
+    console.log(isValid('11asdad(adsasd{asd123])asd'))
+  </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
--- Ô¼Êø
+-- çº¦æŸ
 
--- ´´½¨²¿ÃÅ
+-- éƒ¨é—¨ç®¡ç†
 use test;
 create table dept (
   id int primary key auto_increment,
@@ -10,31 +10,31 @@ create table dept (
 drop table dept;
 
 insert into dept (name) values
-('ÑĞ·¢'),
-('ÊĞ³¡'),
-('²ÆÎñ'),
-('ÏúÊÛ'),
-('×Ü¾­Àí');
+('ç ”å‘'),
+('å¸‚åœº'),
+('è´¢åŠ¡'),
+('äººäº‹'),
+('æ€»ç»ç†');
 
 
 select * from dept order by id asc;
 
--- ´´½¨Ô±¹¤
+-- å‘˜å·¥è¡¨
 create table if not exists emp (
-  id int primary key auto_increment comment 'Ô±¹¤id',
-  name varchar(50) not null comment 'Ô±¹¤ĞÕÃû',
-  age int comment 'Ô±¹¤ÄêÁä',
-  job varchar(50) comment 'Ô±¹¤Ö°Î»',
-  salary decimal(10,2) comment 'Ô±¹¤¹¤×Ê',
-  entrydate date comment 'ÈëÖ°ÈÕÆÚ',
-  managerid int comment 'Áìµ¼id',
-  dept_id int comment '²¿ÃÅid',
-  -- Íâ¼ü1£º²¿ÃÅ
+  id int primary key auto_increment comment 'å‘˜å·¥id',
+  name varchar(50) not null comment 'å‘˜å·¥å§“å',
+  age int comment 'å‘˜å·¥å¹´é¾„',
+  job varchar(50) comment 'å‘˜å·¥èŒä½',
+  salary decimal(10,2) comment 'å‘˜å·¥è–ªèµ„',
+  entrydate date comment 'å…¥èŒæ—¥æœŸ',
+  managerid int comment 'é¢†å¯¼id',
+  dept_id int comment 'éƒ¨é—¨id',
+  -- çº¦æŸ1ï¼šéƒ¨é—¨çº¦æŸ
   constraint fk_emp_dept foreign key (dept_id)
     references dept(id)
     on delete restrict
     on update cascade,
-  -- Íâ¼ü2£ºÁìµ¼£¨×Ô¹ØÁª£©
+  -- çº¦æŸ2ï¼šé¢†å¯¼å¯ä»¥ä¸ºç©º
   constraint fk_emp_manager foreign key (managerid)
     references emp(id)
     on delete set null
@@ -43,20 +43,20 @@ create table if not exists emp (
 
 drop table emp;
 
--- »òÕßÉ¾³ıËùÓĞÊı¾İ£¬²¢ÖØÖÃ×ÔÔöid
+-- æ¸…ç©ºåˆ é™¤æµ‹è¯•æ•°æ®ï¼Œå¹¶é‡ç½®è‡ªå¢id
 delete from emp;
 alter table emp auto_increment = 1;
 
 insert into emp (name, age, job, salary, entrydate, managerid, dept_id) values
-('A', 40, '×Ü¾­Àí', 20000, '2020-01-01', null, 5),
-('ÕÅÈı', 24, 'ÑĞ·¢', 15000, '2020-01-01', 1, 1),
-('ÀîËÄ', 21, 'ÑĞ·¢', 11000, '2020-01-01', 2, 1),
-('ÍõÎå', 22, 'ÑĞ·¢', 10000, '2020-01-01', 2, 1),
-('ÕÔÁù', 23, 'ÏúÊÛ', 15000, '2020-01-01', 1, 4),
-('ËïÆß', 24, '²ÆÎñ', 8000, '2020-01-01', 1, 3),
-('ÖÜ°Ë', 25, 'ÊĞ³¡', 9000, '2020-01-01', 1, 2);
+('A', 40, 'æ€»ç»ç†', 20000, '2020-01-01', null, 5),
+('å¼ ä¸‰', 24, 'ç ”å‘', 15000, '2020-01-01', 1, 1),
+('æå››', 21, 'ç ”å‘', 11000, '2020-01-01', 2, 1),
+('ç‹äº”', 22, 'ç ”å‘', 10000, '2020-01-01', 2, 1),
+('èµµå…­', 23, 'äººäº‹', 15000, '2020-01-01', 1, 4),
+('å­™ä¸ƒ', 24, 'è´¢åŠ¡', 8000, '2020-01-01', 1, 3),
+('å‘¨å…«', 25, 'å¸‚åœº', 9000, '2020-01-01', 1, 2);
 
 select * from emp;
 
 delete from dept where id = 5;
-insert into dept (id, name) values (5,'×Ü¾­Àí');
+insert into dept (id, name) values (5,'æ€»ç»ç†');
