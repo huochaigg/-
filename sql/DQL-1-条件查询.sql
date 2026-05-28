@@ -1,5 +1,8 @@
 -- 表查询
 
+
+use test;
+
 -- 查询所有字段
 select * from users;
 
