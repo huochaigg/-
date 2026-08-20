@@ -1,5 +1,7 @@
 # 分组查询
 
+use test;
+
 # 1. 创建表
 -- show create table users;
 
@@ -11,7 +13,7 @@ CREATE TABLE if not exists `users` (
   `gender` INT(1) DEFAULT 1 COMMENT '性别，1表示男，0表示女',
   `other` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`) 
-) ENGINE=InnoDB AUTO_INCREMENT=4968 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+) ENGINE=InnoDB AUTO_INCREMENT=4968 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 # 添加数据
 INSERT INTO users (Country, age, gender, other) 
