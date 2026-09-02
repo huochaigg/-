@@ -11,7 +11,7 @@
   <script>
 
     const PENDING = 'pending'
-    const FALFILLED = 'falfilled'
+    const FULFILLED = 'fulfilled'
     const REJECTED = 'rejected'
 
     class MyPromise {
@@ -30,7 +30,7 @@
       constructor(executor) {
 
         const resolve = (data) => {
-          this.#changeState(FALFILLED, data)
+          this.#changeState(FULFILLED, data)
         }
 
         const reject = (err) => {
@@ -68,8 +68,7 @@
             reject
           } = this.#thenables.shift()
 
-          const callback = this.#state === FALFILLED ? onFulfilled : onRejected
-          const reFunc = this.#state === FALFILLED ? resolve : reject
+          const callback = this.#state === FULFILLED ? onFulfilled : onRejected
           if (typeof callback === 'function') {
             queueMicrotask(() => {
               try {
@@ -80,12 +79,9 @@
               }
             })
           } else {
+            const reFunc = this.#state === FULFILLED ? resolve : reject
             queueMicrotask(() => {
-              try {
-                reFunc(this.#result)
-              } catch (err) {
-                reject(err)
-              }
+              reFunc(this.#result)
             })
           }
         }
@@ -110,6 +106,16 @@
     }).then(res => {
       console.log(res)
     })
+
+
+    let _result, _reject
+    new Promise((result, reject) => {
+      _result = result,
+      _reject = reject
+    })
+
+    console.log('_result', _result, _reject)
+
 
   </script>
 </body>
