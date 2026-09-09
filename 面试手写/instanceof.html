@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 手写instanceof
+    function myInstanceof(left, right) {
+      if (left || (typeof left !== 'object' && typeof left !== 'function')) {
+        return false
+      }
+      let proto = left.__proto__
+      while(proto) {
+        if (proto === right.prototype) {
+          return true
+        }
+        proto = proto.__proto__
+      }
+      return false
+    }
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="box1" style="width: 100px; height: 100px; border: 1px solid blue;"></div>
+  <script>
+
+    function debounce(fn, delay, immediate = false) {
+      let timer = null
+
+      return function (...args) {
+        if (timer) clearTimeout(timer)
+
+        if (immediate && !timer) {
+          fn.apply(this, args)
+        }
+
+        timer = setTimeout(() => {
+          timer = null // 静默结束后解锁，下次才能再次立即执行
+          if (!immediate) {
+            fn.apply(this, args)
+          }
+        }, delay)
+      }
+    }
+
+    function search(value) {
+      console.log(value);
+    }
+
+    const handler = debounce(search, 1000, true);
+    const box = document.querySelector('#box1')
+    box.onclick = () => {
+      handler(111111)
+    }
+
+  </script>
+</body>
+
+</html>
