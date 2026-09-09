@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promise 并发控制要点</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V3 面试口径 ==========
+     *
+     * 题面：100 个请求，最多同时 5 个
+     *
+     * 核心两问：
+     * 1. 如何保证最大并发数？
+     * 2. 如何保证最终结果顺序？
+     *
+     * ---------- 1. 最大并发 ----------
+     * 维护 running / executing.length：
+     * - 启动任务前 running++
+     * - 任务结束（finally）running--，再拉下一个
+     * - 仅当 running < limit 时才从队列取新任务
+     * asyncPool：池满时 await Promise.race(executing)，腾出一个再继续 for 循环
+     * Scheduler：while (running < limit && queue.length) 拉任务
+     *
+     * ---------- 2. 结果顺序 ----------
+     * 完成有先后 ≠ 结果数组顺序
+     * 正确：创建时记下下标 i，results[i] = res
+     * 或：按入参顺序 push 每个任务的 Promise，最后 Promise.all(ret)
+     * 错误：results.push(res) —— 会变成「谁先完成谁在前」
+     *
+     * ---------- asyncPool vs Scheduler ----------
+     * asyncPool：一批已知任务（数组）+ 并发上限 → 一次返回全部结果
+     * Scheduler：可动态 add；适合持续进任务的队列
+     * 两者底层同一套：队列 + 进行中计数 + 完成后补位
+     *
+     * ---------- 和业务怎么串 ----------
+     * AI 生图：100 张图请求，浏览器/网关限流，池化 5 路并发
+     * 批量任务：导出、压缩、上传分片，同理
+     * 后端 Worker：任务队列 worker 数 = limit，干完再 pull 下一条
+     * 前端本质都是：有限执行槽 + 等待队列
+     *
+     * ---------- 和 v2 的关系 ----------
+     * Promise.all：无限并发，全部一起上
+     * Promise.race：只要最先结束的那个
+     * asyncPool / Scheduler：受控并发，all 的「限流版」
+     */
+
+    // 最小对照：裸 all（无限制）vs 池化
+    const delay = (ms, v) => new Promise(r => setTimeout(() => r(v), ms))
+
+    async function asyncPool(poolLimit, array, iteratorFn) {
+      const ret = []
+      const executing = []
+      for (const item of array) {
+        const p = Promise.resolve().then(() => iteratorFn(item, array))
+        ret.push(p)
+        if (poolLimit <= array.length) {
+          const e = p.then(() => executing.splice(executing.indexOf(e), 1))
+          executing.push(e)
+          if (executing.length >= poolLimit) {
+            await Promise.race(executing)
+          }
+        }
+      }
+      return Promise.all(ret)
+    }
+
+    class Scheduler {
+      constructor(limit) {
+        this.limit = limit
+        this.running = 0
+        this.queue = []
+      }
+      add(taskFn) {
+        return new Promise((resolve, reject) => {
+          this.queue.push(() => Promise.resolve().then(taskFn).then(resolve, reject))
+          this.#run()
+        })
+      }
+      #run() {
+        while (this.running < this.limit && this.queue.length) {
+          const task = this.queue.shift()
+          this.running++
+          task().finally(() => {
+            this.running--
+            this.#run()
+          })
+        }
+      }
+    }
+
+    // 模拟：10 个「生图」请求，并发 3
+    let concurrent = 0
+    let peak = 0
+
+    asyncPool(3, Array.from({ length: 10 }, (_, i) => i), async (id) => {
+      concurrent++
+      peak = Math.max(peak, concurrent)
+      console.log(`[生图] start ${id} | 并发 ${concurrent}`)
+      await delay(80 + Math.random() * 120, id)
+      concurrent--
+      console.log(`[生图] done  ${id} | 并发 ${concurrent}`)
+      return `img-${id}`
+    }).then(imgs => {
+      console.log('生图结果顺序 →', imgs)
+      console.log('峰值并发 →', peak) // <= 3
+    })
+  </script>
+</body>
+</html>
