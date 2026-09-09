@@ -22,7 +22,7 @@
         let count = 0
 
         async function request() {
-          if (index === urls.length) {
+          if (index >= urls.length) {
             return
           }
           const i = index
@@ -38,6 +38,7 @@
             console.log('i', i)
             if (count === urls.length) {
               resolve(result)
+              return
             }
             request()
           }
