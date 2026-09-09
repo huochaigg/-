@@ -13,21 +13,23 @@
 
     function debounce(fn, delay, immediate = false) {
       let timer = null
-
       return function (...args) {
-        if (timer) clearTimeout(timer)
 
         if (immediate && !timer) {
           fn.apply(this, args)
         }
 
+        if (timer) {
+          clearTimeout(timer)
+        }        
+
         timer = setTimeout(() => {
-          timer = null // 静默结束后解锁，下次才能再次立即执行
+          timer = null
           if (!immediate) {
             fn.apply(this, args)
           }
         }, delay)
-      }
+      } 
     }
 
     function search(value) {
