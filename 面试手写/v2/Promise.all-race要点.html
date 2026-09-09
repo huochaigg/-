@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promise.all / race 面试要点</title>
+</head>
+<body>
+  <script>
+    // ========== 实现（与同目录 myAll / myRace 一致）==========
+    Promise.myAll = function (arr) {
+      if (!Array.isArray(arr)) {
+        return Promise.reject(new TypeError('Argument must be an array'))
+      }
+      return new Promise((resolve, reject) => {
+        const len = arr.length
+        if (len === 0) {
+          resolve([])
+          return
+        }
+        let count = 0
+        const results = new Array(len)
+        for (let i = 0; i < len; i++) {
+          Promise.resolve(arr[i]).then(res => {
+            results[i] = res
+            count++
+            if (count === len) resolve(results)
+          }, reject)
+        }
+      })
+    }
+
+    Promise.myRace = function (arr) {
+      if (!Array.isArray(arr)) {
+        return Promise.reject(new TypeError('Argument must be an array'))
+      }
+      return new Promise((resolve, reject) => {
+        for (let i = 0; i < arr.length; i++) {
+          Promise.resolve(arr[i]).then(resolve, reject)
+        }
+      })
+    }
+
+    const delay = (ms, val) => new Promise(r => setTimeout(() => r(val), ms))
+    const fail = (ms, err) => new Promise((_, rj) => setTimeout(() => rj(err), ms))
+
+    // ---------- 1. 处理普通值 ----------
+    // Promise.resolve(x)：已是 Promise 原样返回；普通值包成已成功的 Promise
+    Promise.myAll([1, Promise.resolve(2), 'ok']).then(res => {
+      console.log('1. 普通值 all →', res) // [1, 2, 'ok']
+    })
+
+    Promise.myRace([100, delay(50, '慢')]).then(res => {
+      console.log('1. 普通值 race →', res) // 100（普通值立刻敲定，必赢）
+    })
+
+    // ---------- 2. 保证结果顺序（仅 all）----------
+    // 慢的先完成也不能 push；必须 results[i] = res，顺序跟入参下标走
+    Promise.myAll([
+      delay(80, '慢'),
+      delay(10, '快'),
+      delay(40, '中')
+    ]).then(res => {
+      console.log('2. all 顺序 →', res) // ['慢', '快', '中'] 不是按完成先后
+    })
+
+    // race 没有“结果数组”，谈不上顺序，只取最先敲定的那个
+    Promise.myRace([
+      delay(80, '慢'),
+      delay(10, '快')
+    ]).then(res => {
+      console.log('2. race 谁先谁赢 →', res) // '快'
+    })
+
+    // ---------- 3. 某一个失败以后 ----------
+    // all：任一失败 → 整体立刻 reject；其余 Promise 仍会跑完，但结果被忽略
+    Promise.myAll([
+      delay(50, 1),
+      fail(20, '挂了'),
+      delay(100, 3)
+    ]).then(
+      res => console.log('3. all 成功（不应出现）', res),
+      err => console.log('3. all 失败 →', err) // '挂了'
+    )
+
+    // race：最先敲定的若是失败，整体也失败（成功/失败比的是“谁先结束”）
+    Promise.myRace([
+      fail(10, '先失败'),
+      delay(50, '后成功')
+    ]).then(
+      res => console.log('3. race 成功（不应出现）', res),
+      err => console.log('3. race 失败 →', err) // '先失败'
+    )
+  </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promise.all</title>
+</head>
+<body>
+  <script>
+
+    Promise.myAll = function (arr) {
+      if (!Array.isArray(arr)) {
+        return Promise.reject(new TypeError('Argument must be an array'))
+      }
+
+      return new Promise((resolve, reject) => {
+        const len = arr.length
+        // 空数组：原生 Promise.all([]) 立刻成功
+        if (len === 0) {
+          resolve([])
+          return
+        }
+
+        let count = 0
+        const results = new Array(len)
+
+        for (let i = 0; i < len; i++) {
+          // 兼容普通值；按索引落位，保证结果顺序与入参一致
+          Promise.resolve(arr[i]).then(res => {
+            results[i] = res
+            count++
+            if (count === len) {
+              resolve(results)
+            }
+          }, reject)
+        }
+      })
+    }
+
+  </script>
+</body>
+</html>
