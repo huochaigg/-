@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>retry</title>
+</head>
+<body>
+  <script>
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms))
+    }
+
+    /**
+     * 失败重试
+     * @param {() => Promise} fn 每次尝试都要重新调用（不要传入已经在跑的 Promise）
+     * @param {{ times: number, delay?: number }} options
+     *   times: 最多尝试次数（含第一次）
+     *   delay: 每次失败后的等待（可选）
+     */
+    async function retry(fn, { times = 3, delay = 0 } = {}) {
+      let lastError
+      for (let i = 1; i <= times; i++) {
+        try {
+          return await fn(i) // 成功直接返回
+        } catch (err) {
+          lastError = err
+          console.log(`第 ${i}/${times} 次失败:`, err.message || err)
+          if (i < times && delay > 0) {
+            await sleep(delay)
+          }
+        }
+      }
+      return Promise.reject(lastError)
+    }
+
+    // ---------- 场景：接口失败重试 3 次 ----------
+    let hit = 0
+    function flakyApi() {
+      hit++
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (hit < 3) reject(new Error(`network error @hit=${hit}`))
+          else resolve(`data (第 ${hit} 次才成功)`)
+        }, 200)
+      })
+    }
+
+    retry(flakyApi, { times: 3, delay: 300 })
+      .then(res => console.log('retry 成功 →', res))
+      .catch(err => console.log('retry 最终失败 →', err.message))
+
+    // 一直失败：用尽次数后抛最后一次错误
+    retry(
+      () => Promise.reject(new Error('always fail')),
+      { times: 3, delay: 100 }
+    ).catch(err => console.log('用尽次数 →', err.message))
+  </script>
+</body>
+</html>

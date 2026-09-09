@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>timeout</title>
+</head>
+<body>
+  <script>
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms))
+    }
+
+    /**
+     * 给 promise 加超时：ms 内没敲定就失败
+     * 本质：Promise.race([原任务, 超时拒绝])
+     */
+    function timeout(promise, ms, message = `Timeout after ${ms}ms`) {
+      const timer = sleep(ms).then(() => {
+        return Promise.reject(new Error(message))
+      })
+      return Promise.race([promise, timer])
+    }
+
+    // 更常见签名：timeout(fn, ms) —— fn 是返回 Promise 的函数
+    function timeoutFn(fn, ms, message) {
+      return timeout(Promise.resolve().then(fn), ms, message)
+    }
+
+    // ---------- 场景：请求 3 秒没回来自动失败 ----------
+    function fakeRequest(ms) {
+      return sleep(ms).then(() => `ok @${ms}ms`)
+    }
+
+    timeout(fakeRequest(1000), 3000)
+      .then(res => console.log('快请求成功 →', res))
+      .catch(err => console.log('快请求失败 →', err.message))
+
+    timeout(fakeRequest(4000), 3000)
+      .then(res => console.log('慢请求成功 →', res))
+      .catch(err => console.log('慢请求失败 →', err.message)) // Timeout after 3000ms
+
+    // 注意：race 输了以后，慢请求本身可能仍在跑（未取消）
+    // 面试可提：真要取消需 AbortController
+  </script>
+</body>
+</html>

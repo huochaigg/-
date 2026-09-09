@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>retry / timeout / sleep 要点</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V4 面试口径 ==========
+     *
+     * ---------- sleep ----------
+     * new Promise(r => setTimeout(r, ms))
+     * 作用：把「等一会儿」变成可 await 的 Promise，是 delay / 重试间隔的底座
+     *
+     * ---------- timeout ----------
+     * Promise.race([任务, sleep(ms).then(() => Promise.reject(...))])
+     * 场景：请求 3 秒没回来 → 自动失败
+     * 易错：超时后原请求可能还在飞（race 不取消）；进阶提 AbortController
+     *
+     * ---------- retry ----------
+     * 传入「函数」而不是 Promise：每次失败要重新执行 fn()
+     * times：最大尝试次数（含第一次）
+     * delay：失败后 sleep 再试（retry + delay）
+     * 场景：接口失败重试 3 次
+     *
+     * ---------- 常组合 ----------
+     * retry(() => timeout(fetch(url), 3000), { times: 3, delay: 500 })
+     * = 每次尝试最多等 3 秒，失败则隔 500ms 再试，最多 3 次
+     *
+     * ---------- 和 v2/v3 ----------
+     * sleep / timeout 都用到 Promise（尤其 race）
+     * 批量接口可：asyncPool + 每个任务内部 retry/timeout
+     *
+     * ========== Node 穿插：异步 IO 为什么不阻塞进程？==========
+     * 感性认识即可：
+     *
+     * JS 主线程只跑 JS 回调；真正的读文件 / 网络多交给 libuv + 系统
+     * （线程池或内核异步 IO），做完再把回调塞回事件循环。
+     *
+     * 所以：
+     * - fs.readFile / http 请求期间，主线程还能处理别的事件
+     * - 阻塞的是「同步」API（如 fs.readFileSync），不是「发起异步 IO」本身
+     *
+     * 类比浏览器：fetch 不会卡住页面 JS，和 Node 异步 IO 同一套「事件循环」思路
+     * 细节（libuv 线程池大小等）面试点到即可，不必深挖
+     */
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms))
+    }
+
+    function timeout(promise, ms) {
+      return Promise.race([
+        promise,
+        sleep(ms).then(() => Promise.reject(new Error(`Timeout ${ms}ms`)))
+      ])
+    }
+
+    async function retry(fn, { times = 3, delay = 0 } = {}) {
+      let lastError
+      for (let i = 1; i <= times; i++) {
+        try {
+          return await fn(i)
+        } catch (err) {
+          lastError = err
+          if (i < times && delay) await sleep(delay)
+        }
+      }
+      throw lastError
+    }
+
+    // 组合演示：每次最多等 800ms，失败隔 200ms 再试，最多 3 次
+    let n = 0
+    function slowFlaky() {
+      n++
+      const cost = n < 3 ? 2000 : 100 // 前两次故意超时，第三次很快成功
+      return sleep(cost).then(() => `ok at try ${n}`)
+    }
+
+    retry(() => timeout(slowFlaky(), 800), { times: 3, delay: 200 })
+      .then(res => console.log('组合成功 →', res))
+      .catch(err => console.log('组合失败 →', err.message))
+  </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function sleep(delay) {
+      return new Promise(resolve => setTimeout(() => resolve(), delay))
+    }
+
+    function concurRequest(urls, maxNum) {
+      return new Promise((resolve, reject) => {
+        if (urls.length === 0) {
+          resolve([])
+          return 
+        }
+        const result = []
+        let index = 0
+        let count = 0
+
+        async function request() {
+          if (index === urls.length) {
+            return
+          }
+          const i = index
+          index ++
+          try {
+            const res = await fetch(urls[i])
+            result[i] = res
+          } catch(err) {
+            result[i] = err
+          } finally {
+            count ++
+            console.log('count', count)
+            console.log('i', i)
+            if (count === urls.length) {
+              resolve(result)
+            }
+            request()
+          }
+        }
+
+        for (let i = 0; i < maxNum; i++) {
+          request()
+        }
+      })
+    }
+
+    const requestUrls = []
+    
+    for(let i = 0; i < 10; i++) {
+      requestUrls.push(`http://localhost:3333/test?id=${i}`)
+    }
+
+    concurRequest(requestUrls, 3)
+  
+  </script>
+</body>
+</html>

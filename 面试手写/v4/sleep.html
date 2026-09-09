@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>sleep</title>
+</head>
+<body>
+  <script>
+    /** 等 ms 毫秒后成功（常作 delay / 重试间隔的底座） */
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms))
+    }
+
+    // ---------- 演示 ----------
+    console.log('start', Date.now())
+    sleep(1000).then(() => {
+      console.log('after 1s', Date.now())
+    })
+
+    // async/await 写法
+    ;(async () => {
+      await sleep(500)
+      console.log('await sleep 500ms 结束')
+    })()
+  </script>
+</body>
+</html>
