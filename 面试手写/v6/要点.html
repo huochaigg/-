@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>deepClone 要点</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V6 面试口径 ==========
+     *
+     * JSON.parse(JSON.stringify(x)) 不够：
+     * 丢 undefined / function / Symbol，Date 变字符串，RegExp 变 {}，
+     * Map/Set 变 {}，遇到循环引用直接抛错
+     *
+     * ---------- 骨架 ----------
+     * 1. 非对象（含 null）直接返回
+     * 2. Date / RegExp / Map / Set 走专用构造
+     * 3. Array / Object 递归每个 key
+     * 4. WeakMap 记住「源 → 拷贝」，处理循环引用
+     *
+     * ---------- 为什么 WeakMap 能解决循环引用 ----------
+     *
+     * 循环：const a = {}; a.self = a
+     * 不记账会：clone(a) → clone(a.self) → clone(a) → 无限递归 → 栈溢出
+     *
+     * 做法：
+     *   创建 cloned 后立刻 map.set(源, cloned)
+     *   再递归属性；若属性又指回源，map.has(源) 为 true，返回已有 cloned
+     *   于是 copy.self === copy，环被接到拷贝图上，而不是再 new 一个
+     *
+     * 为什么是 WeakMap 不是 Map：
+     * 1. key 必须是对象 —— 正好，循环引用只发生在对象上
+     * 2. 弱引用：拷贝结束后源对象若没人用了，这条记录可被 GC
+     *    用 Map 会把源对象多钉一份，可能泄漏（深拷贝工具常处理大对象树）
+     * 3. 不能遍历、不能清 size —— 这里只做「查一下有没有拷过」，够用
+     *
+     * 必须「先 set 再递归」：
+     * 若先递归完属性再 set，走进环时 map 里还没有自己，照样爆栈
+     *
+     * ---------- 和 Map 对比一句 ----------
+     * Map：强引用 key，适合还要列举、长期当字典
+     * WeakMap：对象 key + 弱引用，适合「给对象贴私有缓存」（拷贝表、私有数据）
+     *
+     * ---------- 手写不必堆的 ----------
+     * Function / DOM / Promise / 原型链上所有特殊对象不必一次写完
+     * 面试讲清：类型分支 + 先登记再递归 + WeakMap 弱引用即可
+     */
+  </script>
+</body>
+</html>

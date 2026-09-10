@@ -38,7 +38,6 @@
           this.off(type, wrapper)
           fn.apply(this, args)
         }
-        wrapper.origin = fn // 方便用原函数 off
         this.on(type, wrapper)
       }
 
