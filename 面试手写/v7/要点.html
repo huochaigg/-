@@ -11,13 +11,31 @@
      * ========== V7 面试口径 ==========
      *
      * this 不是「函数写在哪」决定的，是「怎么被调用」决定的（箭头函数除外）
+     * 可运行例子见同目录 this复习.html
      *
      * ---------- this 判定优先级（高 → 低）----------
      * 1. new：this = 新创建的对象
      * 2. call / apply / bind：this = 你传入的对象（null/undefined → globalThis）
-     * 3. 对象方法：obj.fn() → this = obj
+     * 3. 对象方法：obj.fn() → this = 点前面那个对象（obj.child.fn() 是 child）
      * 4. 独立调用 fn()：严格模式 undefined，非严格 globalThis
-     * 箭头函数：没有自己的 this，向外层词法作用域找
+     *
+     * ---------- 箭头函数 ----------
+     * 没有自己的 this / arguments / new.target，不能 new
+     * this 在定义时捕获外层普通函数 / 类实例的 this
+     * call / apply / bind 改不了箭头的 this
+     * 对象字面量里直接写 arrow: () => this 不会指向该对象（外层是脚本）
+     * 写在 method() { const f = () => this } 里才会指向 method 的 this
+     *
+     * ---------- 最容易丢 this 的场景 ----------
+     * const fn = obj.show; fn()
+     * setTimeout(obj.show, 0)
+     * arr.forEach(obj.show)
+     * 按钮 addEventListener('click', obj.show)（若还想要 obj 而不是 DOM）
+     * 修复：() => obj.show() 或 obj.show.bind(obj)
+     *
+     * ---------- class ----------
+     * 类方法处于严格模式，提取后 this 是 undefined
+     * 字段箭头 arrow = () => this 绑在实例上，提取后仍指向实例
      *
      * ---------- call vs apply vs bind ----------
      * call(ctx, a, b)     立刻执行，参数逐个传

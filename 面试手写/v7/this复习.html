@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>this 复习</title>
+</head>
+<body>
+  <script>
+    'use strict'
+
+    const tag = (title) => console.log('\n—— ' + title + ' ——')
+
+    function show() {
+      console.log('this =', this)
+    }
+
+    // 1. 独立调用：严格模式 undefined；非严格是 globalThis
+    tag('1. 独立调用 fn()')
+    show() // undefined（本页是 use strict）
+
+    // 2. 对象调用：看「点前面是谁」
+    tag('2. obj.fn()')
+    const obj = { name: 'obj', show }
+    obj.show() // obj
+
+    const obj2 = {
+      name: 'obj2',
+      child: {
+        name: 'child',
+        show
+      }
+    }
+    obj2.child.show() // child（不是 obj2）
+
+    // 3. 取出来再调：丢失隐式绑定
+    tag('3. 方法赋给变量 / 当回调')
+    const fn = obj.show
+    fn() // undefined
+
+    setTimeout(obj.show, 0) // 回调里也是独立调用 → undefined
+    setTimeout(() => obj.show(), 0) // 箭头只包了一层调用方式，this 仍是 obj
+
+    // 4. call / apply / bind：显式指定
+    tag('4. call / apply / bind')
+    show.call({ name: 'call' })
+    show.apply({ name: 'apply' })
+    show.bind({ name: 'bind' })()
+
+    // 5. new：this 是新实例，优先级高于 bind
+    tag('5. new')
+    function Person(name) {
+      this.name = name
+    }
+    const p = new Person('tom')
+    console.log('new Person', p)
+
+    const Bound = Person.bind({ tag: '会被 new 忽略' })
+    console.log('new Bound', new Bound('jerry'))
+
+    // 6. 箭头函数：没有自己的 this，跟定义时外层走
+    tag('6. 箭头函数')
+    const outer = {
+      name: 'outer',
+      arrow: () => {
+        console.log('对象字面量里的箭头 this =', this) // 这里是外层脚本，严格模式 undefined
+      },
+      method() {
+        const arrow = () => console.log('method 里的箭头 this =', this)
+        arrow()
+        ;[1].forEach(() => console.log('forEach 箭头 this =', this))
+      }
+    }
+    outer.arrow()
+    outer.method()
+
+    const arrowShow = () => console.log('独立箭头 this =', this)
+    arrowShow.call({ name: '没用' }) // call/apply/bind 改不了箭头的 this
+    // new arrowShow() // TypeError：箭头不能当构造函数
+
+    // 7. 类：方法默认近似严格，提取后 this 是 undefined
+    tag('7. class')
+    class Foo {
+      name = 'Foo'
+      say() {
+        console.log('class 方法 this =', this)
+      }
+      arrow = () => console.log('class 字段箭头 this =', this)
+    }
+    const foo = new Foo()
+    foo.say()
+    const say = foo.say
+    try { say() } catch (e) { console.log('提取 class 方法', e.message) }
+    const arrow = foo.arrow
+    arrow() // 字段箭头绑在实例上，提取后仍是 foo
+
+    // 8. 优先级口诀（普通函数）
+    tag('8. 优先级')
+    console.log(`
+new > call/apply/bind > obj.fn() > 裸调 fn()
+箭头函数不参与这套，只看词法外层
+定时器、事件、数组回调里直接塞 obj.fn 都会丢 this，包一层或 bind
+`)
+  </script>
+</body>
+</html>
