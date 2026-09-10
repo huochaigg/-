@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>观察者 vs 发布订阅 要点</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V5 面试口径 ==========
+     *
+     * ---------- 观察者模式 Observer ----------
+     * Subject 直接持有 Observer 列表，状态变了自己 notify
+     * 关系：一对多，双方认识（至少 Subject 认识 Observer）
+     * 手写：add / remove / notify
+     * 场景：Vue2 dep.subs、气象站推看板
+     *
+     * ---------- 发布订阅 Pub/Sub ----------
+     * 中间多一个事件中心，按「事件名」订阅
+     * 发布者和订阅者互不认识，只认频道
+     * 手写 EventEmitter：on / off / once / emit
+     * 场景：mitt、Node EventEmitter、DOM addEventListener、Vue $on/$emit
+     *
+     * ---------- 一张图 ----------
+     * 观察者：  Subject -----------------> Observer
+     *                  notify
+     *
+     * 发布订阅： Publisher --> EventBus --> Subscriber
+     *                         (事件名)
+     *
+     * ---------- 面试常问区别 ----------
+     * 1. 有没有中间人：观察者没有；发布订阅有 EventBus
+     * 2. 耦合：观察者更紧（直接引用）；发布订阅靠事件名解耦
+     * 3. 调度：观察者通常「状态变了就全通知」；发布订阅可按 topic 过滤
+     * 别说成完全无关：发布订阅常被看成观察者的解耦升级
+     *
+     * ---------- 手写易错 ----------
+     * 1. off 要用 filter / 下标，不要 list.findIndex(fn)
+     *    findIndex(fn) 会把 fn 当「断言函数」，对不上具体回调
+     * 2. emit / notify 时 slice() 再遍历，避免订阅里 off 打乱当前循环
+     * 3. once 用包装函数，触发后 off 包装函数
+     * 4. 传入的必须是同一个函数引用才能 off 掉
+     *
+     * ---------- 和框架 / Node ----------
+     * Vue 响应式 ≈ 观察者（dep 收集 watcher，set 时 notify）
+     * 组件通信事件总线 ≈ 发布订阅
+     * Node：EventEmitter 是发布订阅；fs / net 很多 API 建立在它上面
+     * 浏览器：addEventListener 也是发布订阅（DOM 当事件中心）
+     *
+     * ---------- 和 v2/v3/v4 ----------
+     * 调度器/并发池解决「怎么跑任务」
+     * 观察者/发布订阅解决「事情发生了通知谁」
+     * 可组合：任务完成 emit('done')；retry 失败 emit('error')
+     */
+  </script>
+</body>
+</html>

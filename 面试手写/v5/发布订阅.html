@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>发布订阅 / EventEmitter</title>
+</head>
+<body>
+  <script>
+    /**
+     * 发布订阅：中间有事件中心（EventEmitter / mitt / Node EventEmitter）
+     * 发布者和订阅者不直接认识，靠事件名解耦
+     * 面试手写：on / off / once / emit
+     */
+    class EventEmitter {
+      constructor() {
+        this.events = Object.create(null)
+      }
+
+      on(type, fn) {
+        if (!this.events[type]) this.events[type] = []
+        this.events[type].push(fn)
+        return () => this.off(type, fn)
+      }
+
+      off(type, fn) {
+        const list = this.events[type]
+        if (!list) return
+        if (!fn) {
+          delete this.events[type]
+          return
+        }
+        this.events[type] = list.filter(item => item !== fn)
+      }
+
+      once(type, fn) {
+        const wrapper = (...args) => {
+          this.off(type, wrapper)
+          fn.apply(this, args)
+        }
+        wrapper.origin = fn // 方便用原函数 off
+        this.on(type, wrapper)
+      }
+
+      emit(type, ...args) {
+        const list = this.events[type]
+        if (!list) return
+        list.slice().forEach(fn => fn.apply(this, args))
+      }
+    }
+
+    // ---------- 演示 ----------
+    const bus = new EventEmitter()
+
+    const onLogin = (user) => console.log('on login', user)
+    bus.on('login', onLogin)
+    bus.once('login', (user) => console.log('once login', user))
+
+    bus.emit('login', { name: 'tom' })
+    bus.emit('login', { name: 'jerry' }) // once 不再触发
+
+    bus.off('login', onLogin)
+    bus.emit('login', { name: 'gone' }) // 无输出
+  </script>
+</body>
+</html>

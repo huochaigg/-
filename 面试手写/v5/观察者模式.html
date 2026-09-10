@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>观察者模式</title>
+</head>
+<body>
+  <script>
+    /**
+     * 观察者：Subject 直接持有 Observer 列表
+     * 一对多：状态变了，Subject 自己通知所有观察者
+     * 典型：Vue 响应式 dep.subs、DOM 上的「这个按钮被点了」
+     */
+    class Subject {
+      constructor() {
+        this.observers = []
+      }
+
+      add(observer) {
+        this.observers.push(observer)
+        return () => this.remove(observer)
+      }
+
+      remove(observer) {
+        this.observers = this.observers.filter(item => item !== observer)
+      }
+
+      notify(data) {
+        // slice：通知过程中若有人 unsubscribe，不影响本次遍历
+        this.observers.slice().forEach(observer => {
+          if (typeof observer === 'function') observer(data)
+          else observer.update(data)
+        })
+      }
+    }
+
+    // ---------- 演示：气象站 → 看板 / 手机 ----------
+    class Board {
+      constructor(name) {
+        this.name = name
+      }
+      update(temp) {
+        console.log(`[${this.name}] 温度更新: ${temp}℃`)
+      }
+    }
+
+    const weather = new Subject()
+    const board = new Board('大厅看板')
+    const phone = (temp) => console.log(`[手机] 温度更新: ${temp}℃`)
+
+    const offBoard = weather.add(board)
+    weather.add(phone)
+
+    weather.notify(26)
+    offBoard()
+    weather.notify(30) // 看板已退订，只剩手机
+  </script>
+</body>
+</html>
