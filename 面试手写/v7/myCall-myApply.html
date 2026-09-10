@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>myCall / myApply</title>
+</head>
+<body>
+  <script>
+    Function.prototype.myCall = function (context, ...args) {
+      if (typeof this !== 'function') {
+        throw new TypeError('myCall must be called on a function')
+      }
+      context = context == null ? globalThis : Object(context)
+      const key = Symbol()
+      context[key] = this
+      const result = context[key](...args)
+      delete context[key]
+      return result
+    }
+
+    Function.prototype.myApply = function (context, args) {
+      if (typeof this !== 'function') {
+        throw new TypeError('myApply must be called on a function')
+      }
+      context = context == null ? globalThis : Object(context)
+      const key = Symbol()
+      context[key] = this
+      const result = args == null ? context[key]() : context[key](...args)
+      delete context[key]
+      return result
+    }
+
+    function greet(hi, mark) {
+      console.log(`${hi}, ${this.name}${mark}`)
+    }
+    const person = { name: 'tom' }
+
+    greet.myCall(person, 'Hello', '!')
+    greet.myApply(person, ['Hi', '~'])
+    greet.myCall(null, 'Hey', '.') // this → globalThis（浏览器里常是 window）
+  </script>
+</body>
+</html>

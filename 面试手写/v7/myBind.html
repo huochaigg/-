@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>myBind（可作为构造函数）</title>
+</head>
+<body>
+  <script>
+    Function.prototype.myBind = function (context, ...boundArgs) {
+      if (typeof this !== 'function') {
+        throw new TypeError('myBind must be called on a function')
+      }
+      const fn = this
+      const boundContext = context == null ? globalThis : context
+
+      function boundFn(...args) {
+        // new boundFn() 时：this 是新实例，且 this instanceof boundFn === true
+        // 普通调用：this 一般不是 boundFn 的实例，用 bind 进来的对象
+        const ctx = this instanceof boundFn ? this : boundContext
+        return fn.apply(ctx, [...boundArgs, ...args])
+      }
+
+      // 空中转：改 boundFn.prototype 不会直接改到 fn.prototype
+      const Empty = function () {}
+      if (fn.prototype) {
+        Empty.prototype = fn.prototype
+        boundFn.prototype = new Empty()
+      }
+      return boundFn
+    }
+
+    // ---------- 1. 普通构造函数 ----------
+    function Person(name, age) {
+      this.name = name
+      this.age = age
+    }
+    Person.prototype.hi = function () {
+      console.log(`hi, ${this.name}, ${this.age}`)
+    }
+
+    const BoundPerson = Person.myBind({ tag: '忽略我' }, 'tom')
+    BoundPerson(1) // 普通调用：写到 { tag: '忽略我' } 上
+
+    const p = new BoundPerson(18)
+    console.log('new Person 绑定后', p, p instanceof Person)
+
+    // ---------- 2. bind 的是 new Function 造出来的构造函数 ----------
+    const Animal = new Function('type', 'this.type = type')
+    Animal.prototype.say = function () {
+      console.log('I am', this.type)
+    }
+
+    const BoundDog = Animal.myBind(null, 'dog')
+    const dog = new BoundDog()
+    console.log('new Function 再 bind 再 new', dog)
+    console.log('dog instanceof Animal', dog instanceof Animal) // true
+    dog.say()
+  </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>call / apply / bind 与 this</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V7 面试口径 ==========
+     *
+     * this 不是「函数写在哪」决定的，是「怎么被调用」决定的（箭头函数除外）
+     *
+     * ---------- this 判定优先级（高 → 低）----------
+     * 1. new：this = 新创建的对象
+     * 2. call / apply / bind：this = 你传入的对象（null/undefined → globalThis）
+     * 3. 对象方法：obj.fn() → this = obj
+     * 4. 独立调用 fn()：严格模式 undefined，非严格 globalThis
+     * 箭头函数：没有自己的 this，向外层词法作用域找
+     *
+     * ---------- call vs apply vs bind ----------
+     * call(ctx, a, b)     立刻执行，参数逐个传
+     * apply(ctx, [a, b])  立刻执行，参数数组
+     * bind(ctx, a)        返回新函数，可预置参数；稍后再调或 new
+     *
+     * 手写 call 原理：把函数临时挂到 ctx 上变成「方法调用」，跑完删掉
+     *   ctx[key] = fn; ctx[key](...args)
+     * 用 Symbol 当 key，避免覆盖已有属性
+     *
+     * ---------- bind 后为什么还能 new ----------
+     * 规范：bound function 当构造函数用时，bind 绑的 this 作废，
+     * 新实例照样走 [[Construct]]，this 指向新对象。
+     * 预置参数仍然生效。
+     *
+     * 手写对应：
+     *   const ctx = new.target ? this : boundContext
+     * new Bound() 时 new.target 有值，用引擎给的新 this；
+     * Bound() 普通调用才用 bind 进来的对象。
+     *
+     * 还要接原型：boundFn.prototype = Object.create(fn.prototype)
+     * 否则 new 出来的实例 instanceof 原构造函数 为 false
+     *
+     * 口诀：new 的优先级高于 bind。
+     *
+     * ---------- 和「挂到对象上」的关系 ----------
+     * obj.fn() 能得到 this=obj，是因为调用方式是方法调用
+     * call 就是人为制造一次「在指定对象上的方法调用」
+     */
+  </script>
+</body>
+</html>
