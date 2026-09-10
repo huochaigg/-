@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>myCreate</title>
+</head>
+<body>
+  <script>
+    /**
+     * Object.create(proto)：造一个对象，其 [[Prototype]] 是 proto
+     * 这就是 new 里「把 __proto__ 接到 Ctor.prototype」那一步
+     */
+    function myCreate(proto) {
+      if (proto !== null && typeof proto !== 'object' && typeof proto !== 'function') {
+        throw new TypeError('Object prototype may only be an Object or null')
+      }
+      function Empty() {}
+      Empty.prototype = proto
+      return new Empty()
+    }
+
+    const proto = {
+      hi() { console.log('hi', this.name) }
+    }
+    const obj = myCreate(proto)
+    obj.name = 'tom'
+    obj.hi()
+
+    console.log(Object.getPrototypeOf(obj) === proto)
+    console.log(obj.constructor === Object) // proto 没写 constructor 时，会沿链找到 Object
+
+    const naked = myCreate(null)
+    console.log('无原型对象', Object.getPrototypeOf(naked)) // null
+  </script>
+</body>
+</html>

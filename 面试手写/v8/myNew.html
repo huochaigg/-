@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>myNew</title>
+</head>
+<body>
+  <script>
+    /**
+     * new 做了四件事：
+     * 1. 建空对象
+     * 2. 空对象.__proto__ = Ctor.prototype
+     * 3. 用这个对象当 this 执行 Ctor
+     * 4. 若构造函数返回对象/函数，用返回值；否则用新对象
+     */
+    function myNew(Ctor, ...args) {
+      if (typeof Ctor !== 'function') {
+        throw new TypeError('myNew requires a constructor')
+      }
+      const obj = Object.create(Ctor.prototype)
+      const result = Ctor.apply(obj, args)
+      const isObject = result !== null && (typeof result === 'object' || typeof result === 'function')
+      return isObject ? result : obj
+    }
+
+    function Person(name) {
+      this.name = name
+    }
+    Person.prototype.hi = function () {
+      console.log('hi', this.name)
+    }
+
+    const p = myNew(Person, 'tom')
+    console.log(p)
+    console.log('p.__proto__ === Person.prototype', p.__proto__ === Person.prototype)
+    console.log('p.constructor === Person', p.constructor === Person)
+    console.log('p instanceof Person', p instanceof Person)
+    p.hi()
+
+    function ReturnObj() {
+      this.inner = 1
+      return { hijack: true }
+    }
+    console.log('构造函数 return 对象 →', myNew(ReturnObj)) // { hijack: true }
+  </script>
+</body>
+</html>

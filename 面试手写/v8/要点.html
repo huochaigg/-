@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>new / instanceof / create 要点</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V8 面试口径 ==========
+     *
+     * 三个手写其实是同一张图：
+     *
+     *   Person.prototype = { constructor: Person, hi() {} }
+     *           ↑
+     *    p.[[Prototype]]   （常说成 p.__proto__）
+     *           ↑
+     *           p  { name: 'tom' }
+     *
+     * 函数有 prototype（显式原型，给实例当模板）
+     * 实例有 __proto__（隐式原型，访问时往上找）
+     * constructor 默认挂在 prototype 上，所以 p.constructor === Person
+     *
+     * ---------- myCreate ----------
+     * 造对象并指定原型：obj.__proto__ = proto
+     * new 的第 1、2 步就是 Object.create(Ctor.prototype)
+     *
+     * ---------- myNew ----------
+     * obj = create(Ctor.prototype)
+     * Ctor.apply(obj, args)
+     * 返回对象则用返回值，否则用 obj
+     * 所以 p.__proto__ === Person.prototype
+     *      p.constructor 沿原型找到 Person
+     *      p.hi 沿原型找到 Person.prototype.hi
+     *
+     * ---------- myInstanceof ----------
+     * 从 left.__proto__ 走到 null，看是否碰到 right.prototype
+     * p instanceof Person  → p.__proto__ === Person.prototype
+     * p instanceof Object  → 再上一层 Object.prototype
+     * 原始值 / null 直接 false
+     *
+     * ---------- 改 prototype 会发生什么 ----------
+     * Person.prototype = { hi() {} } 之后 new 的实例走新对象
+     * 已 new 出的旧实例 __proto__ 仍指向旧 prototype
+     * 新对象若没写 constructor，constructor 会变成 Object
+     *
+     * ---------- 和 v6 / v7 ----------
+     * deepClone 里 Object.create(getPrototypeOf(val)) 就是保住原型
+     * bind 后还能 new：boundFn.prototype 接到原 fn.prototype
+     * 这三题把原型链、this、new 焊在一起
+     */
+  </script>
+</body>
+</html>
