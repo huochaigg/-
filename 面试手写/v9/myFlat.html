@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>myFlat</title>
+</head>
+<body>
+  <script>
+    /** 指定层数，默认 1，和 Array.prototype.flat 一致 */
+    function myFlat(arr, depth = 1) {
+      if (!Array.isArray(arr) || depth <= 0) return arr
+      const result = []
+      for (const item of arr) {
+        if (Array.isArray(item) && depth > 0) {
+          result.push(...myFlat(item, depth - 1))
+        } else {
+          result.push(item)
+        }
+      }
+      return result
+    }
+
+    /** 无限层级：遇到数组就递归，直到没有数组 */
+    function myFlatAll(arr) {
+      const result = []
+      for (const item of arr) {
+        if (Array.isArray(item)) result.push(...myFlatAll(item))
+        else result.push(item)
+      }
+      return result
+    }
+
+    /** reduce 版无限扁平，面试也能写 */
+    function myFlatAllReduce(arr) {
+      return arr.reduce(
+        (acc, item) => acc.concat(Array.isArray(item) ? myFlatAllReduce(item) : item),
+        []
+      )
+    }
+
+    const nested = [1, [2, [3, [4]]], 5]
+    console.log('flat 1 层', myFlat(nested, 1))       // [1, 2, [3, [4]], 5]
+    console.log('flat 2 层', myFlat(nested, 2))       // [1, 2, 3, [4], 5]
+    console.log('无限 flat', myFlatAll(nested))       // [1, 2, 3, 4, 5]
+    console.log('reduce 无限', myFlatAllReduce(nested))
+  </script>
+</body>
+</html>

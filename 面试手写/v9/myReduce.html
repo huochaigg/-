@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>myReduce</title>
+</head>
+<body>
+  <script>
+    Array.prototype.myReduce = function (callback, initialValue) {
+      if (typeof callback !== 'function') {
+        throw new TypeError('callback must be a function')
+      }
+      const arr = this
+      const hasInit = arguments.length >= 2
+      if (arr.length === 0 && !hasInit) {
+        throw new TypeError('Reduce of empty array with no initial value')
+      }
+
+      let acc = hasInit ? initialValue : arr[0]
+      let i = hasInit ? 0 : 1
+
+      for (; i < arr.length; i++) {
+        if (!(i in arr)) continue // 和原生一样跳过空洞
+        acc = callback(acc, arr[i], i, arr)
+      }
+      return acc
+    }
+
+    console.log([1, 2, 3, 4].myReduce((a, b) => a + b))       // 10
+    console.log([1, 2, 3, 4].myReduce((a, b) => a + b, 10))   // 20
+    console.log(['a', 'b'].myReduce((acc, cur) => acc.concat(cur), []))
+  </script>
+</body>
+</html>

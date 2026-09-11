@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>flat / reduce / 去重 要点</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V9 面试口径 ==========
+     *
+     * 这一版的算法思想就是递归：大数组拆成「当前项 + 剩下的结构」
+     *
+     * ---------- flat ----------
+     * 当前项是数组 → 再 flat 一层（depth - 1）
+     * 不是数组 → 放进结果
+     * 无限层级：不再数 depth，只要是数组就递归
+     *
+     * reduce 版：
+     *   arr.reduce((acc, item) => acc.concat(是数组 ? 递归(item) : item), [])
+     * concat 每次新数组，能写但大数组不如 push
+     *
+     * ---------- 自己实现 reduce ----------
+     * 有初值：acc = init，从 0 开始
+     * 无初值：acc = arr[0]，从 1 开始
+     * 空数组且无初值 → TypeError
+     * reduce 是「把一列值收成一个值」：求和、扁平、去重都能靠它
+     *
+     * ---------- 去重 ----------
+     * Set：最短，NaN 去重正确
+     * reduce + includes：展示「用累加器当结果集」
+     * 对象 / 数组是引用相等，{a:1} 和 {a:1} 去不掉
+     * 常组合：flat(Infinity) 再 Set
+     *
+     * ---------- 递归边界 ----------
+     * 扁平：不是数组就停
+     * 深度 flat：depth <= 0 就停
+     * 循环引用的数组（a.push(a)）会爆栈，面试提一句即可
+     */
+  </script>
+</body>
+</html>
