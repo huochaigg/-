@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>deepClone 复习</title>
+</head>
+<body>
+  <script>
+    /**
+     * 深拷贝：map 用来记住「源对象 → 已拷贝对象」
+     * 遇到循环引用时直接返回已拷贝的那个，切断无限递归
+     */
+    function deepClone(val, map = new WeakMap()) {
+      if (val === null || typeof val !== "object") return val
+      if (map.has(val)) return map.get(val)
+      if (val instanceof Date) return new Date(val)
+      if (val instanceof RegExp) return new RegExp(val)
+
+      if (val instanceof Map) {
+        const cloned = new Map()
+        map.set(val, cloned)
+        val.forEach((v, k) => cloned.set(deepClone(k, map), deepClone(v, map)))
+        return cloned
+      }
+
+      if (val instanceof Set) {
+        const cloned = new Set()
+        map.set(val, cloned)
+        val.forEach(v => cloned.add(deepClone(v, map)))
+        return cloned
+      }
+
+      const cloned = Array.isArray(val) ? [] : Object.create(Object.getPrototypeOf(val))
+      map.set(val, cloned)
+      Reflect.ownKeys(val).forEach(k => cloned[k] = deepClone(val[k], map))
+      
+      return cloned
+    }
+
+    // ---------- 演示 ----------
+    const obj = {
+      n: 1,
+      s: 'hi',
+      u: undefined,
+      d: new Date('2024-01-01'),
+      r: /ab+c/gi,
+      arr: [1, { x: 2 }],
+      m: new Map([['a', 1]]),
+      set: new Set([1, 2])
+    }
+    obj.self = obj // 循环引用
+
+    const copy = deepClone(obj)
+    console.log('基础 / Date / RegExp / Map / Set', copy)
+    console.log('循环引用同一份拷贝', copy.self === copy)       // true
+    console.log('和原对象不是同一份', copy !== obj && copy.self !== obj)
+    console.log('Date 独立', copy.d !== obj.d && copy.d.getTime() === obj.d.getTime())
+  </script>
+</body>
+</html>
