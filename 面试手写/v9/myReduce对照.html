@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>myReduce 写法对照</title>
+</head>
+<body>
+  <script>
+    /**
+     * ---------- 写法 A：更贴原生（稀疏数组也正确）----------
+     * 无初值时：acc 取「第一个真实存在的元素」，不是死板的 arr[0]
+     */
+    Array.prototype.myReduceA = function (callback, initialValue) {
+      if (typeof callback !== 'function') {
+        throw new TypeError(callback + ' is not a function')
+      }
+      const arr = Object(this)
+      const len = arr.length >>> 0
+      const hasInit = arguments.length >= 2
+
+      let i = 0
+      let acc
+
+      if (hasInit) {
+        acc = initialValue
+      } else {
+        // 跳过空洞，找到第一个有值的下标
+        while (i < len && !(i in arr)) i++
+        if (i >= len) {
+          throw new TypeError('Reduce of empty array with no initial value')
+        }
+        acc = arr[i++]
+      }
+
+      for (; i < len; i++) {
+        if (!(i in arr)) continue
+        acc = callback(acc, arr[i], i, arr)
+      }
+      return acc
+    }
+
+    /**
+     * ---------- 写法 B：你文件里的版本（面试够用）----------
+     * 无初值直接用 arr[0]，从 1 开始循环
+     * 普通稠密数组结果和原生一致；稀疏数组时可能和原生不同
+     */
+    Array.prototype.myReduceB = function (callback, initialValue) {
+      if (typeof callback !== 'function') {
+        throw new TypeError('callback must be a function')
+      }
+      const arr = this
+      const hasInit = arguments.length >= 2
+      if (arr.length === 0 && !hasInit) {
+        throw new TypeError('Reduce of empty array with no initial value')
+      }
+
+      let acc = hasInit ? initialValue : arr[0]
+      let i = hasInit ? 0 : 1
+
+      for (; i < arr.length; i++) {
+        if (!(i in arr)) continue
+        acc = callback(acc, arr[i], i, arr)
+      }
+      return acc
+    }
+
+    /**
+     * ---------- 写法 C：极简面试版（不处理空洞）----------
+     * 场上 2 分钟能写完，稠密数组够用
+     */
+    Array.prototype.myReduceC = function (fn, init) {
+      let hasInit = arguments.length > 1
+      let acc = hasInit ? init : this[0]
+      for (let i = hasInit ? 0 : 1; i < this.length; i++) {
+        acc = fn(acc, this[i], i, this)
+      }
+      return acc
+    }
+
+    // ---------- 对照演示 ----------
+    const sum = (a, b) => a + b
+    console.log('稠密 无初值', [1, 2, 3, 4].myReduceA(sum), [1, 2, 3, 4].myReduceB(sum))
+    console.log('稠密 有初值', [1, 2, 3, 4].myReduceA(sum, 10), [1, 2, 3, 4].myReduceB(sum, 10))
+
+    const sparse = [, , 1, 2]
+    console.log('原生稀疏', sparse.reduce(sum))             // 3（从第一个存在的 1 开始）
+    console.log('写法A稀疏', sparse.myReduceA(sum))         // 3
+    console.log('写法B稀疏', sparse.myReduceB(sum))         // NaN（acc 先成了 undefined）
+
+    console.log('初值可以是 undefined', [1, 2].myReduceA(sum, undefined))
+
+    /*
+     * ========== 和 myReduce.html 的差异小结 ==========
+     *
+     * 1. 有没有初值
+     *    都用 arguments.length >= 2 / > 1，不要写 initialValue !== undefined
+     *    （因为合法初值就可以是 undefined）
+     *
+     * 2. 无初值时 acc 从哪来
+     *    你的 B：acc = arr[0]，起点 i = 1
+     *    写法 A：找到第一个 i in arr 的元素当 acc
+     *    差别只在稀疏数组；面试稠密场景 B 完全够用
+     *
+     * 3. 空洞
+     *    A/B 都用 !(i in arr) continue，和原生一致
+     *    C 不管空洞，最短但不够严谨
+     *
+     * 4. this / length
+     *    A 用 Object(this) + length >>> 0，更像规范（类数组也能用）
+     *    B 直接 this，数组场景更直观
+     *
+     * 面试推荐口径：先写 B（和你文件一致），被追问稀疏数组再补 A 的 while 找首元素
+     */
+  </script>
+</body>
+</html>
