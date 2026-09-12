@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>getLeafNodes / 节点数 / 最大深度</title>
+</head>
+<body>
+  <script>
+    function getLeafNodes(tree) {
+      const result = []
+      const walk = (nodes) => {
+        for (const node of nodes || []) {
+          const children = node.children
+          if (!children || children.length === 0) result.push(node)
+          else walk(children)
+        }
+      }
+      walk(tree)
+      return result
+    }
+
+    function countNodes(tree) {
+      let n = 0
+      const walk = (nodes) => {
+        for (const node of nodes || []) {
+          n++
+          walk(node.children)
+        }
+      }
+      walk(tree)
+      return n
+    }
+
+    function maxDepth(tree, depth = 1) {
+      if (!tree || tree.length === 0) return 0
+      let max = depth
+      for (const node of tree) {
+        if (node.children && node.children.length) {
+          max = Math.max(max, maxDepth(node.children, depth + 1))
+        }
+      }
+      return max
+    }
+
+    const tree = [
+      {
+        id: 1, name: 'A',
+        children: [
+          { id: 2, name: 'B', children: [{ id: 4, name: 'D', children: [] }] },
+          { id: 3, name: 'C', children: [] }
+        ]
+      }
+    ]
+
+    console.log('叶子', getLeafNodes(tree).map(n => n.name)) // D C
+    console.log('节点数', countNodes(tree))                 // 4
+    console.log('最大深度', maxDepth(tree))                 // 3
+  </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V12 练习 · 先自己写</title>
+</head>
+<body>
+  <p>四道必写：treeToList / findNode / findPath / getLeafNodes。findPath 最重要。</p>
+  <script>
+    const tree = [
+      {
+        id: 1, name: 'A',
+        children: [
+          { id: 2, name: 'B', children: [{ id: 4, name: 'D', children: [] }] },
+          { id: 3, name: 'C', children: [] }
+        ]
+      }
+    ]
+
+    function treeToList(tree) { /* TODO */ }
+    function findNode(tree, id) { /* TODO */ }
+    function findPath(tree, id) { /* TODO */ }
+    function getLeafNodes(tree) { /* TODO */ }
+
+    console.log('list', treeToList(tree))
+    console.log('node 4', findNode(tree, 4))
+    console.log('path 4', findPath(tree, 4)) // 期望 [1, 2, 4]
+    console.log('leaves', getLeafNodes(tree))
+  </script>
+</body>
+</html>

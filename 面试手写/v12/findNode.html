@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>findNode</title>
+</head>
+<body>
+  <script>
+    /**
+     * DFS + 提前结束：子树找到了立刻 return，不要继续扫兄弟
+     * 普通业务树不是 BST，最坏 O(n)，不是 O(log n)
+     */
+    function findNode(tree, id) {
+      for (const node of tree || []) {
+        if (node.id === id) return node
+        const found = findNode(node.children, id)
+        if (found) return found
+      }
+      return null
+    }
+
+    const tree = [
+      {
+        id: 1, name: 'A',
+        children: [
+          { id: 2, name: 'B', children: [{ id: 4, name: 'D', children: [] }] },
+          { id: 3, name: 'C', children: [] }
+        ]
+      }
+    ]
+
+    console.log(findNode(tree, 4))
+    console.log(findNode(tree, 99)) // null
+  </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tree 查找 要点</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V12 面试口径 ==========
+     *
+     * 四道题同一套：Tree DFS。变的只是「访问到节点时做什么」。
+     *
+     * treeToList     拆掉 children，push 扁平项     → A B D C（深度优先）
+     * findNode       id 相等就 return，子树找到也立刻 return
+     * findPath       path.push → 递归 → 失败 path.pop（回溯）
+     * getLeafNodes   没有 children 就收集
+     *
+     * 业务树不是二叉搜索树 → 查找最坏 O(n)，不是 O(log n)
+     * 递归栈 O(h)，h 是高度；退化成链时 h = n
+     *
+     * ---------- findPath 模板 ----------
+     * 选择：path.push(id)
+     * 命中：return true（不要 pop，路径要留着）
+     * 子树命中：return true
+     * 撤销：path.pop()，试兄弟
+     *
+     * ---------- 提前结束 ----------
+     * 递归必须有返回值。子调用有结果就 return 上去，别继续扫。
+     *
+     * ---------- 业务 ----------
+     * 菜单 pathname → 面包屑 = findPath
+     * permissionId → findNode
+     * 级联选中展示 = findPath
+     * 所有文件 ≈ 叶子
+     * Node 扫目录：fs.readdir 遇文件夹再进 = 同一套 DFS
+     *
+     * V13：把上面抽象成递归 DFS / 栈迭代 DFS / visited
+     */
+  </script>
+</body>
+</html>
