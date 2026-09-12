@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数组转树 要点</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V11 面试口径（30 秒版）==========
+     *
+     * 扁平数组转树，要 O(n)：Map 两遍。
+     * 第一遍：id → { ...item, children: [] }
+     * 第二遍：parent = map.get(parentId)；有则 parent.children.push(node)，无则进 roots
+     * 不依赖数组顺序。时间 O(n)，空间 O(n)，空间换时间。
+     *
+     * ---------- 和递归 ----------
+     * 递归 = 对每个节点扫全表找孩子，DFS，最坏 O(n²)
+     * Map 建树本身不是 DFS，只是接上父子引用
+     * 建完之后：查路径、滤权限、树转数组 才会大量 DFS（V12/V13）
+     *
+     * ---------- 细节 ----------
+     * 复制对象 { ...item, children: [] }，避免污染原 list
+     * 字段可配 idKey / parentKey（菜单 key/pid）
+     * 父不存在：当根 / 忽略 / 抛错 —— 业务策略，没有唯一答案
+     * 环（1→2→1）：遍历时 visited；菜单数据一般后端保证无环
+     *
+     * ---------- 为什么 Map 不是 Object ----------
+     * key 类型更自由；get/set/has 语义清楚；不踩原型链属性
+     *
+     * ---------- 业务 ----------
+     * 菜单权限、部门组织、分类、评论嵌套、文件目录
+     * 别说成纯 LeetCode
+     *
+     * 通过标准：5～10 分钟写出 Map 两遍；打乱顺序仍对
+     */
+  </script>
+</body>
+</html>

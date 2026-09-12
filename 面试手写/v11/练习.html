@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V11 练习 · 先自己写</title>
+</head>
+<body>
+  <p>先写 <code>arrayToTree</code>，不要看同目录其它文件。写完刷新看控制台。</p>
+  <script>
+    // 练习 1：pid=0 为根，用 Map，O(n)
+    // 练习 2：打乱顺序仍要正确
+    // 练习 3：{ id: 5, pid: 999 } 父不存在 —— 在下面写清业务策略
+    function arrayToTree(list) {
+      // TODO
+    }
+
+    const a = [
+      { id: 1, pid: 0 },
+      { id: 2, pid: 1 },
+      { id: 3, pid: 1 },
+      { id: 4, pid: 2 }
+    ]
+    const b = [
+      { id: 4, pid: 2 },
+      { id: 2, pid: 1 },
+      { id: 3, pid: 1 },
+      { id: 1, pid: 0 }
+    ]
+    const c = [...a, { id: 5, pid: 999 }]
+
+    function ids(nodes) {
+      return (nodes || []).map(n => n.id + ':' + ids(n.children))
+    }
+
+    console.log('练习1', JSON.stringify(ids(arrayToTree(a))))
+    console.log('练习2 应与练习1相同', JSON.stringify(ids(arrayToTree(b))))
+    console.log('练习3 孤儿策略看你怎么写', JSON.stringify(ids(arrayToTree(c))))
+    // 期望树形：1 下有 2、3；2 下有 4  → 类似 ["1:[\"2:[\\\"4:[]\\\"]\",\"3:[]\"]"]
+  </script>
+</body>
+</html>

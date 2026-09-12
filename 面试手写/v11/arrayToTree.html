@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>arrayToTree · Map 两遍</title>
+</head>
+<body>
+  <script>
+    /**
+     * 时间 O(n)，空间 O(n)
+     * 不依赖数组顺序；不改原对象
+     * 孤儿节点（父 id 不存在）：当根 —— 这是业务策略，也可改成忽略或抛错
+     */
+    function arrayToTree(list, { idKey = 'id', parentKey = 'parentId', rootPid = 0 } = {}) {
+      const map = new Map()
+      const roots = []
+
+      for (const item of list) {
+        map.set(item[idKey], { ...item, children: [] })
+      }
+
+      for (const item of list) {
+        const node = map.get(item[idKey])
+        const pid = item[parentKey]
+        const parent = map.get(pid)
+        if (parent) parent.children.push(node)
+        else roots.push(node) // pid 为根标记，或父节点不在数据里
+      }
+
+      return roots
+    }
+
+    const list = [
+      { id: 1, parentId: 0, name: 'A' },
+      { id: 2, parentId: 1, name: 'B' },
+      { id: 3, parentId: 1, name: 'C' },
+      { id: 4, parentId: 2, name: 'D' }
+    ]
+
+    console.log('正常顺序', arrayToTree(list))
+    // A → B → D ， A → C
+
+    const shuffled = [
+      { id: 4, parentId: 2, name: 'D' },
+      { id: 2, parentId: 1, name: 'B' },
+      { id: 3, parentId: 1, name: 'C' },
+      { id: 1, parentId: 0, name: 'A' }
+    ]
+    console.log('打乱顺序也能挂上', arrayToTree(shuffled))
+
+    const withOrphan = [...list, { id: 5, parentId: 999, name: '孤儿' }]
+    console.log('父不存在当根', arrayToTree(withOrphan))
+
+    const keyed = [
+      { key: '1001', pid: null, name: '珠宝' },
+      { key: '1002', pid: '1001', name: '翡翠' }
+    ]
+    console.log('字段可配', arrayToTree(keyed, { idKey: 'key', parentKey: 'pid', rootPid: null }))
+  </script>
+</body>
+</html>

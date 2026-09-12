@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>arrayToTree · 递归（易 O(n²)）</title>
+</head>
+<body>
+  <script>
+    /**
+     * DFS：找当前 parentId 的孩子们，再对每个孩子重复
+     * 每个节点都可能扫一遍 list → 最坏 O(n²)
+     * 先写这个，再被追问「怎么变成 O(n)」→ 答 Map 两遍
+     */
+    function arrayToTreeRecursive(list, parentId = 0) {
+      const level = []
+      for (const item of list) {
+        if (item.parentId === parentId) {
+          const node = { ...item, children: arrayToTreeRecursive(list, item.id) }
+          level.push(node)
+        }
+      }
+      return level
+    }
+
+    const list = [
+      { id: 1, parentId: 0, name: 'A' },
+      { id: 2, parentId: 1, name: 'B' },
+      { id: 3, parentId: 1, name: 'C' },
+      { id: 4, parentId: 2, name: 'D' }
+    ]
+    console.log(arrayToTreeRecursive(list))
+  </script>
+</body>
+</html>
