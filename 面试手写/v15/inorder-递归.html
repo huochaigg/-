@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中序递归 · 左根右</title>
+</head>
+<body>
+  <script>
+    /**
+     * 中序：左 → 根 → 右（visit 夹在中间）
+     * BST 的中序结果是有序序列（先记住结论，V 后面再讲 BST）
+     */
+    const root = {
+      val: 'A',
+      left: {
+        val: 'B',
+        left: { val: 'D', left: null, right: null },
+        right: { val: 'E', left: null, right: null }
+      },
+      right: {
+        val: 'C',
+        left: null,
+        right: { val: 'F', left: null, right: null }
+      }
+    }
+
+    function inorder(root) {
+      const result = []
+      const dfs = (node) => {
+        if (!node) return
+        dfs(node.left)          // 左
+        result.push(node.val)   // 根
+        dfs(node.right)         // 右
+      }
+      dfs(root)
+      return result
+    }
+
+    console.log(inorder(root)) // ['D', 'B', 'E', 'A', 'C', 'F']
+  </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>前序递归 · 根左右</title>
+</head>
+<body>
+  <script>
+    /**
+     * 二叉树：{ val, left, right } = 普通树 children 固定成两个坑
+     * 前序：根 → 左 → 右（visit 放最前，和普通 Tree DFS 几乎一样）
+     *
+     *      A
+     *     / \
+     *    B   C
+     *   / \   \
+     *  D   E   F
+     */
+    const root = {
+      val: 'A',
+      left: {
+        val: 'B',
+        left: { val: 'D', left: null, right: null },
+        right: { val: 'E', left: null, right: null }
+      },
+      right: {
+        val: 'C',
+        left: null,
+        right: { val: 'F', left: null, right: null }
+      }
+    }
+
+    function preorder(root) {
+      const result = []
+      const dfs = (node) => {
+        if (!node) return
+        result.push(node.val)   // 根
+        dfs(node.left)          // 左
+        dfs(node.right)         // 右
+      }
+      dfs(root)
+      return result
+    }
+
+    console.log(preorder(root)) // ['A', 'B', 'D', 'E', 'C', 'F']
+  </script>
+</body>
+</html>

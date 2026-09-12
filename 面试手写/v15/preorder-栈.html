@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>前序非递归 · Stack</title>
+</head>
+<body>
+  <script>
+    /**
+     * 前序迭代：根 → 左 → 右
+     * Stack LIFO：想 left 先出，就先 push right 再 push left
+     * （和 V13 普通树栈 DFS 倒序 push children 一个道理）
+     */
+    const root = {
+      val: 'A',
+      left: {
+        val: 'B',
+        left: { val: 'D', left: null, right: null },
+        right: { val: 'E', left: null, right: null }
+      },
+      right: {
+        val: 'C',
+        left: null,
+        right: { val: 'F', left: null, right: null }
+      }
+    }
+
+    function preorderStack(root) {
+      if (!root) return []
+      const result = []
+      const stack = [root]
+
+      while (stack.length) {
+        const node = stack.pop()
+        result.push(node.val)
+        // 先右后左 → pop 时先左后右
+        if (node.right) stack.push(node.right)
+        if (node.left) stack.push(node.left)
+      }
+      return result
+    }
+
+    console.log(preorderStack(root)) // ['A', 'B', 'D', 'E', 'C', 'F']
+  </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>二叉树遍历 要点</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V15 面试口径 ==========
+     *
+     * 二叉树 = 每个节点最多两个孩子：left / right
+     * 三种遍历只是 visit(node) 位置不同，不是三套算法：
+     *   前序：visit → left → right   根左右
+     *   中序：left → visit → right   左根右
+     *   后序：left → right → visit   左右根
+     * 「前/中/后」说的是根相对左右的位置；左右通常仍是左在右前
+     *
+     * 终止：if (!node) return
+     * 递归函数只负责「当前节点怎么处理」，子树交给 dfs(left/right)
+     *
+     * 优先级：
+     *   前/中/后递归 + 前序 Stack → 必须会
+     *   中序 Stack → 建议会（一路压左 → pop → 转右）
+     *   后序 Stack → 知道思路即可，别死磕
+     *
+     * 前序 Stack：先 push right 再 push left（LIFO 保证左先出）
+     * BST 中序 → 有序序列（普通二叉树没有大小关系，查找最坏 O(n)）
+     *
+     * 时间都是 O(n)；递归空间 O(h)，链状最坏 O(n)
+     *
+     * 前端价值：递归训练；AST / DOM / 目录树同构思维
+     * V16：层序(BFS) + 最大深度 + 节点数 + 翻转二叉树
+     */
+  </script>
+</body>
+</html>

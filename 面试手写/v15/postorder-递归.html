@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>后序递归 · 左右根</title>
+</head>
+<body>
+  <script>
+    /**
+     * 后序：左 → 右 → 根（visit 放最后）
+     * 适合「先处理孩子再处理自己」：删树、目录大小、子树统计
+     */
+    const root = {
+      val: 'A',
+      left: {
+        val: 'B',
+        left: { val: 'D', left: null, right: null },
+        right: { val: 'E', left: null, right: null }
+      },
+      right: {
+        val: 'C',
+        left: null,
+        right: { val: 'F', left: null, right: null }
+      }
+    }
+
+    function postorder(root) {
+      const result = []
+      const dfs = (node) => {
+        if (!node) return
+        dfs(node.left)          // 左
+        dfs(node.right)         // 右
+        result.push(node.val)   // 根
+      }
+      dfs(root)
+      return result
+    }
+
+    console.log(postorder(root)) // ['D', 'E', 'B', 'F', 'C', 'A']
+  </script>
+</body>
+</html>

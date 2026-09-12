@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中序非递归 · 建议会</title>
+</head>
+<body>
+  <script>
+    /**
+     * 中序迭代（建议会，不要求闭眼裸写）
+     * 一路把左孩子压栈 → 弹栈处理 → 转到 right → 再一路压左
+     */
+    const root = {
+      val: 'A',
+      left: {
+        val: 'B',
+        left: { val: 'D', left: null, right: null },
+        right: { val: 'E', left: null, right: null }
+      },
+      right: {
+        val: 'C',
+        left: null,
+        right: { val: 'F', left: null, right: null }
+      }
+    }
+
+    function inorderStack(root) {
+      const result = []
+      const stack = []
+      let cur = root
+
+      while (cur || stack.length) {
+        while (cur) {
+          stack.push(cur)
+          cur = cur.left
+        }
+        cur = stack.pop()
+        result.push(cur.val)
+        cur = cur.right
+      }
+      return result
+    }
+
+    console.log(inorderStack(root)) // ['D', 'B', 'E', 'A', 'C', 'F']
+  </script>
+</body>
+</html>

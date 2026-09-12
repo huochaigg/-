@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V15 练习 · 先自己写</title>
+</head>
+<body>
+  <p>四题必写：前/中/后序递归 + 前序 Stack。先纸上推演，再写代码。</p>
+  <pre>
+      A
+     / \
+    B   C
+   / \   \
+  D   E   F
+
+  纸上写（别先看答案）：
+  前序 _______________
+  中序 _______________
+  后序 _______________
+  </pre>
+  <script>
+    const root = {
+      val: 'A',
+      left: {
+        val: 'B',
+        left: { val: 'D', left: null, right: null },
+        right: { val: 'E', left: null, right: null }
+      },
+      right: {
+        val: 'C',
+        left: null,
+        right: { val: 'F', left: null, right: null }
+      }
+    }
+
+    function preorder(root) { /* TODO 根左右 期望 A B D E C F */ }
+    function inorder(root) { /* TODO 左根右 期望 D B E A C F */ }
+    function postorder(root) { /* TODO 左右根 期望 D E B F C A */ }
+    function preorderStack(root) { /* TODO 禁止递归；先 push right 再 left */ }
+
+    console.log('前序', preorder(root))
+    console.log('中序', inorder(root))
+    console.log('后序', postorder(root))
+    console.log('前序栈', preorderStack(root))
+  </script>
+</body>
+</html>
