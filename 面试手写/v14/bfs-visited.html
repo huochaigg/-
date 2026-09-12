@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图 BFS + visited</title>
+</head>
+<body>
+  <script>
+    /**
+     * 有环图必须 visited，否则 queue 转圈
+     * 推荐：入队时就标记，避免出队前被多个邻居重复 push
+     */
+    const graph = {
+      A: ['B'],
+      B: ['C'],
+      C: ['A', 'D'],
+      D: []
+    }
+
+    function bfsGraph(start) {
+      const result = []
+      const visited = new Set()
+      const queue = [start]
+      visited.add(start) // 入队即标记
+      let i = 0
+
+      while (i < queue.length) {
+        const node = queue[i++]
+        result.push(node)
+        for (const next of graph[node] || []) {
+          if (visited.has(next)) continue
+          visited.add(next)
+          queue.push(next)
+        }
+      }
+      return result
+    }
+
+    console.log(bfsGraph('A')) // ['A', 'B', 'C', 'D']  不会 A→B→C→A…
+  </script>
+</body>
+</html>

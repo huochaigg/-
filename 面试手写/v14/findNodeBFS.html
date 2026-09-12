@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>findNodeBFS</title>
+</head>
+<body>
+  <script>
+    /**
+     * BFS 查找：命中立刻 return
+     * 和 DFS 找「任意一个」都能用；若要「离 root 最近」的命中，BFS 更自然
+     */
+    const tree = [
+      {
+        id: 1, name: 'A',
+        children: [
+          {
+            id: 2, name: 'B',
+            children: [
+              { id: 4, name: 'D', children: [] },
+              { id: 5, name: 'E', children: [] }
+            ]
+          },
+          {
+            id: 3, name: 'C',
+            children: [{ id: 6, name: 'F', children: [] }]
+          }
+        ]
+      }
+    ]
+
+    function findNodeBFS(nodes, id) {
+      const queue = [...(nodes || [])]
+      let i = 0
+
+      while (i < queue.length) {
+        const node = queue[i++]
+        if (node.id === id) return node
+        for (const child of node.children || []) {
+          queue.push(child)
+        }
+      }
+      return null
+    }
+
+    console.log(findNodeBFS(tree, 5))
+    console.log(findNodeBFS(tree, 99))
+  </script>
+</body>
+</html>

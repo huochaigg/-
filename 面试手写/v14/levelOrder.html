@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>层序遍历 levelOrder</title>
+</head>
+<body>
+  <script>
+    /**
+     * 按层 BFS：固定当前层长度 levelSize，本轮只处理这么多个
+     * 处理过程中 push 的 children 属于下一层，不能算进本轮
+     */
+    const tree = [
+      {
+        id: 1, name: 'A',
+        children: [
+          {
+            id: 2, name: 'B',
+            children: [
+              { id: 4, name: 'D', children: [] },
+              { id: 5, name: 'E', children: [] }
+            ]
+          },
+          {
+            id: 3, name: 'C',
+            children: [{ id: 6, name: 'F', children: [] }]
+          }
+        ]
+      }
+    ]
+
+    function levelOrder(nodes) {
+      const result = []
+      const queue = [...(nodes || [])]
+      let i = 0
+
+      while (i < queue.length) {
+        const levelSize = queue.length - i // 当前层还剩多少
+        const level = []
+        for (let k = 0; k < levelSize; k++) {
+          const node = queue[i++]
+          level.push(node.id)
+          for (const child of node.children || []) {
+            queue.push(child)
+          }
+        }
+        result.push(level)
+      }
+      return result
+    }
+
+    console.log(levelOrder(tree)) // [[1], [2, 3], [4, 5, 6]]
+  </script>
+</body>
+</html>

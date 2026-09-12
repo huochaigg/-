@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BFS 基础 · Queue</title>
+</head>
+<body>
+  <script>
+    /**
+     * BFS：一层一层扩。Queue FIFO。
+     * 模板：入队 → 取队头 → 处理 → children 入队
+     * 用 index 指针代替 shift，避免大量数据时整体搬移（面试加分）
+     */
+    const tree = [
+      {
+        id: 1, name: 'A',
+        children: [
+          {
+            id: 2, name: 'B',
+            children: [
+              { id: 4, name: 'D', children: [] },
+              { id: 5, name: 'E', children: [] }
+            ]
+          },
+          {
+            id: 3, name: 'C',
+            children: [{ id: 6, name: 'F', children: [] }]
+          }
+        ]
+      }
+    ]
+
+    function bfsIds(nodes) {
+      const result = []
+      const queue = [...(nodes || [])]
+      let i = 0
+
+      while (i < queue.length) {
+        const node = queue[i++]
+        result.push(node.id)
+        for (const child of node.children || []) {
+          queue.push(child)
+        }
+      }
+      return result
+    }
+
+    // DFS 对照：A→B→D→E→C→F
+    // BFS：      A→B→C→D→E→F
+    console.log(bfsIds(tree)) // [1, 2, 3, 4, 5, 6]
+  </script>
+</body>
+</html>

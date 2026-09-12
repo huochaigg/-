@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>getLevel · 节点所在层</title>
+</head>
+<body>
+  <script>
+    /**
+     * 提高：目标在第几层（root 为 0）
+     * 按层 BFS：每轮固定 levelSize，本层找不到再 level++
+     * 第一次命中时就是最少层数（树 / 无权图）
+     */
+    const tree = [
+      {
+        id: 1, name: 'A',
+        children: [
+          {
+            id: 2, name: 'B',
+            children: [
+              { id: 4, name: 'D', children: [] },
+              { id: 5, name: 'E', children: [] }
+            ]
+          },
+          {
+            id: 3, name: 'C',
+            children: [{ id: 6, name: 'F', children: [] }]
+          }
+        ]
+      }
+    ]
+
+    function getLevel(nodes, targetId) {
+      const queue = [...(nodes || [])]
+      let i = 0
+      let level = 0
+
+      while (i < queue.length) {
+        const levelSize = queue.length - i
+        for (let k = 0; k < levelSize; k++) {
+          const node = queue[i++]
+          if (node.id === targetId) return level
+          for (const child of node.children || []) {
+            queue.push(child)
+          }
+        }
+        level++
+      }
+      return -1
+    }
+
+    console.log('id=1', getLevel(tree, 1)) // 0
+    console.log('id=3', getLevel(tree, 3)) // 1
+    console.log('id=6', getLevel(tree, 6)) // 2
+    console.log('id=99', getLevel(tree, 99)) // -1
+  </script>
+</body>
+</html>

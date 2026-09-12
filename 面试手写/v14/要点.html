@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BFS 要点</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V14 面试口径 ==========
+     *
+     * BFS = 先把当前层处理完，再进下一层。Queue FIFO。
+     * 条件反射：DFS → Stack / 递归；BFS → Queue
+     *
+     * 最小模板：入队 → 取队头 → 处理 → children 入队
+     * JS 大数据别狂 shift，用数组 + index：node = queue[i++]
+     *
+     * 层序：每轮 levelSize = 当前层长度，只循环这么多次
+     * → [[1], [2,3], [4,5,6]]
+     *
+     * 选谁：
+     * 层级 / 最近 / 最短步数 / 最少层数 → BFS
+     * 深入 / 路径 / 回溯 / 所有组合 → DFS
+     *
+     * 树一般不用 visited；图必须 visited，推荐入队时标记
+     * 无权图：BFS 第一次到达目标 = 最少边数路径
+     *
+     * 复杂度：树 O(n)；图 O(V+E)；空间看最宽一层，最坏 O(n)
+     * 深而窄：DFS 栈可能 O(n)，BFS queue 可能很小
+     * 浅而宽：BFS queue 可能很大
+     *
+     * 前端：组织架构按层、最浅菜单命中、DOM 近邻、依赖最少跳数
+     * Node：按目录层级统计 → BFS；扫完全部文件 → DFS 也自然
+     *
+     * V15：二叉树 = 每个节点最多两个孩子；前/中/后序本质仍是 DFS
+     */
+  </script>
+</body>
+</html>
