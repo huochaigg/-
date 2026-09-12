@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>层序遍历 · BFS</title>
+</head>
+<body>
+  <script>
+    /**
+     * 层序 = BFS + 固定 levelSize（V14 同一套）
+     * while → levelSize = 当前层长度 → 只处理这么多个 → 收集成一层
+     */
+    const root = {
+      val: 'A',
+      left: {
+        val: 'B',
+        left: { val: 'D', left: null, right: null },
+        right: { val: 'E', left: null, right: null }
+      },
+      right: {
+        val: 'C',
+        left: null,
+        right: { val: 'F', left: null, right: null }
+      }
+    }
+
+    function levelOrder(root) {
+      if (!root) return []
+      const result = []
+      const queue = [root]
+      let i = 0
+
+      while (i < queue.length) {
+        const levelSize = queue.length - i
+        const level = []
+        for (let k = 0; k < levelSize; k++) {
+          const node = queue[i++]
+          level.push(node.val)
+          if (node.left) queue.push(node.left)
+          if (node.right) queue.push(node.right)
+        }
+        result.push(level)
+      }
+      return result
+    }
+
+    console.log(levelOrder(root)) // [['A'], ['B', 'C'], ['D', 'E', 'F']]
+  </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>判断两棵树相同 · 加分</title>
+</head>
+<body>
+  <script>
+    /**
+     * 都 null → true；一个 null → false；值不同 → false
+     * 否则 left 相同 && right 相同
+     */
+    function isSameTree(p, q) {
+      if (!p && !q) return true
+      if (!p || !q) return false
+      if (p.val !== q.val) return false
+      return isSameTree(p.left, q.left) && isSameTree(p.right, q.right)
+    }
+
+    const a = {
+      val: 1,
+      left: { val: 2, left: null, right: null },
+      right: { val: 3, left: null, right: null }
+    }
+    const b = {
+      val: 1,
+      left: { val: 2, left: null, right: null },
+      right: { val: 3, left: null, right: null }
+    }
+    const c = {
+      val: 1,
+      left: { val: 2, left: null, right: null },
+      right: { val: 4, left: null, right: null }
+    }
+
+    console.log(isSameTree(a, b)) // true
+    console.log(isSameTree(a, c)) // false
+  </script>
+</body>
+</html>

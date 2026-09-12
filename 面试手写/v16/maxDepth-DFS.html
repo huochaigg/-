@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>最大深度 · DFS</title>
+</head>
+<body>
+  <script>
+    /**
+     * 当前深度 = 1 + max(左深度, 右深度)
+     * null → 0；叶子 → 1
+     * 递归函数「返回一个结果」，不只是遍历
+     */
+    const root = {
+      val: 'A',
+      left: {
+        val: 'B',
+        left: { val: 'D', left: null, right: null },
+        right: { val: 'E', left: null, right: null }
+      },
+      right: {
+        val: 'C',
+        left: null,
+        right: { val: 'F', left: null, right: null }
+      }
+    }
+
+    function maxDepth(root) {
+      if (!root) return 0
+      return 1 + Math.max(maxDepth(root.left), maxDepth(root.right))
+    }
+
+    console.log(maxDepth(root)) // 3
+  </script>
+</body>
+</html>

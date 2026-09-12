@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>最大深度 · BFS</title>
+</head>
+<body>
+  <script>
+    /**
+     * 按层 BFS：每处理完一层 depth++
+     * 极深树递归可能爆栈时，BFS 更安全
+     */
+    const root = {
+      val: 'A',
+      left: {
+        val: 'B',
+        left: { val: 'D', left: null, right: null },
+        right: { val: 'E', left: null, right: null }
+      },
+      right: {
+        val: 'C',
+        left: null,
+        right: { val: 'F', left: null, right: null }
+      }
+    }
+
+    function maxDepthBFS(root) {
+      if (!root) return 0
+      const queue = [root]
+      let i = 0
+      let depth = 0
+
+      while (i < queue.length) {
+        const levelSize = queue.length - i
+        for (let k = 0; k < levelSize; k++) {
+          const node = queue[i++]
+          if (node.left) queue.push(node.left)
+          if (node.right) queue.push(node.right)
+        }
+        depth++
+      }
+      return depth
+    }
+
+    console.log(maxDepthBFS(root)) // 3
+  </script>
+</body>
+</html>

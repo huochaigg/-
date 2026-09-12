@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V16 练习 · 先自己写</title>
+</head>
+<body>
+  <p>五题：层序 → 最大深度 DFS/BFS → 节点数 → 翻转。加分：isSameTree。</p>
+  <script>
+    const root = {
+      val: 'A',
+      left: {
+        val: 'B',
+        left: { val: 'D', left: null, right: null },
+        right: { val: 'E', left: null, right: null }
+      },
+      right: {
+        val: 'C',
+        left: null,
+        right: { val: 'F', left: null, right: null }
+      }
+    }
+
+    function levelOrder(root) { /* TODO [[A],[B,C],[D,E,F]] */ }
+    function maxDepth(root) { /* TODO DFS：1 + max(L,R) → 3 */ }
+    function maxDepthBFS(root) { /* TODO 按层 depth++ → 3 */ }
+    function countNodes(root) { /* TODO 1 + L + R → 6 */ }
+    function invertTree(root) { /* TODO 交换左右后递归，返回 root */ }
+    function isSameTree(p, q) { /* TODO 加分 */ }
+
+    console.log('层序', levelOrder(root))
+    console.log('深度DFS', maxDepth(root))
+    console.log('深度BFS', maxDepthBFS(root))
+    console.log('节点数', countNodes(root))
+    console.log('翻转后层序', (() => {
+      const t = JSON.parse(JSON.stringify(root)) // 简单拷贝，避免改坏上面的 root
+      invertTree(t)
+      return levelOrder(t) // 期望 [['A'],['C','B'],['F','E','D']]
+    })())
+  </script>
+</body>
+</html>

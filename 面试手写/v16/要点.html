@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>二叉树四题 要点</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V16 面试口径 ==========
+     *
+     * 四题训练四种树思维（不是四套孤立算法）：
+     *   层序     → BFS + Queue + levelSize
+     *   最大深度 → 递归返回值 + max   → 1 + max(L, R)
+     *   节点数量 → 递归返回值 + 汇总  → 1 + L + R
+     *   翻转     → 递归修改节点       → 交换 left/right
+     *
+     * 最大深度两种都要会：面试优先 DFS（短）；极深树用 BFS 更安全
+     * 翻转也能 BFS：取出就交换，再入队新左右
+     *
+     * 易错：
+     *   忘 if (!node) return
+     *   不清楚函数「返回什么」
+     *   翻转后还拿旧引用递归
+     *
+     * 复杂度都是 O(n)；递归栈 O(h)，链状最坏 O(n)
+     * 「有几层」= 最大深度；「镜像」= 翻转
+     *
+     * 加分：isSameTree —— 双树递归模板变体
+     * V17：链表 · 遍历 / 反转 / 找中点 · 双指针
+     */
+  </script>
+</body>
+</html>

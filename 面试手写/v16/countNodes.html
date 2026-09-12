@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>节点数量</title>
+</head>
+<body>
+  <script>
+    /**
+     * count(node) = 1 + count(left) + count(right)
+     * 和最大深度同模板，只是组合从 max 换成相加
+     */
+    const root = {
+      val: 'A',
+      left: {
+        val: 'B',
+        left: { val: 'D', left: null, right: null },
+        right: { val: 'E', left: null, right: null }
+      },
+      right: {
+        val: 'C',
+        left: null,
+        right: { val: 'F', left: null, right: null }
+      }
+    }
+
+    function countNodes(root) {
+      if (!root) return 0
+      return 1 + countNodes(root.left) + countNodes(root.right)
+    }
+
+    console.log(countNodes(root)) // 6
+  </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>翻转二叉树</title>
+</head>
+<body>
+  <script>
+    /**
+     * 每个节点交换 left / right，再递归两边
+     * 交换后再递归「新的」左右，别拿交换前的旧引用把自己绕晕
+     */
+    function invertTree(root) {
+      if (!root) return null
+      const tmp = root.left
+      root.left = root.right
+      root.right = tmp
+      invertTree(root.left)
+      invertTree(root.right)
+      return root
+    }
+
+    // BFS 也能做：取出节点就交换，再把新左右入队
+    function invertTreeBFS(root) {
+      if (!root) return null
+      const queue = [root]
+      let i = 0
+      while (i < queue.length) {
+        const node = queue[i++]
+        const tmp = node.left
+        node.left = node.right
+        node.right = tmp
+        if (node.left) queue.push(node.left)
+        if (node.right) queue.push(node.right)
+      }
+      return root
+    }
+
+    const root = {
+      val: 'A',
+      left: {
+        val: 'B',
+        left: { val: 'D', left: null, right: null },
+        right: { val: 'E', left: null, right: null }
+      },
+      right: {
+        val: 'C',
+        left: null,
+        right: { val: 'F', left: null, right: null }
+      }
+    }
+
+    // 层序看翻转结果：原 [[A],[B,C],[D,E,F]] → [[A],[C,B],[F,E,D]]
+    function levelOrder(root) {
+      if (!root) return []
+      const result = [], queue = [root]
+      let i = 0
+      while (i < queue.length) {
+        const size = queue.length - i
+        const level = []
+        for (let k = 0; k < size; k++) {
+          const node = queue[i++]
+          level.push(node.val)
+          if (node.left) queue.push(node.left)
+          if (node.right) queue.push(node.right)
+        }
+        result.push(level)
+      }
+      return result
+    }
+
+    console.log('翻转前', levelOrder(root))
+    invertTree(root)
+    console.log('翻转后', levelOrder(root)) // [['A'], ['C', 'B'], ['F', 'E', 'D']]
+  </script>
+</body>
+</html>
