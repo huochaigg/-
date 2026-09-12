@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V10 空白卷 · 不要翻 V1～V9</title>
+</head>
+<body>
+  <p>打开控制台。按下方顺序写，每题在 <code>状态</code> 改成 A / B / C。限时 90～120 分钟，第一次超时没关系。</p>
+  <p>A 独立写出 · B 思路有但卡住 · C 下不了手。写完再打开同目录「参考答案.html」和「评分记录.md」。</p>
+  <script>
+    /* =========================================================
+     * 推荐顺序（先四道核心）：
+     * 1 Promise.all → 2 并发控制 → 3 EventEmitter → 4 bind
+     * 再：5 debounce → 6 deepClone → 7 new/instanceof → 8 flat
+     * 最后：9 Event Loop 口算 → 10 生图场景只讲设计
+     * ========================================================= */
+
+    // ---------- 1. myPromiseAll  目标 8～10 min  状态：
+    // 输入 [Promise.resolve(1), 2, Promise.resolve(3)] → [1, 2, 3]
+    // 保序、普通值、全成才成、一败立刻 reject、[] 立刻 []
+    // 为什么不能 result.push(value)？
+    function myPromiseAll(arr) {
+      // TODO
+    }
+
+    // ---------- 2. asyncPool / 最大并发  目标 ≤15 min  状态：
+    // tasks 是 () => Promise 的数组，limit=3，结果顺序 = tasks 顺序
+    // 失败策略自己选并在注释里写一句：立刻 reject 整池 / 错误放进 result 继续
+    function asyncPool(tasks, limit) {
+      // TODO
+    }
+
+    // ---------- 3. EventEmitter  目标 10～15 min  状态：
+    // on / emit / off / once
+    class EventEmitter {
+      // TODO
+    }
+    // 口答（写在这里）：发布订阅为什么适合 Node？和观察者差在哪？
+    //
+
+    // ---------- 4. myBind  目标 10～15 min  状态：
+    // 改 this、预置参数、后续参数、new boundFn() 时忽略 bind 的 this
+    Function.prototype.myBind = function (context, ...boundArgs) {
+      // TODO
+    }
+
+    // ---------- 5. debounce  目标 5～8 min  状态：
+    // 停 delay 后执行一次；保留 this 和 args
+    // 进阶：immediate = true 第一次立刻执行
+    function debounce(fn, delay, immediate = false) {
+      // TODO
+    }
+
+    // ---------- 6. deepClone  目标 ~15 min  状态：
+    // Object Array Date RegExp Map Set + WeakMap 循环引用
+    function deepClone(val, map = new WeakMap()) {
+      // TODO
+    }
+
+    // ---------- 7. myNew + myInstanceof  目标 ~10 min  状态：
+    function myNew(Ctor, ...args) {
+      // TODO
+    }
+    function myInstanceof(left, right) {
+      // TODO
+    }
+
+    // ---------- 8. myFlat  目标 5～8 min  状态：
+    // depth 可为 Infinity；至少递归版。加分：栈、不许递归
+    function myFlat(arr, depth = 1) {
+      // TODO
+    }
+
+    // ---------- 9. Event Loop 口算  状态：
+    // 只写你认为的打印顺序，不要运行对照（写完再对）
+    /*
+    console.log('1')
+    setTimeout(() => console.log('2'), 0)
+    Promise.resolve().then(() => console.log('3'))
+    queueMicrotask(() => console.log('4'))
+    // Node 里再加：
+    // setImmediate(() => console.log('5'))
+    // process.nextTick(() => console.log('6'))
+    浏览器你猜：
+    Node 你猜（1 之后 nextTick / then / timer / immediate）：
+    */
+
+    // ---------- 10. 生图执行器 · 只写设计，不要求一次写完  状态：
+    /*
+    10 张图，并发 3，单张 30s timeout，失败最多 retry 2 次
+    最终 [{ index, status, url|error }]
+    每个 task =
+    外层池 =
+    失败策略 =
+    */
+
+    // ====================== 自测（实现后再看控制台） ======================
+    function delay(ms, v) {
+      return new Promise(r => setTimeout(() => r(v), ms))
+    }
+    function fail(ms, e) {
+      return new Promise((_, rj) => setTimeout(() => rj(e), ms))
+    }
+
+    async function runTests() {
+      console.log('===== 自测开始（没写完会报错，正常）=====')
+
+      try {
+        const allRes = await myPromiseAll([Promise.resolve(1), 2, Promise.resolve(3)])
+        console.log('all 顺序/普通值', JSON.stringify(allRes) === '[1,2,3]' ? 'OK' : allRes)
+        const empty = await myPromiseAll([])
+        console.log('all []', Array.isArray(empty) && empty.length === 0 ? 'OK' : empty)
+        await myPromiseAll([Promise.resolve(1), Promise.reject('x')]).then(
+          () => console.log('all 失败应 reject，但成功了'),
+          err => console.log('all reject', err === 'x' ? 'OK' : err)
+        )
+      } catch (e) { console.log('all 未完成', e.message || e) }
+
+      try {
+        let peak = 0, cur = 0
+        const tasks = [0, 1, 2, 3, 4].map(i => () => {
+          cur++
+          peak = Math.max(peak, cur)
+          return delay(30 + (4 - i) * 10, i).finally(() => cur--)
+        })
+        const poolRes = await asyncPool(tasks, 3)
+        console.log('pool 结果顺序', JSON.stringify(poolRes) === '[0,1,2,3,4]' ? 'OK' : poolRes)
+        console.log('pool 峰值并发 <=3', peak <= 3 ? 'OK peak=' + peak : 'FAIL peak=' + peak)
+      } catch (e) { console.log('pool 未完成', e.message || e) }
+
+      try {
+        const bus = new EventEmitter()
+        const logs = []
+        const a = (x, y) => logs.push('a' + x + y)
+        const b = (x, y) => logs.push('b' + x + y)
+        bus.on('message', a)
+        bus.on('message', b)
+        bus.once('message', (x, y) => logs.push('once' + x + y))
+        bus.emit('message', 1, 2)
+        bus.off('message', a)
+        bus.emit('message', 3, 4)
+        console.log('EventEmitter', logs.join(',') === 'a12,b12,once12,b34' ? 'OK' : logs)
+      } catch (e) { console.log('EventEmitter 未完成', e.message || e) }
+
+      try {
+        function add(a, b, c, d) { return [this.n, a, b, c, d] }
+        const fn2 = add.myBind({ n: 9 }, 1, 2)
+        const callRes = fn2(3, 4)
+        console.log('bind 预置参数', JSON.stringify(callRes) === '[9,1,2,3,4]' ? 'OK' : callRes)
+
+        function Person(name) { this.name = name }
+        Person.prototype.hi = function () { return this.name }
+        const Bound = Person.myBind({ x: 1 }, 'tom')
+        const p = new Bound()
+        console.log('new bind', p instanceof Person && p.hi() === 'tom' && p.x === undefined ? 'OK' : p)
+      } catch (e) { console.log('bind 未完成', e.message || e) }
+
+      try {
+        const obj = { n: 1, d: new Date('2020-01-01'), r: /ab/g, arr: [1], m: new Map([['a', 1]]), s: new Set([1]) }
+        obj.self = obj
+        const c = deepClone(obj)
+        const ok = c !== obj && c.self === c && c.d !== obj.d && c.r.source === 'ab' && c.m.get('a') === 1 && c.s.has(1)
+        console.log('deepClone', ok ? 'OK' : c)
+      } catch (e) { console.log('deepClone 未完成', e.message || e) }
+
+      try {
+        function Ctor(name) { this.name = name }
+        Ctor.prototype.k = 1
+        const n = myNew(Ctor, 'a')
+        console.log('myNew', n.name === 'a' && n.k === 1 ? 'OK' : n)
+        function Ret() { return { hijack: true } }
+        console.log('myNew return 对象', myNew(Ret).hijack === true ? 'OK' : myNew(Ret))
+        console.log('instanceof', myInstanceof(n, Ctor) && myInstanceof(n, Object) && !myInstanceof(1, Number) ? 'OK' : 'FAIL')
+      } catch (e) { console.log('new/instanceof 未完成', e.message || e) }
+
+      try {
+        const arr = [1, [2, [3]]]
+        console.log('flat 1', JSON.stringify(myFlat(arr, 1)) === '[1,2,[3]]' ? 'OK' : myFlat(arr, 1))
+        console.log('flat Infinity', JSON.stringify(myFlat(arr, Infinity)) === '[1,2,3]' ? 'OK' : myFlat(arr, Infinity))
+      } catch (e) { console.log('flat 未完成', e.message || e) }
+
+      console.log('===== 自测结束 =====')
+    }
+
+    runTests()
+  </script>
+</body>
+</html>
