@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图 DFS + visited</title>
+</head>
+<body>
+  <script>
+    /**
+     * 图：邻接表。A→B→C→A 有环
+     * 树一般不用 visited；图必须用，否则无限递归
+     */
+    const graph = {
+      A: ['B'],
+      B: ['C'],
+      C: ['A', 'D'],
+      D: []
+    }
+
+    function dfsGraph(start) {
+      const result = []
+      const visited = new Set()
+
+      const dfs = (node) => {
+        if (visited.has(node)) return
+        visited.add(node)
+        result.push(node)
+        for (const next of graph[node] || []) dfs(next)
+      }
+
+      dfs(start)
+      return result
+    }
+
+    console.log(dfsGraph('A')) // ['A', 'B', 'C', 'D']  不会围着环转
+
+    // 脏数据树也可以用 visited 防环
+    const a = { id: 'A', children: [] }
+    const b = { id: 'B', children: [] }
+    a.children.push(b)
+    b.children.push(a)
+
+    function dfsTreeSafe(nodes) {
+      const result = []
+      const visited = new Set()
+      const dfs = (list) => {
+        for (const node of list || []) {
+          if (visited.has(node)) continue
+          visited.add(node)
+          result.push(node.id)
+          dfs(node.children)
+        }
+      }
+      dfs(nodes)
+      return result
+    }
+
+    console.log('脏树防环', dfsTreeSafe([a])) // ['A', 'B']
+  </script>
+</body>
+</html>

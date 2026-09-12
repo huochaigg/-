@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V13 练习 · 先自己写</title>
+</head>
+<body>
+  <p>四题：递归展平 id → 栈版同样顺序 → findNodeDFS 提前结束 → 有环图 + visited。</p>
+  <script>
+    const tree = [
+      {
+        id: 1, name: 'A',
+        children: [
+          {
+            id: 2, name: 'B',
+            children: [
+              { id: 4, name: 'D', children: [] },
+              { id: 5, name: 'E', children: [] }
+            ]
+          },
+          {
+            id: 3, name: 'C',
+            children: [{ id: 6, name: 'F', children: [] }]
+          }
+        ]
+      }
+    ]
+
+    const graph = { A: ['B'], B: ['C'], C: ['A', 'D'], D: [] }
+
+    function dfsIds(tree) { /* TODO 期望 [1,2,4,5,3,6] */ }
+    function dfsIdsStack(tree) { /* TODO 禁止递归，顺序同上；children 倒序 push */ }
+    function findNodeDFS(tree, id) { /* TODO */ }
+    function dfsGraph(graph, start) { /* TODO visited，期望 A B C D */ }
+
+    console.log('递归', dfsIds(tree))
+    console.log('栈', dfsIdsStack(tree))
+    console.log('找 5', findNodeDFS(tree, 5))
+    console.log('图', dfsGraph(graph, 'A'))
+  </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>findNodeDFS</title>
+</head>
+<body>
+  <script>
+    function findNodeDFS(tree, id) {
+      for (const node of tree || []) {
+        if (node.id === id) return node
+        const found = findNodeDFS(node.children, id)
+        if (found) return found
+      }
+      return null
+    }
+
+    const tree = [
+      {
+        id: 1, name: 'A',
+        children: [
+          { id: 2, name: 'B', children: [{ id: 4, name: 'D' }, { id: 5, name: 'E' }] },
+          { id: 3, name: 'C', children: [{ id: 6, name: 'F' }] }
+        ]
+      }
+    ]
+
+    console.log(findNodeDFS(tree, 5))
+    console.log(findNodeDFS(tree, 99))
+  </script>
+</body>
+</html>

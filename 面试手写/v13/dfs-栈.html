@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DFS 栈（禁止递归）</title>
+</head>
+<body>
+  <script>
+    const tree = [
+      {
+        id: 1, name: 'A',
+        children: [
+          {
+            id: 2, name: 'B',
+            children: [
+              { id: 4, name: 'D', children: [] },
+              { id: 5, name: 'E', children: [] }
+            ]
+          },
+          {
+            id: 3, name: 'C',
+            children: [{ id: 6, name: 'F', children: [] }]
+          }
+        ]
+      }
+    ]
+
+    /**
+     * 自己维护 stack = 模拟调用栈
+     * 栈 LIFO：想 A→B→C 时，children 要倒序 push（先 C 后 B，B 先出）
+     */
+    function dfsIdsStack(nodes) {
+      const result = []
+      const stack = [...(nodes || [])].reverse()
+
+      while (stack.length) {
+        const node = stack.pop()
+        result.push(node.id)
+        const children = node.children || []
+        for (let i = children.length - 1; i >= 0; i--) {
+          stack.push(children[i])
+        }
+      }
+      return result
+    }
+
+    console.log(dfsIdsStack(tree)) // [1, 2, 4, 5, 3, 6]
+  </script>
+</body>
+</html>

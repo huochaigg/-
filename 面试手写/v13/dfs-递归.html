@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DFS 递归</title>
+</head>
+<body>
+  <script>
+    const tree = [
+      {
+        id: 1, name: 'A',
+        children: [
+          {
+            id: 2, name: 'B',
+            children: [
+              { id: 4, name: 'D', children: [] },
+              { id: 5, name: 'E', children: [] }
+            ]
+          },
+          {
+            id: 3, name: 'C',
+            children: [{ id: 6, name: 'F', children: [] }]
+          }
+        ]
+      }
+    ]
+
+    /** 处理当前 → 再 dfs 每个 child。调用栈自动帮你「走到底再回来」 */
+    function dfsIds(nodes) {
+      const result = []
+      const dfs = (list) => {
+        for (const node of list || []) {
+          result.push(node.id)
+          dfs(node.children)
+        }
+      }
+      dfs(nodes)
+      return result
+    }
+
+    console.log(dfsIds(tree)) // [1, 2, 4, 5, 3, 6]  A B D E C F
+  </script>
+</body>
+</html>

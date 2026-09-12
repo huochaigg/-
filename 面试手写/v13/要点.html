@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DFS 要点</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V13 面试口径 ==========
+     *
+     * DFS = 优先沿一条路走到底，走不动再回来。
+     * 不是「必须递归」，也不是「只有树」。
+     *
+     * 递归：调用栈替你记住回来从哪继续。模板：访问当前 → for child dfs(child)
+     * 迭代：自己用数组当 stack。LIFO。要 A→B→C 就把 children 倒序 push。
+     *
+     * 条件反射：DFS → 栈（调用栈或显式栈）；BFS → 队列（V14）
+     *
+     * 树一般不用 visited（无环）；图 / 脏数据环：visited Set
+     *
+     * 复杂度：每个节点一次 → O(n)；递归栈 O(h)，链状 h=n
+     * 普通树查找不是 O(log n)
+     *
+     * V12 归类：
+     * 全遍历 treeToList / 叶子
+     * 查找 findNode 提前 return
+     * 路径 findPath = DFS + push/pop 回溯（选择→递归→撤销）
+     *
+     * 递归 vs 迭代：递归好读；太深会爆栈，改显式 stack
+     * 前端：菜单权限、DOM、Schema、Node 扫目录（readdir 遇文件夹再进）
+     * 二叉树只是 children 最多两个的特殊树，前序仍是 DFS
+     */
+  </script>
+</body>
+</html>
