@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>反转链表</title>
+</head>
+<body>
+  <script>
+    function ListNode(value, next = null) {
+      this.value = value
+      this.next = next
+    }
+    function fromArray(arr) {
+      const dummy = new ListNode(0)
+      let cur = dummy
+      for (const v of arr) { cur.next = new ListNode(v); cur = cur.next }
+      return dummy.next
+    }
+    function toArray(head) {
+      const r = []
+      while (head) { r.push(head.value); head = head.next }
+      return r
+    }
+
+    /**
+     * 先存 next，再改指向；prev 前进，current 前进
+     * 时间 O(n)，额外空间 O(1)
+     * 空链表 / 单节点不用特判，循环自然成立
+     */
+    function reverseList(head) {
+      let prev = null
+      let current = head
+      while (current) {
+        const next = current.next
+        current.next = prev
+        prev = current
+        current = next
+      }
+      return prev
+    }
+
+    console.log(toArray(reverseList(fromArray([1, 2, 3])))) // [3, 2, 1]
+    console.log(toArray(reverseList(fromArray([1]))))
+    console.log(reverseList(null))
+  </script>
+</body>
+</html>

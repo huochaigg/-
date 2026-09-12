@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>链表要点</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V17 面试口径 ==========
+     *
+     * 节点 { value, next }。无下标：找第 k 个 O(k)。
+     * 已拿到前驱时改 next 插删 O(1)；先查找仍可能 O(n)。
+     * 数组随机访问快；链表顺序走、局部改指针方便。JS Array 别讲成 C 连续内存。
+     *
+     * 遍历：current = head; while (current) { ...; current = current.next }
+     *
+     * 反转：先存 next，再改指向；prev 前进，current 前进。最后 prev 是新头。
+     * 不先存 next：current.next = prev 会丢掉后面整段。
+     * 时间 O(n)，迭代额外空间 O(1)。空 / 单节点循环自然成立。
+     *
+     * 中点：slow 一步 fast 两步。条件 fast && fast.next。
+     * 偶数本实现返回后一个中点（6 个节点 → 第 4 个）。面试说清约定。
+     *
+     * 删头：dummy 节点，统一删 prev.next。
+     *
+     * Node 穿插：LRU = HashMap + 双向链表（V33）。
+     *
+     * 卡住就画：A→B→C，current / next / 哪根箭头 / 改完还能不能找到后面。
+     */
+  </script>
+</body>
+</html>

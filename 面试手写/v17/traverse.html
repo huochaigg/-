@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>链表遍历</title>
+</head>
+<body>
+  <script>
+    function ListNode(value, next = null) {
+      this.value = value
+      this.next = next
+    }
+
+    function fromArray(arr) {
+      const dummy = new ListNode(0)
+      let cur = dummy
+      for (const v of arr) {
+        cur.next = new ListNode(v)
+        cur = cur.next
+      }
+      return dummy.next
+    }
+
+    /** while (current)：处理 → current = current.next */
+    function toArray(head) {
+      const result = []
+      let current = head
+      while (current) {
+        result.push(current.value)
+        current = current.next
+      }
+      return result
+    }
+
+    const head = fromArray([1, 2, 3])
+    console.log(toArray(head)) // [1, 2, 3]
+  </script>
+</body>
+</html>

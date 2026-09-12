@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V17 练习 · 先自己写</title>
+</head>
+<body>
+  <p>必写：toArray / reverseList / middleNode / deleteValue。加餐 mergeTwoLists。</p>
+  <script>
+    function ListNode(value, next = null) {
+      this.value = value
+      this.next = next
+    }
+    function fromArray(arr) {
+      const dummy = new ListNode(0)
+      let cur = dummy
+      for (const v of arr) { cur.next = new ListNode(v); cur = cur.next }
+      return dummy.next
+    }
+
+    function toArray(head) { /* TODO */ }
+    function reverseList(head) { /* TODO 迭代 O(1) 额外空间 */ }
+    function middleNode(head) { /* TODO 快慢指针一遍 */ }
+    function deleteValue(head, target) { /* TODO 含删头 */ }
+    function mergeTwoLists(l1, l2) { /* 加餐 */ }
+
+    const a = fromArray([1, 2, 3])
+    console.log('toArray', toArray(a))
+    console.log('reverse', toArray(reverseList(fromArray([1, 2, 3]))))
+    console.log('mid odd', middleNode(fromArray([1, 2, 3, 4, 5])) && middleNode(fromArray([1, 2, 3, 4, 5])).value)
+    console.log('mid even', middleNode(fromArray([1, 2, 3, 4, 5, 6])) && middleNode(fromArray([1, 2, 3, 4, 5, 6])).value)
+    console.log('del 2', toArray(deleteValue(fromArray([1, 2, 3]), 2)))
+    console.log('del head', toArray(deleteValue(fromArray([1, 2, 3]), 1)))
+  </script>
+</body>
+</html>
