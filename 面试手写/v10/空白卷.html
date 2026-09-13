@@ -21,20 +21,97 @@
     // 保序、普通值、全成才成、一败立刻 reject、[] 立刻 []
     // 为什么不能 result.push(value)？
     function myPromiseAll(arr) {
-      // TODO
+      if (!Array.isArray(arr)) Promise.reject(new TypeError('need array'))
+      return new Promise((resolve, reject) => {
+        if (arr.length === 0) resolve([])
+        let result = []
+        let count = 0
+        for (let i = 0; i < arr.length; i ++) {
+          Promise.resolve(arr[i]).then(res => {
+            result[i] = res
+            count ++
+            if (count === arr.length) {
+              resolve(result)
+            }
+          }, reject)
+        }
+      })
     }
 
     // ---------- 2. asyncPool / 最大并发  目标 ≤15 min  状态：
     // tasks 是 () => Promise 的数组，limit=3，结果顺序 = tasks 顺序
     // 失败策略自己选并在注释里写一句：立刻 reject 整池 / 错误放进 result 继续
     function asyncPool(tasks, limit) {
-      // TODO
+      // 失败策略：错误放进 result 继续，整池仍 resolve
+      return new Promise((resolve, reject) => {
+        const len = tasks.length
+        if (len === 0) {
+          resolve([])
+          return
+        }
+
+        const result = []
+        let index = 0
+        let finished = 0
+        async function request() {
+          if (index >= len) return
+          const i = index++
+          try {
+            // tasks[i] 是 () => Promise，要调用后再 await
+            result[i] = await tasks[i]()
+          } catch (err) {
+            result[i] = err
+          } finally {
+            finished++
+            if (finished >= len) {
+              resolve(result)
+              return
+            }
+            request()
+          }
+        }
+
+        const maxReqLen = Math.min(limit, len)
+        for (let i = 0; i < maxReqLen; i++) {
+          request()
+        }
+      })
     }
 
     // ---------- 3. EventEmitter  目标 10～15 min  状态：
     // on / emit / off / once
     class EventEmitter {
-      // TODO
+      #events = []
+      on(event, fn) {
+        if (!this.#events[event]) {
+          this.#events[event] = []
+        }
+        this.#events.push(fn)
+        return () => this.off(event, fn)
+      }
+      
+      emit(event, ...args) {
+        if (this.#events.event) {
+          this.#events[event].slice().forEach(fn => {
+            fn.appay(this, ...args)
+          })
+        }
+      }
+
+      off(event, fn) {
+        const list = this.#events[event]
+        if (list.length === 0) return
+        this.#events[event] = list.filter(item => item !== event)
+      }
+
+      once(event, fn) {
+        const wrapper = (...args) => {
+          this.off(event, wrapper)
+          fn.appay(this, args)
+        }
+
+        this.on(event. wrapper)
+      }
     }
     // 口答（写在这里）：发布订阅为什么适合 Node？和观察者差在哪？
     //
@@ -42,34 +119,110 @@
     // ---------- 4. myBind  目标 10～15 min  状态：
     // 改 this、预置参数、后续参数、new boundFn() 时忽略 bind 的 this
     Function.prototype.myBind = function (context, ...boundArgs) {
-      // TODO
+      if (typeof this !== 'function') throw TypeError('必须function')
+      const fn = this
+      const bindContext = context === null ? globalThis : context
+
+      return function (...args) {
+        if (new.target) {
+          return new fn([...boundArgs, ...args])
+        }
+        return fn.apply(bindContext, [...boundArgs, ...args])
+      }
     }
 
     // ---------- 5. debounce  目标 5～8 min  状态：
     // 停 delay 后执行一次；保留 this 和 args
     // 进阶：immediate = true 第一次立刻执行
     function debounce(fn, delay, immediate = false) {
-      // TODO
+      let timer = null
+      return function (...args) {
+        if (immediate && !timer) {
+          fn.appay(this, args)
+        }
+        if (timer) clearTimeout(timer)
+        timer = setTimeout(() => {
+          time = null
+          if (!immediate) {
+            fn.appay(this, args)
+          }
+        }, delay)
+      }
     }
 
     // ---------- 6. deepClone  目标 ~15 min  状态：
     // Object Array Date RegExp Map Set + WeakMap 循环引用
     function deepClone(val, map = new WeakMap()) {
-      // TODO
+      if (val === null || typeof val !== "object") {
+        return val
+      }
+      if (val instanceof RegExp) {
+        return new RegExp(val)
+      } 
+      if (val instanceof Date) {
+        return new Date(val)
+      }
+      if (val instanceof Map) {
+        const cloned = new Map()
+        map.set(val, cloned)
+        val.forEach((v, k) => cloned.set(deepClone(k, map), deepClone(v, map)))
+        return cloned
+      }
+      if (val instanceof Set) {
+        const cloned = new Set()
+        map.set(val, cloned)
+        val.forEach(v => cloned.add(deepClone(v, map)))
+        return cloned
+      }
+      const c = Array.isArray(val) ? [] : Object.create(Object.getPrototypeOf(val))
+      if (map.get(val)) return val
+      map.set(val, c)
+      Reflect.ownKeys(val).forEach(k => {
+        c[k] = deepClone(val[k], map)
+      })
+      return c
     }
 
     // ---------- 7. myNew + myInstanceof  目标 ~10 min  状态：
     function myNew(Ctor, ...args) {
-      // TODO
+      const obj = Object.create(Ctor.prototype)
+      const ret = Ctor.apply(this, args)
+      const isObj = ret !== null && (typeof ret ==="object" || typeof ret === 'function')
+      return isObj ? ret : obj
     }
     function myInstanceof(left, right) {
-      // TODO
-    }
+      if (typeof right !== 'function') throw new TypeError('not callable')
+      if (left === null || (typeof left !== 'object' && typeof left !== 'function')) return false
+
+      let proto = Object.getPrototypeOf(left)
+      while(proto) {
+        if (proto === right.prototype) {
+          return true
+        }
+        proto = Object.getPrototypeOf(proto)
+      }
+      return false
+    } 
 
     // ---------- 8. myFlat  目标 5～8 min  状态：
     // depth 可为 Infinity；至少递归版。加分：栈、不许递归
     function myFlat(arr, depth = 1) {
-      // TODO
+      debugger
+      const result = []
+      // 每个元素记下「还能再展几层」
+      const stack = arr.map(val => ({ val, d: depth }))
+      while (stack.length) {
+        const { val, d } = stack.shift()
+        if (Array.isArray(val) && d > 0) {
+          // 从队头展开：倒序 unshift，保证左→右顺序
+          for (let i = val.length - 1; i >= 0; i--) {
+            stack.unshift({ val: val[i], d: d - 1 })
+          }
+        } else {
+          result.push(val) // 非数组，或 depth 用尽（保留内层数组）
+        }
+      }
+      return result
     }
 
     // ---------- 9. Event Loop 口算  状态：
@@ -176,6 +329,7 @@
 
       try {
         const arr = [1, [2, [3]]]
+        console.log(myFlat(arr, 2))
         console.log('flat 1', JSON.stringify(myFlat(arr, 1)) === '[1,2,[3]]' ? 'OK' : myFlat(arr, 1))
         console.log('flat Infinity', JSON.stringify(myFlat(arr, Infinity)) === '[1,2,3]' ? 'OK' : myFlat(arr, Infinity))
       } catch (e) { console.log('flat 未完成', e.message || e) }

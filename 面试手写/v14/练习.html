@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>V14 练习 · 先自己写</title>
 </head>
+
 <body>
   <p>四题：BFS 展平 id → levelOrder 按层 → findNodeBFS 命中即停 → 有环图 + visited。加分：getLevel。</p>
   <script>
@@ -29,8 +31,21 @@
 
     const graph = { A: ['B'], B: ['C'], C: ['A', 'D'], D: [] }
 
-    function bfsIds(tree) { /* TODO 期望 [1,2,3,4,5,6]，建议 queue + index */ }
-    function levelOrder(tree) { /* TODO 期望 [[1],[2,3],[4,5,6]]，固定 levelSize */ }
+    function bfsIds(tree) {
+      const result = []
+      const _tree = [...tree]
+      while (_tree.length > 0) {
+        const node = _tree.shift()
+        result.push(node.id)
+        for (const item of (node.children || [])) {
+          _tree.push(item)
+        }
+      }
+      return result
+    }
+    function levelOrder(tree) {
+      
+    }
     function findNodeBFS(tree, id) { /* TODO 命中立刻 return */ }
     function bfsGraph(graph, start) { /* TODO 入队时 visited，期望 A B C D */ }
     function getLevel(tree, id) { /* TODO 提高：root 为 0 层 */ }
@@ -42,4 +57,5 @@
     console.log('6 的层', getLevel(tree, 6)) // 期望 2
   </script>
 </body>
+
 </html>

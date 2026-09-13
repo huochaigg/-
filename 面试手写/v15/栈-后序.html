@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 结构：
+    //     1
+    //    / \
+    //   2   3
+    //  / \
+    // 4   5
+    const tree = {
+      val: 1,
+      left: {
+        val: 2,
+        left: {
+          val: 4,
+          left: null,
+          right: null,
+        },
+        right: {
+          val: 5,
+          left: null,
+          right: null,
+        },
+      },
+      right: {
+        val: 3,
+        left: null,
+        right: null,
+      },
+    }
+
+    // 结构：
+    //     1
+    //    / \
+    //   2   3
+    //  / \
+    // 4   5
+
+    function inorderTraversal(root) {
+      const result = []
+      const stack = [root]
+
+      while (stack.length) {
+        const node = stack.pop()
+        if (node) {
+          stack.push(node.left)
+          stack.push(node.right)
+          result.unshift(node.val)
+        }
+      }
+
+      return result
+    }
+
+    console.log('inorderTraversal', inorderTraversal(tree)) 
+  </script>
+</body>
+
+</html>

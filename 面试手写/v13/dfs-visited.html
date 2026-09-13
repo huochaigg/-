@@ -35,11 +35,22 @@
 
     console.log(dfsGraph('A')) // ['A', 'B', 'C', 'D']  不会围着环转
 
-    // 脏数据树也可以用 visited 防环
-    const a = { id: 'A', children: [] }
-    const b = { id: 'B', children: [] }
-    a.children.push(b)
-    b.children.push(a)
+    // 脏数据树：看起来像多叉树，但某处又指回祖先 → 有环
+    //        A
+    //      / | \
+    //     B  C  D
+    //    / \    ↑
+    //   E   F───┘  （F 又指回 D，甚至可以指回 A）
+    const A = { id: 'A', children: [] }
+    const B = { id: 'B', children: [] }
+    const C = { id: 'C', children: [] }
+    const D = { id: 'D', children: [] }
+    const E = { id: 'E', children: [] }
+    const F = { id: 'F', children: [] }
+    A.children.push(B, C, D)
+    B.children.push(E, F)
+    F.children.push(D) // 脏数据：F → D（D 已被走过，没有 visited 会重复/绕圈）
+    // 更狠一点也可以：F.children.push(A) 指回根，没有 visited 直接爆栈
 
     function dfsTreeSafe(nodes) {
       const result = []
@@ -56,7 +67,9 @@
       return result
     }
 
-    console.log('脏树防环', dfsTreeSafe([a])) // ['A', 'B']
+    console.log('脏树防环', dfsTreeSafe([A])) // ['A', 'B', 'E', 'F', 'D', 'C']
+    // F→D 时若 D 已访问过会 skip；这里 D 是第一次见到就收录。
+    // 之后回到 A 的第三孩子 D 时已在 visited，不会再进，更不会死循环。
   </script>
 </body>
 </html>

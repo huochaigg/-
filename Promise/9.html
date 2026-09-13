@@ -53,7 +53,7 @@
           if (typeof onComplate === 'function') {
             queueMicrotask(() => {
               try {
-                const res = onFulfilled(this.#reson)
+                const res = onComplate(this.#reson)
                 resolve(res)
               } catch (err) {
                 reject(err)
