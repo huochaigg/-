@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V18 要点：链表环 + 快慢指针</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V18 面试口径 ==========
+     *
+     * 无环：最终走到 null。有环：某节点 next 指回前面，while(current) 死循环。
+     *
+     * hasCycle（S，必须裸写）
+     * slow 一步、fast 两步。条件 fast && fast.next。
+     * fast 到 null → 无环；slow === fast（比引用不是比 value）→ 有环。
+     * 时间 O(n)，空间 O(1)。
+     *
+     * 为什么能追上：都进环后，fast 每轮相对 slow 靠近 1 格，环有限，距离必到 0。
+     * 像操场套圈。
+     *
+     * Set：见过的节点放进 Set，再遇到同一对象就是环。O(n) 时间 O(n) 空间。
+     * 忘了 Floyd 先写 Set 也对；追问 O(1) 空间再上快慢指针。
+     *
+     * detectCycle（A）
+     * 第一阶段 1/2 直到相遇。
+     * 第二阶段：一指针回 head，两边都走 1 步，再相遇 = 入口。
+     * 别在第二阶段还让 fast 走两步。
+     *
+     * 口答入口：相遇后一个回 head、同速一步，路程关系保证下次相遇在入口。
+     * （head→入口 a = 相遇点再走到入口 c + 若干整圈）
+     *
+     * 和 V13：图环用 visited；链表环也可用 Set。Floyd 是链表特化、省空间。
+     *
+     * 双指针同一套：
+     * 中点     速度 1:2
+     * 有环     速度 1:2
+     * 倒数第 K 距离始终为 K（fast 先走 K 步）
+     *
+     * 加餐：相遇后一指针绕环一圈 = 环长；倒数第 K。
+     */
+  </script>
+</body>
+</html>

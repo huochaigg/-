@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V18 练习 · 先自己写</title>
+</head>
+<body>
+  <p>顺序：hasCycle → Set → detectCycle → getKthFromEnd。第 5 题在纸上画。</p>
+  <script>
+    function ListNode(value, next = null) {
+      this.value = value
+      this.next = next
+    }
+    function fromArray(arr, pos = -1) {
+      const dummy = new ListNode(0)
+      let cur = dummy
+      const nodes = []
+      for (const v of arr) {
+        cur.next = new ListNode(v)
+        cur = cur.next
+        nodes.push(cur)
+      }
+      if (pos >= 0) cur.next = nodes[pos]
+      return dummy.next
+    }
+
+    function hasCycle(head) { /* TODO Floyd O(1) 空间 */ }
+    function hasCycleBySet(head) { /* TODO 并写一句：空间为何 O(n) */ }
+    function detectCycle(head) { /* TODO 返回入口节点或 null */ }
+    function getKthFromEnd(head, k) { /* TODO */ }
+
+    const cycled = fromArray([1, 2, 3, 4, 5, 6], 2) // 6→3
+    console.log('hasCycle', hasCycle(cycled), hasCycle(fromArray([1, 2, 3])))
+    console.log('Set', hasCycleBySet(fromArray([1, 2, 3, 4], 1)))
+    const entry = detectCycle(fromArray([1, 2, 3, 4, 5, 6], 2))
+    console.log('入口', entry && entry.value) // 3
+    console.log('倒数第2', getKthFromEnd(fromArray([1, 2, 3, 4, 5]), 2) && getKthFromEnd(fromArray([1, 2, 3, 4, 5]), 2).value) // 4
+
+    /*
+     * 第 5 题：纸上模拟 1→2→3→4→5→3（入口是 3）
+     * 每一轮 slow / fast 分别在哪个节点，何时相遇。
+     */
+  </script>
+</body>
+</html>

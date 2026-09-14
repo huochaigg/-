@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V18 综合对比</title>
+</head>
+<body>
+  <script>
+    function ListNode(value, next = null) {
+      this.value = value
+      this.next = next
+    }
+
+    function getCycleLength(head) {
+      let slow = head
+      let fast = head
+      while (fast && fast.next) {
+        slow = slow.next
+        fast = fast.next.next
+        if (slow === fast) {
+          let length = 1
+          let current = slow.next
+          while (current !== slow) {
+            current = current.next
+            length++
+          }
+          return length
+        }
+      }
+      return 0
+    }
+
+    function getKthFromEnd(head, k) {
+      if (!head || k <= 0) return null
+      let slow = head
+      let fast = head
+      for (let i = 0; i < k; i++) {
+        if (!fast) return null
+        fast = fast.next
+      }
+      while (fast) {
+        fast = fast.next
+        slow = slow.next
+      }
+      return slow
+    }
+
+    /*
+     * 方法                 时间   空间   优先级
+     * Set 判断环           O(n)   O(n)   A
+     * 快慢指针判断环       O(n)   O(1)   S 必须裸写
+     * Floyd 找环入口       O(n)   O(1)   A
+     * 计算环长度           O(n)   O(1)   B
+     * 找倒数第 K 个        O(n)   O(1)   A 建议裸写
+     *
+     * 追问：
+     * 为什么能判断环？无环 fast 到 null；有环每轮靠近 1，必相遇。
+     * 为什么还要 Floyd？Set 对，但多 O(n) 空间。
+     * 为什么 === 不是比 value？值相同可以是两个节点。
+     * 入口？相遇后一指针回 head，两边一步，再相遇即入口。
+     * 中点 / 倒数 K / 环：都是双指针（速度差 vs 固定距离）。
+     */
+  </script>
+</body>
+</html>
