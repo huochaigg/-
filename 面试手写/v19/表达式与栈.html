@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>表达式与栈</title>
+</head>
+<body>
+  <script>
+    /**
+     * 删除相邻重复字符：记住最近一个元素 → Stack
+     * 时间 O(n)，空间 O(n)
+     */
+    function removeDuplicates(s) {
+      const stack = []
+      for (const char of s) {
+        if (stack[stack.length - 1] === char) stack.pop()
+        else stack.push(char)
+      }
+      return stack.join('')
+    }
+
+    console.log(removeDuplicates('abbaca')) // ca
+
+    /*
+     * 括号匹配、四则运算求值、Undo/Redo（undoStack + redoStack）
+     * Canvas / 富文本撤销：后进先出
+     * 单调栈：下一个更大元素 / 每日温度 —— 本版只认识名字
+     */
+  </script>
+</body>
+</html>

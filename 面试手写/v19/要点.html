@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V19 要点：Stack</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V19 面试口径 ==========
+     *
+     * Stack = LIFO 后进先出。A B C 入，取出 C B A。
+     * push / pop / peek / isEmpty / size，尾部操作，别用 shift。
+     *
+     * 有效括号：最后出现的左括号必须最先关上 → 天然栈。
+     * 左括号入栈；右括号 pop 对栈顶；最后 stack.length === 0。
+     * 不能只数括号个数，[(]) 数量对但顺序错。时间 O(n)，空间最坏 O(n)。
+     *
+     * MinStack：主栈 + minStack，getMin O(1)。push 时 value <= 当前最小才进辅助栈（重复最小值也要进）。
+     *
+     * DFS → Stack（调用栈或显式栈）。BFS → Queue。
+     * 调用栈：a→b→c 退出 c→b→a。递归过深 Maximum call stack size exceeded。
+     * Undo、相邻删重复：记住「最近一个元素」→ 想栈。
+     * 单调栈：只认识名字，16–18k 不优先投入。
+     */
+  </script>
+</body>
+</html>

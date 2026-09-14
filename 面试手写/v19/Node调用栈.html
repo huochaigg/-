@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Node / JS 调用栈</title>
+</head>
+<body>
+  <script>
+    /*
+     * a() → b() → c()
+     * 入栈 a, b, c；退出 c, b, a。完全 LIFO。
+     *
+     * 同步代码占满 Call Stack。
+     * 异步 IO 不会一直卡在栈里：交给事件循环，完成后再把 callback 推回来。
+     *
+     * dfs(child) 递归十万层 → Maximum call stack size exceeded
+     * 极深 DFS：自己用数组当显式 Stack（V13）
+     *
+     * 所以：Stack Overflow、递归深度、Event Loop、同步/异步
+     * 都要能说「和调用栈有关」
+     */
+
+    function a() { b() }
+    function b() { c() }
+    function c() { console.log('c 在栈顶，先结束') }
+    a()
+  </script>
+</body>
+</html>
