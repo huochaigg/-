@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>前序非递归 · Stack</title>
 </head>
-
 <body>
   <script>
     // 结构：
@@ -15,55 +13,59 @@
     //   2   3
     //  / \
     // 4   5
+    // 前序：1 2 4 5 3
     const tree = {
       val: 1,
       left: {
         val: 2,
-        left: {
-          val: 4,
-          left: null,
-          right: null,
-        },
-        right: {
-          val: 5,
-          left: null,
-          right: null,
-        },
+        left: { val: 4, left: null, right: null },
+        right: { val: 5, left: null, right: null }
       },
-      right: {
-        val: 3,
-        left: null,
-        right: null,
-      },
+      right: { val: 3, left: null, right: null }
     }
 
-    // 结构：
-    //     1
-    //    / \
-    //   2   3
-    //  / \
-    // 4   5
+    /**
+     * 前序：根 → 左 → 右
+     * 写法 A（常见面试）：pop 立刻访问，先压右再压左
+     */
+    function preorderStack(root) {
+      if (!root) return []
+      const result = []
+      const stack = [root]
 
-    function inorderTraversal(root) {
+      while (stack.length) {
+        const node = stack.pop()
+        result.push(node.val)
+        // LIFO：想左先出，就先压右
+        if (node.right) stack.push(node.right)
+        if (node.left) stack.push(node.left)
+      }
+      return result
+    }
+
+    /**
+     * 写法 B：中序骨架改访问时机——往左钻时就 push(val)
+     * 也能得到前序，和上面等价
+     */
+    function preorderStackAlt(root) {
       const result = []
       const stack = []
       let current = root
 
       while (stack.length || current) {
-        while(current) {
-          result.push(current.val)
+        while (current) {
+          result.push(current.val) // 前序：先访问根
           stack.push(current)
           current = current.left
         }
         const node = stack.pop()
         current = node.right
       }
-
       return result
     }
 
-    console.log('inorderTraversal', inorderTraversal(tree)) 
+    console.log('前序A', preorderStack(tree))       // [1, 2, 4, 5, 3]
+    console.log('前序B', preorderStackAlt(tree))    // [1, 2, 4, 5, 3]
   </script>
 </body>
-
 </html>

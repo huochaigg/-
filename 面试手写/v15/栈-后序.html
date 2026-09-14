@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>后序非递归 · Stack</title>
 </head>
-
 <body>
   <script>
     // 结构：
@@ -15,53 +13,39 @@
     //   2   3
     //  / \
     // 4   5
+    // 后序：4 5 2 3 1
     const tree = {
       val: 1,
       left: {
         val: 2,
-        left: {
-          val: 4,
-          left: null,
-          right: null,
-        },
-        right: {
-          val: 5,
-          left: null,
-          right: null,
-        },
+        left: { val: 4, left: null, right: null },
+        right: { val: 5, left: null, right: null }
       },
-      right: {
-        val: 3,
-        left: null,
-        right: null,
-      },
+      right: { val: 3, left: null, right: null }
     }
 
-    // 结构：
-    //     1
-    //    / \
-    //   2   3
-    //  / \
-    // 4   5
-
-    function inorderTraversal(root) {
+    /**
+     * 后序：左 → 右 → 根
+     * 技巧：按「根 → 右 → 左」访问并 push，最后 reverse → 左右根
+     * （先压 left 再压 right，pop 时先右后左）
+     *
+     * 不要用 unshift：每次 O(n)，整体约 O(n²)；push + reverse 才是 O(n)
+     */
+    function postorderStack(root) {
+      if (!root) return []
       const result = []
       const stack = [root]
 
       while (stack.length) {
         const node = stack.pop()
-        if (node) {
-          stack.push(node.left)
-          stack.push(node.right)
-          result.unshift(node.val)
-        }
+        result.push(node.val)
+        if (node.left) stack.push(node.left)
+        if (node.right) stack.push(node.right)
       }
-
-      return result
+      return result.reverse()
     }
 
-    console.log('inorderTraversal', inorderTraversal(tree)) 
+    console.log('后序', postorderStack(tree)) // [4, 5, 2, 3, 1]
   </script>
 </body>
-
 </html>
