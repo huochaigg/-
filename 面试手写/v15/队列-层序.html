@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>层序非递归 · Queue（不是栈）</title>
+</head>
+<body>
+  <script>
+    // 结构：
+    //     1
+    //    / \
+    //   2   3
+    //  / \
+    // 4   5
+    // 层序一维：1 2 3 4 5
+    // 层序按层：[[1], [2, 3], [4, 5]]
+    const tree = {
+      val: 1,
+      left: {
+        val: 2,
+        left: { val: 4, left: null, right: null },
+        right: { val: 5, left: null, right: null }
+      },
+      right: { val: 3, left: null, right: null }
+    }
+
+    /**
+     * 层序 = BFS，用的是 Queue（FIFO），不是 Stack（LIFO）
+     * 文件名叫「栈-层序」只是和前/中/后「非递归」系列对齐；实现务必用队列
+     *
+     * 按层分组：进入本轮时记下 levelSize，只处理这么多个
+     * 用 index 代替 shift，避免大量搬移
+     */
+    function levelOrder(root) {
+      if (!root) return []
+      const result = []
+      const queue = [root]
+      let i = 0
+
+      while (i < queue.length) {
+        const levelSize = queue.length - i
+        const level = []
+        for (let k = 0; k < levelSize; k++) {
+          const node = queue[i++]
+          level.push(node.val)
+          if (node.left) queue.push(node.left)
+          if (node.right) queue.push(node.right)
+        }
+        result.push(level)
+      }
+      return result
+    }
+
+    /** 只要一维顺序时，不必记 levelSize */
+    function levelOrderFlat(root) {
+      if (!root) return []
+      const result = []
+      const queue = [root]
+      let i = 0
+      while (i < queue.length) {
+        const node = queue[i++]
+        result.push(node.val)
+        if (node.left) queue.push(node.left)
+        if (node.right) queue.push(node.right)
+      }
+      return result
+    }
+
+    console.log('按层', levelOrder(tree))       // [[1], [2, 3], [4, 5]]
+    console.log('一维', levelOrderFlat(tree))   // [1, 2, 3, 4, 5]
+  </script>
+</body>
+</html>

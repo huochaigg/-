@@ -11,10 +11,14 @@
      * ========== V15 面试口径 ==========
      *
      * 二叉树 = 每个节点最多两个孩子：left / right
-     * 三种遍历只是 visit(node) 位置不同，不是三套算法：
+     * 三种 DFS 遍历只是 visit(node) 位置不同：
      *   前序：visit → left → right   根左右
      *   中序：left → visit → right   左根右
      *   后序：left → right → visit   左右根
+     * 另有层序（BFS）：一层一层，用 Queue，不是 Stack
+     *   非递归：队列 + levelSize → [[1],[2,3],[4,5]]
+     *   递归：dfs(node, depth)，丢进 result[depth]（本质仍是 DFS）
+     *
      * 「前/中/后」说的是根相对左右的位置；左右通常仍是左在右前
      *
      * 终止：if (!node) return
@@ -22,13 +26,14 @@
      *
      * 优先级：
      *   前/中/后递归 + 前序 Stack → 必须会
+     *   层序 Queue → 必须会（和 V14/V16 同一套）
      *   中序 Stack → 建议会（一路压左 → pop → 转右）
-     *   后序 Stack → 知道思路即可，别死磕
+     *   后序 Stack / 层序递归 → 知道思路即可
      *
      * 前序 Stack：先 push right 再 push left（LIFO 保证左先出）
      * BST 中序 → 有序序列（普通二叉树没有大小关系，查找最坏 O(n)）
      *
-     * 时间都是 O(n)；递归空间 O(h)，链状最坏 O(n)
+     * 时间都是 O(n)；递归空间 O(h)，层序队列最坏 O(n)（最宽一层）
      *
      * 前端价值：递归训练；AST / DOM / 目录树同构思维
      * V16：层序(BFS) + 最大深度 + 节点数 + 翻转二叉树

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>层序递归 · 按深度收集</title>
+</head>
+<body>
+  <script>
+    // 结构：
+    //     1
+    //    / \
+    //   2   3
+    //  / \
+    // 4   5
+    // 层序按层：[[1], [2, 3], [4, 5]]
+    const tree = {
+      val: 1,
+      left: {
+        val: 2,
+        left: { val: 4, left: null, right: null },
+        right: { val: 5, left: null, right: null }
+      },
+      right: { val: 3, left: null, right: null }
+    }
+
+    /**
+     * 层序递归：本质仍是 DFS，用 depth 把节点丢进 result[depth]
+     * 面试更推荐队列 BFS；递归版适合理解「层 = 深度」
+     */
+    function levelOrder(root) {
+      const result = []
+      const dfs = (node, depth) => {
+        if (!node) return
+        if (!result[depth]) result[depth] = []
+        result[depth].push(node.val)
+        dfs(node.left, depth + 1)
+        dfs(node.right, depth + 1)
+      }
+      dfs(root, 0)
+      return result
+    }
+
+    console.log(levelOrder(tree)) // [[1], [2, 3], [4, 5]]
+  </script>
+</body>
+</html>

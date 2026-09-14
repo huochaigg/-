@@ -174,8 +174,8 @@
         val.forEach(v => cloned.add(deepClone(v, map)))
         return cloned
       }
-      const c = Array.isArray(val) ? [] : Object.create(Object.getPrototypeOf(val))
       if (map.get(val)) return val
+      const c = Array.isArray(val) ? [] : Object.create(Object.getPrototypeOf(val))
       map.set(val, c)
       Reflect.ownKeys(val).forEach(k => {
         c[k] = deepClone(val[k], map)
