@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V21 练习 · 先自己写</title>
+</head>
+<body>
+  <p>第 1 题 twoSum 必须约 3～5 分钟裸写，并立刻说出时间 O(n)、空间 O(n)。先查 need，再 set 当前值。</p>
+  <script>
+    function twoSum(nums, target) { /* TODO Map */ }
+
+    function countChars(str) { /* TODO 返回 Map */ }
+
+    function firstUniqueChar(str) { /* TODO 两遍，仍是 O(n) */ }
+
+    function unique(arr) { /* TODO Set */ }
+
+    function containsDuplicate(nums) { /* TODO seen Set */ }
+
+    function intersection(nums1, nums2) { /* TODO 不重复交集 */ }
+
+    function intersectWithDup(nums1, nums2) { /* TODO 保留次数，必须用 Map */ }
+
+    console.log(twoSum([2, 7, 11, 15], 9))           // [0, 1]
+    console.log(twoSum([3, 3], 6))                    // [0, 1]
+    console.log(countChars('aabbccc'))
+    console.log(firstUniqueChar('leetcode'))          // l
+    console.log(unique([1, 2, 2, 1]))                 // [1, 2]
+    console.log(containsDuplicate([1, 2, 3, 1]))      // true
+    console.log(intersection([1, 2, 2, 1], [2, 2]))   // [2]
+    console.log(intersectWithDup([1, 2, 2, 1], [2, 2])) // [2, 2]
+
+    /*
+     * 口述：为什么 Map 能把很多 O(n²) 问题降到 O(n)？
+     *
+     */
+  </script>
+</body>
+</html>

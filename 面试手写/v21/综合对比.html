@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map vs Object vs Set</title>
+</head>
+<body>
+  <script>
+    /*
+     * Map vs Object
+     * Map key 可以是任意类型；Object key 本质是 string / symbol。
+     * Map 有 size；Object 通常 Object.keys(obj).length。
+     * Map 有明确 get/set/has/delete，适合频繁增删查。
+     * Object 描述业务实体：user = { name, age }
+     * Map 是映射表：userId → user
+     * 算法题优先 Map。
+     *
+     * Set vs Array.includes
+     * includes 最坏 O(n)。n 个元素各 includes 一次 → 可能 O(n²)
+     * set.has 平均 O(1)，整体常能降到 O(n)
+     * 只判断一两次，差别不大。
+     *
+     * 方法                   时间        空间       优先级
+     * Two Sum 暴力           O(n²)      O(1)       了解
+     * Two Sum Map            O(n)       O(n)       S 必须裸写
+     * 字符频次               O(n)       O(k)       S
+     * 第一个不重复字符       O(n)       O(k)       A
+     * 不重复数组交集         O(n+m)     O(n+m)     A
+     * 保留次数的交集         O(n+m)     O(n)       A 提高
+     * Set 去重               O(n)       O(n)       S
+     * 判断重复元素           O(n)       O(n)       A
+     *
+     * Q：Two Sum 为什么用 Map？
+     *    当前 num 只问 complement 以前出现过没有，平均 O(1)，从 O(n²) 降到 O(n)。
+     * Q：为什么先查再 set？
+     *    避免自己配自己；[3,3] target=6 也能返回 [0,1]。
+     * Q：何时 Set，何时 Map？
+     *    只问有没有 → Set；还要次数/下标/对象 → Map。
+     * Q：两遍循环为什么还是 O(n)？
+     *    O(n)+O(n)=O(2n)，忽略常数仍是 O(n)。
+     */
+  </script>
+</body>
+</html>

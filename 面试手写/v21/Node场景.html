@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V21 Node 场景：Map / Set</title>
+</head>
+<body>
+  <script>
+    /*
+     * Map/Set 不是纯算法玩具，Node / NestJS 里很常见。
+     *
+     * Map  userId → socket     WebSocket 连接
+     * Map  jobId → job         进行中的任务
+     * Map  cacheKey → result   简单内存缓存
+     * Set  在线 userId
+     * Set  processedMessageIds 防止重复消费
+     *
+     * 请求去重（后面 RequestManager 还会用）：
+     * pendingRequests = new Map()
+     * key = requestKey，value = Promise
+     * 第一次：发请求并 set 进 Map
+     * 第二次：has 则直接复用同一个 Promise
+     * finally：delete，避免缓存过期结果
+     */
+
+    const sockets = new Map()
+    const online = new Set()
+    const pendingRequests = new Map()
+
+    function addSocket(userId, socket) {
+      sockets.set(userId, socket)
+      online.add(userId)
+    }
+
+    function removeSocket(userId) {
+      sockets.delete(userId)
+      online.delete(userId)
+    }
+
+    function requestOnce(key, send) {
+      if (pendingRequests.has(key)) return pendingRequests.get(key)
+
+      const p = Promise.resolve()
+        .then(send)
+        .finally(() => pendingRequests.delete(key))
+
+      pendingRequests.set(key, p)
+      return p
+    }
+
+    addSocket(1001, { id: 'ws-1' })
+    addSocket(1002, { id: 'ws-2' })
+    console.log('在线', [...online])
+    console.log('1001 的 socket', sockets.get(1001))
+
+    requestOnce('/api/product/1001', () => '商品A')
+      .then(console.log)
+    requestOnce('/api/product/1001', () => '不该再发')
+      .then(console.log)
+  </script>
+</body>
+</html>

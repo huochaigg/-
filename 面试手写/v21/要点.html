@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V21 要点：Map / Set</title>
+</head>
+<body>
+  <script>
+    /*
+     * ========== V21 面试口径 ==========
+     *
+     * Map：key → value。id→node、字符→次数、数字→下标。
+     * Set：只关心「有没有」。去重、visited、防止重复访问。
+     *
+     * 算法最常见优化：别每次重新扫数组，提前存进 Map/Set。
+     * V11 数组转树：找父节点从 O(n) 扫描 → id Map 后 O(1)。
+     *
+     * 面试把 get/set/has/add 平均看成 O(1)。
+     * 用 O(n) 额外空间，换掉 O(n²) 时间。
+     *
+     * Two Sum（S，必须裸写）
+     * 当前 num，要找 need = target - num。
+     * 先 map.has(need) 再 map.set(num, i)。
+     * 先查再 set：避免自己配自己，且 [3,3] target=6 能过。
+     * 时间 O(n)，空间 O(n)。
+     *
+     * 频次：map.set(k, (map.get(k) || 0) + 1) 必须熟。
+     * 第一个不重复字符：先统计再按原序找 count===1。两遍仍是 O(n)。
+     *
+     * 只问存在 → Set；还要次数/下标/对象 → Map。
+     * arr.includes 最坏 O(n)；n 次 includes 可能 O(n²)；换成 Set 通常 O(n)。
+     *
+     * 业务对象用 Object：{ name, age }。
+     * 映射表用 Map：userId → user。算法题优先 Map。
+     */
+  </script>
+</body>
+</html>
