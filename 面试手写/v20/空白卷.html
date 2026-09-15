@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V20 空白卷 · 不要翻 V11～V19</title>
+</head>
+<body>
+  <p>每题改「状态」为 A/B/C。写完刷新看自测。对照答案请看同目录各 js，不要边写边开。</p>
+  <script>
+    // 1 数组转树  状态：    限 10 min
+    function arrayToTree(list) { /* TODO Map 两遍 O(n)，不依赖顺序 */ }
+
+    // 2 Tree→List  状态：
+    function treeToList(tree) { /* TODO DFS，去掉 children */ }
+
+    // 3 路径  状态：
+    function findPath(tree, targetId) { /* TODO push dfs pop，返回节点数组或 null */ }
+
+    // 4 BFS 层序  状态：
+    function levelOrder(root) { /* TODO Queue + levelSize → [[A],[B,C],...] */ }
+
+    // 5 前中后序  状态：
+    function preorder(root) { /* 根左右 */ }
+    function inorder(root) { /* 左根右 */ }
+    function postorder(root) { /* 左右根 */ }
+
+    // 6 最大深度 / 翻转  状态：
+    function maxDepth(root) { /* TODO */ }
+    function invertTree(root) { /* TODO */ }
+
+    // 7 反转链表 S  状态：
+    function reverseList(head) { /* TODO O(1) 空间 */ }
+
+    // 8 中点  状态：
+    function middleNode(head) { /* TODO 偶数后一个中点 */ }
+
+    // 9 有环 3～5 min  状态：
+    function hasCycle(head) { /* TODO */ }
+
+    // 10 环入口  状态：
+    function detectCycle(head) { /* TODO 1:2 然后 1:1 */ }
+
+    // 11 有效括号  状态：
+    function isValid(s) { /* TODO */ }
+
+    // 12 MinStack 思路必须有  状态：
+    class MinStack { /* TODO getMin O(1) */ }
+
+    // 13 综合：30 秒定模型，写在注释里即可  状态：
+    // 菜单面包屑 routeId →
+    // 组织架构按层 →
+    // A→B→C→A 依赖环 →
+    // Undo / Redo →
+
+    // ---------- 自测 ----------
+    function TreeNode(val, left = null, right = null) {
+      this.val = val; this.left = left; this.right = right
+    }
+    function ListNode(value, next = null) {
+      this.value = value; this.next = next
+    }
+    function listFrom(arr, pos = -1) {
+      const dummy = new ListNode(0)
+      let cur = dummy
+      const nodes = []
+      for (const v of arr) { cur.next = new ListNode(v); cur = cur.next; nodes.push(cur) }
+      if (pos >= 0) cur.next = nodes[pos]
+      return dummy.next
+    }
+    function toArr(head) {
+      const r = []; const seen = new Set()
+      while (head && !seen.has(head)) { seen.add(head); r.push(head.value); head = head.next }
+      return r
+    }
+
+    const list = [
+      { id: 4, parentId: 2, name: 'D' },
+      { id: 2, parentId: 1, name: 'B' },
+      { id: 3, parentId: 1, name: 'C' },
+      { id: 1, parentId: 0, name: 'A' },
+    ]
+
+    try {
+      const tree = arrayToTree(list)
+      const a = tree && tree[0]
+      console.log('arrayToTree 根 A', a && a.name === 'A' && a.children.length === 2 ? 'OK' : tree)
+      console.log('treeToList', treeToList(tree))
+      const path = findPath(tree, 4)
+      console.log('findPath D', path && path.map(n => n.name).join() === 'A,B,D' ? 'OK' : path)
+      console.log('levelOrder', JSON.stringify(levelOrder(a)))
+    } catch (e) { console.log('树部分未完成', e.message) }
+
+    const bt = new TreeNode(1, new TreeNode(2, new TreeNode(4), new TreeNode(5)), new TreeNode(3))
+    try {
+      console.log('pre', preorder(bt))
+      console.log('in', inorder(bt))
+      console.log('post', postorder(bt))
+      console.log('depth', maxDepth(bt))
+      invertTree(bt)
+      console.log('invert pre', preorder(bt))
+    } catch (e) { console.log('二叉树未完成', e.message) }
+
+    try {
+      console.log('reverse', toArr(reverseList(listFrom([1, 2, 3]))))
+      console.log('mid', middleNode(listFrom([1, 2, 3, 4, 5, 6])) && middleNode(listFrom([1, 2, 3, 4, 5, 6])).value)
+      console.log('cycle', hasCycle(listFrom([1, 2, 3, 4], 1)), hasCycle(listFrom([1, 2, 3])))
+      const entry = detectCycle(listFrom([1, 2, 3, 4, 5, 6], 2))
+      console.log('入口', entry && entry.value)
+    } catch (e) { console.log('链表未完成', e.message) }
+
+    try {
+      console.log('isValid', isValid('([{}])'), isValid('[(])'), isValid('((('))
+    } catch (e) { console.log('括号未完成', e.message) }
+  </script>
+</body>
+</html>
