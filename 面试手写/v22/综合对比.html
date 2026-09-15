@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>双指针综合对比</title>
+</head>
+<body>
+  <script>
+    /**
+     * 删除所有等于 val 的元素，返回新长度，O(1) 额外空间
+     */
+    function removeElement(nums, val) {
+      let slow = 0
+      for (let fast = 0; fast < nums.length; fast++) {
+        if (nums[fast] !== val) nums[slow++] = nums[fast]
+      }
+      return slow
+    }
+
+    /*
+     * 方法               时间      空间   类型        优先级
+     * 移动零             O(n)      O(1)   快慢        S
+     * 删除有序重复       O(n)      O(1)   快慢        S
+     * 回文               O(n)      O(1)   左右        S
+     * 合并有序数组       O(m+n)    O(1)   两数组从后  A
+     * 有序 Two Sum       O(n)      O(1)   左右        A
+     * 删 val             O(n)      O(1)   快慢        B
+     *
+     * 为何不是 O(n²)：指针单向推进，合计 O(n)，不会每个 left 都让 right 从头扫。
+     *
+     * 追问：
+     * 移零 slow/fast？fast 扫，slow 是下一个非零坑。
+     * 去重要求有序？重复相邻，只和最后一个有效值比。
+     * 回文左右？对称位置相同，O(1) 空间。
+     * 合并从后往前？nums1 尾巴是空位，从后写不覆盖未处理数据。
+     * 一定同时动两个？不一定，常只动一个。
+     */
+  </script>
+</body>
+</html>
