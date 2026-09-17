@@ -23,6 +23,10 @@ function moveZeroes2(nums) {
   while (slow < nums.length) nums[slow++] = 0
 }
 
-const a = [0, 1, 0, 3, 12]
-moveZeroes(a)
-console.log(a) // [1, 3, 12, 0, 0]
+// const a = [0, 1, 0, 3, 12]
+// moveZeroes(a)
+// console.log(a) // [1, 3, 12, 0, 0]
+
+const b = [1, 0, 1, 12, 13]
+moveZeroes2(b)
+console.log(b) // [1, 12, 13, 0, 0]
